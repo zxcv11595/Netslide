@@ -47,6 +47,8 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   let completing = false; // 완료 확정 이후(중복 저장 방지)
   let leaving = false; // 다음 판 전환 중(중복 요청/중복 이동 방지)
   let hintBusy = false;
+  let guiding = false; // 힌트를 쓴 뒤 되돌리기 안내를 따라가는 중
+  let solution = null;
   const timers = new Set();
   const later = (fn, ms) => {
     const t = setTimeout(() => { timers.delete(t); if (!destroyed) fn(); }, ms);
@@ -161,6 +163,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     if (destroyed || completing || board.busy) return;
     const res = session.move(move);
     if (!res.ok) return; // 무효/잠긴 줄: 0수
+    guiding = false;
     clearHint();
     buzz(8);
     refreshHud();
@@ -175,12 +178,17 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     clearHint();
     refreshHud();
     persist();
-    board.animateShift(res.prevCells, res.applied, session.cells, session.conn, afterShift);
+    board.animateShift(res.prevCells, res.applied, session.cells, session.conn, () => {
+      afterShift();
+      // 되돌리기 안내를 따라가는 중이면 같은 힌트로 이어서 안내한다
+      if (guiding && !completing) showHintNow();
+    });
   }
 
   function handleRestart() {
     if (destroyed || completing || board.busy) return;
     session.restart();
+    guiding = false;
     clearHint();
     refreshHud();
     persist();
@@ -188,7 +196,17 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     guide();
   }
 
-  // 힌트: 다음에 밀 줄 하나(또는 되돌리기)를 강조한다. 한 번 쓰면 1개가 줄어든다.
+  // 지금 배치에서 다음에 밀 줄을 찾아 강조한다. 못 찾으면 되돌리기를 강조하고 계속 안내한다.
+  function showHintNow() {
+    const hint = nextHint(stage, session.cells, session.historyCodes(), solution);
+    clearHint();
+    if (hint.type === 'move') { board.showHint(hint.move); guiding = false; return true; }
+    if (hint.type === 'undo') { undoBtn.classList.add('hinted'); guiding = true; return true; }
+    guiding = false;
+    return false;
+  }
+
+  // 힌트: 다음에 밀 줄 하나를 알려 준다. 한 번 쓰면 1개가 줄어든다.
   async function handleHint() {
     if (destroyed || completing || board.busy || hintBusy) return;
     if (store.data.hints <= 0) {
@@ -196,14 +214,11 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
       return;
     }
     hintBusy = true;
-    const solution = await loadSolution(content, stage.id);
+    solution = await loadSolution(content, stage.id);
     hintBusy = false;
     if (destroyed || completing || board.busy) return;
-    const hint = nextHint(stage, session.cells, session.historyCodes(), solution);
-    if (hint.type === 'none') { toast('지금은 알려 줄 수가 없어요'); return; }
-    clearHint();
-    if (hint.type === 'move') board.showHint(hint.move);
-    else { undoBtn.classList.add('hinted'); toast('길에서 벗어났어요. 되돌리기를 눌러 보세요.'); }
+    if (!showHintNow()) { toast('지금은 알려 줄 수가 없어요'); return; }
+    if (guiding) toast('여기서는 길을 찾기 어려워요. 표시된 되돌리기를 따라가면 다음 수를 알려 줄게요.', 3600);
     store.data.hints -= 1;
     store.save();
     hintCount.textContent = String(store.data.hints);

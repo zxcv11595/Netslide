@@ -319,3 +319,25 @@ test('힌트: 탐색 범위를 넘으면 해답 경로를 따르고, 벗어났�
   // 해답 자료가 없고 한 수도 두지 않았으면 알려 줄 것이 없다
   assert.deepEqual(nextHint(stage, createSession(stage).cells, [], null, tiny), { type: 'none' });
 });
+
+test('힌트: 플레이어가 마음대로 흐트러뜨린 배치에서도 지금 배치 기준으로 안내해 끝까지 풀린다', () => {
+  let seed = 4242;
+  const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+  for (const id of ['B12', 'M05', 'M10', 'A04', 'A12']) {
+    const stage = content.byId.get(id);
+    const session = createSession(stage);
+    const lines = [];
+    for (let i = 0; i < stage.size; i++) for (const axis of ['row', 'col']) for (const dir of [1, -1]) lines.push({ axis, index: i, dir });
+    let made = 0;
+    while (made < 9) { if (session.move(lines[Math.floor(rnd() * lines.length)]).ok) made++; }
+    let steps = 0;
+    let undos = 0;
+    while (!session.result.canComplete && steps < 200) {
+      const hint = nextHint(stage, session.cells, session.historyCodes(), sols[id].basic.moves, { maxStates: 20000 });
+      assert.notEqual(hint.type, 'none', `${id} ${steps}번째`);
+      if (hint.type === 'undo') { assert.equal(session.undo().ok, true); undos++; } else assert.equal(session.move(hint.move).ok, true);
+      steps++;
+    }
+    assert.equal(session.result.canComplete, true, `${id}: ${steps}번 안내 (되돌리기 ${undos}번)`);
+  }
+});

@@ -111,3 +111,62 @@ export function replay(stage, moveCodes, parse) {
   }
   return { ok: true, cells };
 }
+
+// 어느 배치에서든 "풀리는 길 하나"를 빨리 찾는 탐색(가중 A*). 힌트용이다.
+// 최단을 보장하지 않는 대신, 아직 길이 닿지 않은 칸 수를 기준으로 좋아 보이는 배치부터 펼쳐서
+// BFS로는 닿지 못하는 깊은 배치에서도 해답을 찾는다.
+// 반환: { moves: ["r0+", ...] } 또는 null(제한 안에서 못 찾음)
+// target: 풀린 배치를 알고 있으면(타일 종류 배열) 그 배치와 다른 칸 수를 기준으로 삼는다. 훨씬 잘 찾는다.
+export function findPath(stage, { maxStates = 60000, weight = 3, target = null } = {}) {
+  const moves = legalMoves(stage);
+  const sign = makeSigner(stage);
+  const total = stage.size * stage.size;
+  const kinds = stage.tiles.map(tileCode);
+  const score = (cells) => {
+    const conn = evaluateConnections(stage, cells);
+    if (evaluateResult(stage, conn, 0).requiredDone) return 0;
+    if (target) {
+      let off = 0;
+      for (let i = 0; i < total; i++) if (kinds[cells[i]] !== target[i]) off++;
+      return Math.max(1, off);
+    }
+    let reached = 0;
+    for (let i = 0; i < total; i++) reached += conn.reached[i];
+    return Math.max(1, total - reached);
+  };
+  const start = initialCells(stage);
+  const h0 = score(start);
+  if (h0 === 0) return { moves: [] };
+  const seen = new Map([[sign(start), 0]]);
+  const nodes = [{ cells: start, parent: -1, move: -1, g: 0 }];
+  const buckets = [];
+  const push = (f, idx) => { (buckets[f] || (buckets[f] = [])).push(idx); };
+  push(weight * h0, 0);
+  let low = weight * h0;
+  while (seen.size < maxStates) {
+    while (low < buckets.length && !(buckets[low] && buckets[low].length)) low++;
+    if (low >= buckets.length) return null;
+    const idx = buckets[low].pop();
+    const node = nodes[idx];
+    for (let m = 0; m < moves.length; m++) {
+      if (node.move >= 0 && (m ^ 1) === node.move) continue;
+      const cells = shiftBoard(stage, node.cells, moves[m]).cells;
+      const key = sign(cells);
+      const g = node.g + 1;
+      if (seen.has(key) && seen.get(key) <= g) continue;
+      seen.set(key, g);
+      const h = score(cells);
+      const at = nodes.length;
+      nodes.push({ cells, parent: idx, move: m, g });
+      if (h === 0) {
+        const out = [];
+        for (let i = at; nodes[i].parent !== -1; i = nodes[i].parent) out.push(moveToCode(moves[nodes[i].move]));
+        return { moves: out.reverse() };
+      }
+      const f = g + weight * h;
+      push(f, at);
+      if (f < low) low = f;
+    }
+  }
+  return null;
+}

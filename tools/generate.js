@@ -73,6 +73,7 @@ const DAILY_PLAN = [
 ];
 const MAX_STATES = { 3: 200000, 4: 3000000, 5: 2000000 };
 const STAR2_EXTRA = 3; // 2별 기준 = 3별 기준 + 3
+const MAX_HAMSTERS = 7; // 한 판의 햄스터(가지 끝) 수 상한
 
 // ---------- 정답 배치: 모든 칸을 잇는 무작위 나무 ----------
 function buildSolved(r, spec) {
@@ -145,6 +146,7 @@ function canonical(size, tiles) {
 // ---------- 후보 하나 만들기 ----------
 function tryCandidate(r, spec, seenForms) {
   const solved = buildSolved(r, spec);
+  if (solved.tiles.filter((t) => t.kind === 'goal').length > MAX_HAMSTERS) return { reject: 'too-many-hamsters' };
   const n = spec.size;
   const probe = { size: n, tiles: solved.tiles };
   const moves = legalMoves(probe);
@@ -320,7 +322,7 @@ for (const row of reportRows) {
 lines.push('', '## 생성 통계와 제외 이유', '');
 lines.push('| 계획 | 채택 | 시도 | 제외 이유(횟수) |', '|---|---|---|---|');
 const rejectName = {
-  replay: '역순 해답 재생 실패', duplicate: '회전/반사 중복', 'too-easy': '너무 쉬움', 'too-hard': '범위보다 김',
+  replay: '역순 해답 재생 실패', 'too-many-hamsters': '햄스터 8마리 이상', duplicate: '회전/반사 중복', 'too-easy': '너무 쉬움', 'too-hard': '범위보다 김',
   unproven: '제한 안에서 해답 미발견', 'single-line': '한 줄 반복 풀이', 'single-axis': '한 방향 축만 쓰는 풀이',
 };
 for (const l of log) {
