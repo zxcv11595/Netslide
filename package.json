@@ -8,8 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --test \"tests/*.test.js\"",
-    "generate": "node tools/generate.js",
-    "verify": "node tools/verify.js"
+    "generate": "node --max-old-space-size=8192 tools/generate.js",
+    "verify": "node --max-old-space-size=8192 tools/verify.js"
   },
   "devDependencies": {
     "vite": "^7.0.0"

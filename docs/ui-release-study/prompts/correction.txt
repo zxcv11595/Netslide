@@ -1,0 +1,10 @@
+Edit the supplied THREE-SCREEN HAMSTER GAME UI image. Preserve the overall art direction, colors, composition, character designs, typography, home stage selector/grid, result popup, and all other details. This is a targeted game-rule UI correction, not a redesign.
+1) MIDDLE GAME SCREEN and the dimmed background of RIGHT SCREEN: Correct the FOUR-SIDED shift controls of the 4x4 board. They must be:
+ABOVE board, aligned with the four columns, left to right: UP ARROW, LOCK, UP ARROW, UP ARROW.
+BELOW board, aligned with the four columns: DOWN ARROW, LOCK, DOWN ARROW, DOWN ARROW.
+LEFT of board, aligned with the four rows, top to bottom: LEFT ARROW, LOCK, LEFT ARROW, LEFT ARROW.
+RIGHT of board, aligned with the four rows: RIGHT ARROW, LOCK, RIGHT ARROW, RIGHT ARROW.
+Replace the erroneous left-side '1', '3', '4' row labels with actual left arrow buttons. No row numbers. Move the erroneous locked top/bottom FIRST column to the SECOND column, because the snack-source seed is at second row, second column. The snack source and all tiles stay in place. Both ends of the second row and second column are locked.
+2) RIGHT SCREEN ONLY, behind popup: change header connection text '연결 1/2' to '연결 2/2'. A completed result must not show one of two goals connected.
+3) MIDDLE SCREEN ONLY: the disconnected target hamster at third row first column should have a thin ochre endpoint channel going to its LEFT tile edge, not a tube rising above its face. Keep the orange path from source up then left to the first target.
+Keep exact existing main Korean texts and two earned stars. No additions. Crisp high fidelity same commercial game UI.

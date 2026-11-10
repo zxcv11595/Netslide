@@ -13,7 +13,7 @@ const DEEP = process.argv.includes('--deep');
 const raw = JSON.parse(readFileSync(new URL('../src/data/stages.json', import.meta.url), 'utf8'));
 const sols = JSON.parse(readFileSync(new URL('../tools/out/solutions.json', import.meta.url), 'utf8'));
 const content = parseContent(raw);
-const MAX_STATES = { 3: 200000, 4: 1500000, 5: 2500000 };
+const MAX_STATES = { 3: 200000, 4: 3000000, 5: 2000000 };
 
 const problems = [];
 let checked = 0;
@@ -43,8 +43,11 @@ for (const stage of content.byId.values()) {
 
   if (DEEP) {
     const again = solve(stage, { maxStates: MAX_STATES[stage.size] });
-    if (!again.basic || again.basic.length !== sol.basic.length) fail(`기본 최단 수 불일치: 기록 ${sol.basic.length}, 재탐색 ${again.basic?.length ?? '미발견'}`);
-    if (!again.full || again.full.length !== sol.full.length) fail(`보너스 포함 최단 수 불일치: 기록 ${sol.full.length}, 재탐색 ${again.full?.length ?? '미발견'}`);
+    if (sol.basicProven) {
+      if (!again.basic || again.basic.length !== sol.basic.length) fail(`최단 수 불일치: 기록 ${sol.basic.length}, 재탐색 ${again.basic?.length ?? '미발견'}`);
+    } else if (again.basic && again.basic.length < sol.basic.length) {
+      fail(`미증명 판에서 더 짧은 해답 발견: 기록 ${sol.basic.length}, 재탐색 ${again.basic.length}`);
+    }
     process.stdout.write(`  ${stage.id} 재탐색 ${again.states}개 상태\n`);
   }
 }

@@ -1,14 +1,16 @@
-// 홈: 입문 → 난이도 탭 + 스테이지 목록, 오늘의 도전. 대형 월드맵은 만들지 않는다.
+// 홈(땅속 굴 디자인): 이어서 하기 + 난이도별 굴 카드(펼치면 판 목록) + 오늘의 판.
+// 판 수가 늘어도 카드 안의 목록만 길어지므로 구조를 바꿀 필요가 없다. 대형 월드맵은 만들지 않는다.
 import { CONFIG, GROUP_LABEL } from '../config.js';
 import {
   getRecord, isTutorialDone, isUnlocked, nextTutorial, getCurrent,
 } from '../game/progress.js';
 import { dailyStageFor, kstDateString } from '../game/daily.js';
-import { el, svg, hamsterFrame, starsRow } from './art.js';
+import { el, svg, hamsterFrame, starsRow, starIcon } from './art.js';
 import { stageTitle } from './play.js';
 import { toast } from './toast.js';
 
-const TABS = ['beginner', 'intermediate', 'advanced'];
+const GROUPS = ['beginner', 'intermediate', 'advanced'];
+const GROUP_DESC = { beginner: '3×3 · 4×4', intermediate: '4×4 · 5×5', advanced: '깊게 섞인 4×4 · 5×5' };
 const ISSUE_TEXT = {
   unavailable: '이 브라우저에서는 저장할 수 없어요. 창을 닫으면 기록이 사라져요.',
   'write-failed': '저장에 실패했어요. 지금부터의 기록은 창을 닫으면 사라질 수 있어요.',
@@ -27,112 +29,119 @@ function lockGlyph() {
 export function createHomeScreen(ctx) {
   const { store, content } = ctx;
   const tutorialDone = isTutorialDone(store, content);
-  const root = el('section', { class: 'screen home' });
+  const rec = (s) => getRecord(store, content, s.id);
 
-  root.appendChild(el('header', { class: 'home-head' }, [
-    hamsterFrame({ cls: 'hero breathe' }),
-    el('div', {}, [
+  const regular = GROUPS.flatMap((g) => content.groups[g]);
+  const totalStars = regular.reduce((sum, s) => sum + (rec(s)?.stars ?? 0), 0);
+
+  const sky = el('div', { class: 'sky home-sky' }, [
+    hamsterFrame({ cls: 'sky-ham breathe' }),
+    el('div', { class: 'home-title' }, [
       el('h1', { text: CONFIG.gameName }),
-      el('p', { class: 'tagline', text: '줄을 밀어 간식 길을 이어 주세요' }),
+      el('div', { class: 'total', role: 'img', 'aria-label': `모은 별 ${totalStars}개, 전체 ${regular.length * 3}개` }, [
+        starIcon(true, 18), ` ${totalStars} / ${regular.length * 3}`,
+      ]),
     ]),
-  ]));
-
-  if (store.issue) root.appendChild(el('p', { class: 'notice warn', role: 'status', text: ISSUE_TEXT[store.issue] }));
-
-  // 하던 판 이어하기
-  const cur = getCurrent(store, content);
-  if (cur) {
-    root.appendChild(el('button', {
-      class: 'card resume', type: 'button',
-      onclick: () => ctx.goPlay(cur.stage, { date: cur.date, history: cur.history }),
-    }, [
-      el('span', { class: 'card-title', text: '하던 판 이어하기' }),
-      el('span', { class: 'card-sub', text: `${stageTitle(cur.stage, cur.date)} · ${cur.history.length}수 진행` }),
-    ]));
-  }
-
-  // 입문
-  const tutorials = content.groups.tutorial;
-  const tutDoneCount = tutorials.filter((s) => getRecord(store, content, s.id)?.done).length;
-  const tutSection = el('section', { class: 'block' }, [
-    el('h2', {}, ['입문 ', el('small', { text: `${tutDoneCount}/${tutorials.length}` })]),
   ]);
-  if (!tutorialDone) {
-    const nt = nextTutorial(store, content);
-    tutSection.appendChild(el('button', {
-      class: 'btn primary big', type: 'button',
-      text: tutDoneCount ? '입문 이어하기' : '입문 시작하기',
-      onclick: () => ctx.goPlay(nt),
-    }));
-    tutSection.appendChild(el('p', { class: 'hint', text: '짧은 입문 3판을 마치면 초급·중급·고급을 모두 고를 수 있어요.' }));
-  } else {
-    const row = el('div', { class: 'stage-grid compact' });
-    tutorials.forEach((s) => row.appendChild(el('button', {
-      class: 'stage done', type: 'button', 'aria-label': `입문 ${s.order} 다시 하기`, onclick: () => ctx.goPlay(s),
-    }, [el('b', { text: String(s.order) }), el('span', { class: 'check', text: '완료' })])));
-    tutSection.appendChild(row);
-  }
-  root.appendChild(tutSection);
+  const ground = el('div', { class: 'ground home-ground' });
+  const root = el('section', { class: 'screen home' }, [sky, ground]);
 
+  if (store.issue) ground.appendChild(el('p', { class: 'notice warn', role: 'status', text: ISSUE_TEXT[store.issue] }));
+
+  // 맨 위 큰 버튼: 하던 판 → 입문 → 다음에 풀 판
+  const cur = getCurrent(store, content);
+  let target = null;
+  if (cur) {
+    target = { label: `이어서 하기 · ${stageTitle(cur.stage, cur.date)}`, go: () => ctx.goPlay(cur.stage, { date: cur.date, history: cur.history }) };
+  } else if (!tutorialDone) {
+    const nt = nextTutorial(store, content);
+    target = { label: nt.order === 1 ? '입문 시작하기' : `입문 이어하기 · ${nt.order}/${content.groups.tutorial.length}`, go: () => ctx.goPlay(nt) };
+  } else {
+    const order = [ctx.state.tab, ...GROUPS.filter((g) => g !== ctx.state.tab)].filter((g) => GROUPS.includes(g));
+    for (const g of order) {
+      const s = content.groups[g].find((x) => !rec(x)?.done);
+      if (s) { target = { label: `다음 판 · ${stageTitle(s)}`, go: () => ctx.goPlay(s) }; break; }
+    }
+  }
+  if (target) ground.appendChild(el('button', { class: 'go big', type: 'button', text: target.label, onclick: target.go }));
+  if (!tutorialDone) {
+    ground.appendChild(el('p', { class: 'hint', text: '짧은 입문 3판을 마치면 초급·중급·고급 굴이 모두 열려요.' }));
+  }
+
+  // 오늘의 판: 날마다 하나, 누구에게나 같은 판(한국 시간 기준)
   if (tutorialDone) {
-    // 오늘의 도전 (한국 시간 날짜 기준)
     const today = kstDateString();
     const daily = dailyStageFor(content, today);
     if (daily) {
-      const rec = store.content(content.version).daily[today];
-      const [, m, d] = today.split('-').map(Number);
-      root.appendChild(el('button', {
-        class: 'card daily', type: 'button', onclick: () => ctx.goPlay(daily, { date: today }),
+      const d = store.content(content.version).daily[today];
+      const [, m, day] = today.split('-').map(Number);
+      const done = d && d.id === daily.id;
+      ground.appendChild(el('button', {
+        class: 'wood card daily', type: 'button', onclick: () => ctx.goPlay(daily, { date: today }),
       }, [
-        el('span', { class: 'card-title', text: `오늘의 도전 · ${m}월 ${d}일` }),
-        rec && rec.id === daily.id
-          ? el('span', { class: 'card-sub' }, [starsRow(rec.stars, 3, 16), ` ${rec.moves}수 · 다시 도전하기`])
-          : el('span', { class: 'card-sub', text: `${daily.size}×${daily.size} · 오늘은 모두 같은 판이에요` }),
+        el('span', { class: 'card-title', text: `오늘의 판 · ${m}월 ${day}일` }),
+        done
+          ? el('span', { class: 'card-sub' }, [starsRow(d.stars, 3, 16), ` ${d.moves}수 · 다시 도전`])
+          : el('span', { class: 'card-sub', text: '날마다 바뀌는 한 판 · 모두 같은 판을 풀어요' }),
       ]));
     }
-
-    // 난이도 탭 + 스테이지 목록
-    const tabsEl = el('div', { class: 'tabs', role: 'tablist', 'aria-label': '난이도' });
-    const grid = el('div', { class: 'stage-grid', role: 'tabpanel' });
-    const tabBtns = {};
-    const showTab = (group) => {
-      ctx.state.tab = group;
-      for (const g of TABS) {
-        tabBtns[g].classList.toggle('active', g === group);
-        tabBtns[g].setAttribute('aria-selected', g === group ? 'true' : 'false');
-      }
-      grid.replaceChildren();
-      for (const s of content.groups[group]) {
-        const rec = getRecord(store, content, s.id);
-        const open = isUnlocked(store, content, s);
-        const btn = el('button', {
-          class: `stage${rec?.done ? ' done' : ''}${open ? '' : ' locked'}`, type: 'button',
-          'aria-label': `${GROUP_LABEL[group]} ${s.order}, ${s.size}×${s.size}${open ? (rec?.done ? `, 별 ${rec.stars}개` : '') : ', 잠김'}`,
-          'aria-disabled': open ? null : 'true',
-          onclick: () => {
-            if (open) ctx.goPlay(s);
-            else toast('앞 판을 완료하면 열려요');
-          },
-        }, [
-          el('b', { text: String(s.order) }),
-          el('span', { class: 'size', text: `${s.size}×${s.size}` }),
-          open ? starsRow(rec?.stars ?? 0, 3, 13) : lockGlyph(),
-        ]);
-        grid.appendChild(btn);
-      }
-    };
-    for (const g of TABS) {
-      const done = content.groups[g].filter((s) => getRecord(store, content, s.id)?.done).length;
-      tabBtns[g] = el('button', {
-        class: 'tab', type: 'button', role: 'tab', onclick: () => showTab(g),
-      }, [GROUP_LABEL[g], el('small', { text: ` ${done}/${content.groups[g].length}` })]);
-      tabsEl.appendChild(tabBtns[g]);
-    }
-    root.appendChild(el('section', { class: 'block' }, [el('h2', { text: '스테이지' }), tabsEl, grid]));
-    showTab(TABS.includes(ctx.state.tab) ? ctx.state.tab : 'beginner');
   }
 
-  root.appendChild(el('p', {
+  // 난이도별 굴 카드: 하나만 펼친다
+  const cards = {};
+  const openGroup = (group) => {
+    ctx.state.tab = group;
+    for (const g of GROUPS) cards[g].classList.toggle('open', g === group);
+  };
+  for (const g of GROUPS) {
+    const list = content.groups[g];
+    const done = list.filter((s) => rec(s)?.done).length;
+    const stars = list.reduce((sum, s) => sum + (rec(s)?.stars ?? 0), 0);
+    const grid = el('div', { class: 'stage-grid' });
+    for (const s of list) {
+      const r = rec(s);
+      const open = isUnlocked(store, content, s);
+      const isNext = open && !r?.done;
+      grid.appendChild(el('button', {
+        class: `stage${r?.done ? ' done' : ''}${isNext ? ' next' : ''}${open ? '' : ' locked'}`, type: 'button',
+        'aria-label': `${GROUP_LABEL[g]} ${s.order}, ${s.size}×${s.size}${open ? (r?.done ? `, 별 ${r.stars}개` : '') : ', 잠김'}`,
+        'aria-disabled': open ? null : 'true',
+        onclick: () => {
+          if (open) ctx.goPlay(s);
+          else toast('앞 판을 끝내면 열려요');
+        },
+      }, [
+        el('b', { text: String(s.order) }),
+        open ? starsRow(r?.stars ?? 0, 3, 12) : lockGlyph(),
+      ]));
+    }
+    const head = el('button', {
+      class: 'burrow-head', type: 'button', 'aria-label': `${GROUP_LABEL[g]} 굴, ${done}/${list.length} 완료`,
+      disabled: !tutorialDone,
+      onclick: () => openGroup(cards[g].classList.contains('open') ? null : g),
+    }, [
+      el('span', { class: 'burrow-name' }, [el('b', { text: GROUP_LABEL[g] }), el('small', { text: GROUP_DESC[g] })]),
+      el('span', { class: 'burrow-meta' }, [
+        tutorialDone ? `${done}/${list.length}` : lockGlyph(),
+        tutorialDone ? el('span', { class: 'burrow-stars' }, [starIcon(true, 14), ` ${stars}`]) : null,
+      ]),
+      el('span', { class: 'bar' }, [el('i', { style: `width:${(done / list.length) * 100}%` })]),
+    ]);
+    cards[g] = el('section', { class: `wood burrow${tutorialDone ? '' : ' closed'}` }, [head, grid]);
+    ground.appendChild(cards[g]);
+  }
+  if (tutorialDone) openGroup(GROUPS.includes(ctx.state.tab) ? ctx.state.tab : 'beginner');
+
+  // 입문 다시 보기
+  if (tutorialDone) {
+    const row = el('div', { class: 'replay' }, [el('span', { text: '입문 다시 보기' })]);
+    content.groups.tutorial.forEach((s) => row.appendChild(el('button', {
+      class: 'chip-btn', type: 'button', 'aria-label': `입문 ${s.order} 다시 하기`, text: String(s.order), onclick: () => ctx.goPlay(s),
+    })));
+    ground.appendChild(row);
+  }
+
+  ground.appendChild(el('p', {
     class: 'notice',
     text: '기록은 이 브라우저에만 저장돼요. 브라우저 데이터를 지우거나 기기를 바꾸면 기록이 사라질 수 있어요.',
   }));

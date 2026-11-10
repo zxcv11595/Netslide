@@ -1,7 +1,13 @@
 // 출시 판 생성 도구 (개발용).
-//   node tools/generate.js [--seed 20261111] [--quick]
-// 정답 배치 → 합법 이동 셔플 → 역순 해답 보관 → 공통 규칙으로 재생 확인 → 풀이 BFS
-// → 중복/과도한 쉬움 제거 → 난이도·별 기준 지정 순으로 처리한다.
+//   node --max-old-space-size=8192 tools/generate.js [--seed 20261111] [--quick]
+//
+// 판 구성은 Netslide 방식이다.
+//   - 정답 배치는 공급원에서 뻗는 하나의 나무(spanning tree)이고 모든 칸이 그 나무에 속한다.
+//     정답과 무관한 수로나 빈 칸은 없다(입문 제외).
+//   - 가지 끝(막다른 칸)마다 햄스터가 있고, 모든 햄스터에게 길이 닿으면 완료다. 보너스는 없다.
+//   - 난이도는 정답에서 섞은 깊이로 조절하고, 풀이 BFS로 최단 수를 확인한다.
+// 순서: 정답 배치 → 합법 이동 셔플 → 역순 해답 보관 → 공통 규칙으로 재생 확인 → 풀이 BFS
+//       → 중복/과도한 쉬움 제거 → 난이도·별 기준 지정
 // 출력:
 //   src/data/stages.json        게임이 읽는 판 데이터(해답 없음)
 //   tools/out/solutions.json    개발용 검증 자료(해답·탐색량)
@@ -23,7 +29,7 @@ const argOf = (name, def) => {
 };
 const BASE_SEED = Number(argOf('--seed', 20261111));
 const QUICK = args.includes('--quick');
-const CONTENT_VERSION = 1;
+const CONTENT_VERSION = 1; // 아직 공개 전이라 1을 유지한다. 공개 뒤에 판을 바꾸면 올린다.
 const DAILY_EPOCH = '2026-11-11';
 
 // ---------- 난수 ----------
@@ -38,137 +44,74 @@ function rng(seed) {
   };
 }
 const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
-const shuffled = (r, arr) => {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(r() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-};
 
-// ---------- 입문(수작업) ----------
+// ---------- 입문(수작업): 규칙을 하나씩 익히도록 빈 칸을 둔 작은 판 ----------
 const TUTORIALS = [
-  { id: 'T1', size: 3, tiles: ['p6 p10 g8', 'p5 s2 p0', 'p3 p10 p0'] },
-  { id: 'T2', size: 3, tiles: ['g8 p10 p6', 'p0 s1 p0', 'p9 p0 p3'] },
-  { id: 'T3', size: 3, tiles: ['p6 p10 g8', 'p5 s6 p0', 'g1 p0 p9'] },
+  { id: 'T1', size: 3, tiles: ['p0 p0 g8', 'p0 s2 p0', 'p0 p0 p0'] },
+  { id: 'T2', size: 3, tiles: ['g8 p0 p6', 'p0 s1 p0', 'p0 p0 p0'] },
+  { id: 'T3', size: 3, tiles: ['p0 p0 g8', 'p0 s6 p0', 'g1 p0 p0'] },
 ];
 
 // ---------- 생성 계획 ----------
-// min: 기본 클리어 최단 이동 수의 허용 범위(증명된 값 기준)
+// min: 최단 이동 수 허용 범위. shuffle: 정답에서 섞는 횟수(기본 = min 상한).
+// deep: 제한 안에서 해답을 못 찾아도, 확인한 깊이가 min 하한 이상이면 "미증명" 판으로 채택한다.
 const PLAN = [
-  { group: 'beginner', size: 3, req: 1, bonus: 0, oneway: 0, min: [2, 3], count: 2 },
-  { group: 'beginner', size: 3, req: 2, bonus: 0, oneway: 0, min: [2, 4], count: 2 },
-  { group: 'beginner', size: 4, req: 1, bonus: 0, oneway: 0, min: [2, 3], count: 2 },
-  { group: 'beginner', size: 4, req: 2, bonus: 0, oneway: 0, min: [3, 4], count: 3 },
-  { group: 'beginner', size: 4, req: 2, bonus: 1, oneway: 0, min: [3, 4], count: 1 },
-  { group: 'intermediate', size: 4, req: 2, bonus: 0, oneway: 0, min: [4, 5], count: 3 },
-  { group: 'intermediate', size: 4, req: 2, bonus: 1, oneway: 1, min: [4, 5], count: 3 },
-  { group: 'intermediate', size: 4, req: 3, bonus: 0, oneway: 1, min: [5, 6], count: 2 },
-  { group: 'intermediate', size: 4, req: 3, bonus: 1, oneway: 1, min: [5, 6], count: 2 },
-  { group: 'advanced', size: 4, req: 3, bonus: 1, oneway: 2, min: [6, 8], count: 4 },
-  { group: 'advanced', size: 5, req: 2, bonus: 1, oneway: 1, min: [4, 5], count: 2 },
-  { group: 'advanced', size: 5, req: 3, bonus: 1, oneway: 2, min: [5, 6], count: 4 },
+  { group: 'beginner', size: 3, min: [2, 3], count: 3 },
+  { group: 'beginner', size: 3, min: [4, 6], shuffle: 8, count: 3 },
+  { group: 'beginner', size: 4, min: [3, 4], count: 6 },
+  { group: 'intermediate', size: 4, min: [5, 6], count: 8 },
+  { group: 'intermediate', size: 5, min: [4, 5], count: 4 },
+  { group: 'advanced', size: 4, min: [7, 8], shuffle: 8, deep: true, count: 5 },
+  { group: 'advanced', size: 5, min: [6, 99], shuffle: 11, deep: true, count: 6 },
 ];
 const DAILY_PLAN = [
-  { group: 'daily', size: 4, req: 2, bonus: 1, oneway: 1, min: [4, 6], count: 21 },
-  { group: 'daily', size: 5, req: 2, bonus: 1, oneway: 1, min: [4, 5], count: 7 },
+  { group: 'daily', size: 4, min: [5, 6], count: 21 },
+  { group: 'daily', size: 5, min: [4, 5], count: 7 },
 ];
-const SLACK = { beginner: 1, intermediate: 1, advanced: 0, daily: 1 };
-const DECOY_BLANK = { beginner: 0.4, intermediate: 0.25, advanced: 0.15, daily: 0.25 };
-const MAX_STATES = { 3: 200000, 4: 1500000, 5: 2500000 };
+const MAX_STATES = { 3: 200000, 4: 3000000, 5: 2000000 };
+const STAR2_EXTRA = 3; // 2별 기준 = 3별 기준 + 3
 
-// ---------- 정답 배치 만들기 ----------
+// ---------- 정답 배치: 모든 칸을 잇는 무작위 나무 ----------
 function buildSolved(r, spec) {
   const n = spec.size;
   const total = n * n;
   const src = n === 4 ? pick(r, [5, 6, 9, 10]) : (total - 1) / 2;
-  const others = shuffled(r, [...Array(total).keys()].filter((p) => p !== src));
-  const goalPos = others.slice(0, spec.req + spec.bonus);
-  const isGoal = new Set(goalPos);
   const ports = new Array(total).fill(0);
-  const inTree = new Set([src]);
-  const weight = Array.from({ length: total }, () => 1 + r() * 3);
-
-  for (const g of goalPos) {
-    // 목표 g에서 트리까지 무작위 가중치 최단 경로
-    const dist = new Array(total).fill(Infinity);
-    const prev = new Array(total).fill(-1);
-    const done = new Array(total).fill(false);
-    dist[g] = 0;
-    let hit = -1;
-    for (;;) {
-      let u = -1;
-      for (let i = 0; i < total; i++) if (!done[i] && dist[i] < Infinity && (u < 0 || dist[i] < dist[u])) u = i;
-      if (u < 0) break;
-      done[u] = true;
-      if (inTree.has(u)) { hit = u; break; }
-      const ur = Math.floor(u / n);
-      const uc = u % n;
-      for (const d of DIRS) {
-        const { dr, dc } = dirDelta(d);
-        const vr = ur + dr;
-        const vc = uc + dc;
-        if (vr < 0 || vr >= n || vc < 0 || vc >= n) continue;
-        const v = vr * n + vc;
-        if (isGoal.has(v)) continue; // 목표 칸은 통로로 쓰지 않는다
-        if (dist[u] + weight[v] < dist[v]) { dist[v] = dist[u] + weight[v]; prev[v] = u; }
-      }
-    }
-    if (hit < 0) return null;
-    for (let v = hit; prev[v] !== -1; v = prev[v]) {
-      const u = prev[v];
-      const d = DIRS.find((dd) => {
-        const { dr, dc } = dirDelta(dd);
-        return Math.floor(v / n) + dr === Math.floor(u / n) && (v % n) + dc === u % n;
-      });
-      ports[v] |= d;
-      ports[u] |= opposite(d);
-      inTree.add(u);
-    }
-  }
-
-  // 트리에서 공급원 쪽 방향
-  const towardSrc = new Array(total).fill(0);
-  const seen = new Set([src]);
-  const queue = [src];
-  while (queue.length) {
-    const u = queue.shift();
+  const inTree = new Array(total).fill(false);
+  inTree[src] = true;
+  // 가장 최근 칸에서 이어 갈 확률이 높을수록 길고 구불구불한 굴(가지 적음), 낮을수록 가지 많은 굴
+  const windy = 0.35 + r() * 0.55;
+  const active = [src];
+  let count = 1;
+  while (count < total) {
+    const i = r() < windy ? active.length - 1 : Math.floor(r() * active.length);
+    const u = active[i];
+    const options = [];
     for (const d of DIRS) {
-      if (!(ports[u] & d)) continue;
       const { dr, dc } = dirDelta(d);
-      const v = (Math.floor(u / n) + dr) * n + (u % n) + dc;
-      if (seen.has(v)) continue;
-      seen.add(v);
-      towardSrc[v] = opposite(d);
-      queue.push(v);
+      const vr = Math.floor(u / n) + dr;
+      const vc = (u % n) + dc;
+      if (vr < 0 || vr >= n || vc < 0 || vc >= n) continue;
+      if (!inTree[vr * n + vc]) options.push([d, vr * n + vc]);
     }
+    if (!options.length) { active.splice(i, 1); continue; }
+    const [d, v] = pick(r, options);
+    ports[u] |= d;
+    ports[v] |= opposite(d);
+    inTree[v] = true;
+    active.push(v);
+    count++;
   }
-
-  const tiles = new Array(total);
-  const blank = DECOY_BLANK[spec.group];
-  const onewayCells = shuffled(r, [...inTree].filter((p) => p !== src && !isGoal.has(p)
-    && DIRS.filter((d) => ports[p] & d).length === 2)).slice(0, spec.oneway);
-  if (onewayCells.length < spec.oneway) return null;
-  for (let p = 0; p < total; p++) {
-    if (p === src) tiles[p] = { kind: 'source', ports: ports[p] };
-    else if (isGoal.has(p)) {
-      tiles[p] = { kind: 'goal', ports: ports[p], bonus: goalPos.indexOf(p) >= spec.req };
-    } else if (onewayCells.includes(p)) {
-      tiles[p] = { kind: 'oneway', in: towardSrc[p], out: ports[p] & ~towardSrc[p] };
-    } else if (inTree.has(p)) {
-      tiles[p] = { kind: 'pipe', ports: ports[p] };
-    } else if (r() < blank) {
-      tiles[p] = { kind: 'pipe', ports: 0 };
-    } else {
-      tiles[p] = { kind: 'pipe', ports: pick(r, [5, 10, 3, 6, 12, 9, 3, 6, 12, 9, 7, 11, 13, 14]) };
-    }
-  }
+  const tiles = ports.map((mask, p) => {
+    if (p === src) return { kind: 'source', ports: mask };
+    if (DIRS.includes(mask)) return { kind: 'goal', ports: mask, bonus: false }; // 가지 끝 = 햄스터
+    return { kind: 'pipe', ports: mask };
+  });
   return { tiles, src };
 }
 
 // ---------- 회전/반사 중복 판정 ----------
-// 공급원 위치를 보존하는 변환에서만 같은 판으로 본다(잠금 줄과 방향성도 함께 변환된다).
+// 공급원 위치를 보존하는 변환에서만 같은 판으로 본다(잠금 줄도 함께 변환된다).
 const ROT = { [N]: E, [E]: S, [S]: W, [W]: N };
 const FLIP = { [N]: N, [S]: S, [E]: W, [W]: E };
 const mapMask = (mask, f) => DIRS.reduce((m, d) => (mask & d ? m | f[d] : m), 0);
@@ -199,13 +142,12 @@ function canonical(size, tiles) {
 // ---------- 후보 하나 만들기 ----------
 function tryCandidate(r, spec, seenForms) {
   const solved = buildSolved(r, spec);
-  if (!solved) return { reject: 'build' };
   const n = spec.size;
   const probe = { size: n, tiles: solved.tiles };
   const moves = legalMoves(probe);
 
-  // 합법 이동으로 셔플 (직전 이동의 역이동은 피한다). N번 셔플이 최소 N수를 뜻하지는 않는다.
-  const shuffleLen = spec.min[1] + 2 + Math.floor(r() * 4);
+  // 합법 이동으로 셔플(직전 이동의 역이동은 피한다). N번 셔플이 최소 N수를 뜻하지는 않는다.
+  const shuffleLen = spec.shuffle ?? spec.min[1];
   let cells = [...Array(n * n).keys()];
   const applied = [];
   for (let i = 0; i < shuffleLen; i++) {
@@ -217,11 +159,10 @@ function tryCandidate(r, spec, seenForms) {
   const stage = { size: n, tiles: cells.map((id) => solved.tiles[id]), tutorial: false, star2: 99, star3: 98 };
   const known = applied.slice().reverse().map((m) => moveToCode(inverseMove(m)));
 
-  // 역순 해답을 공통 규칙으로 재생해 필수+보너스가 모두 이어지는지 확인
+  // 역순 해답을 공통 규칙으로 재생해 모든 햄스터가 이어지는지 확인
   const rep = replay(stage, known, moveFromCode);
   if (!rep.ok) return { reject: 'replay' };
-  const endRes = evaluateResult(stage, evaluateConnections(stage, rep.cells), known.length);
-  if (!endRes.requiredDone || (spec.bonus && !endRes.bonusDone)) return { reject: 'replay' };
+  if (!evaluateResult(stage, evaluateConnections(stage, rep.cells), known.length).requiredDone) return { reject: 'replay' };
 
   const form = canonical(n, stage.tiles);
   if (seenForms.has(form)) return { reject: 'duplicate' };
@@ -231,29 +172,32 @@ function tryCandidate(r, spec, seenForms) {
   if (pre.basic && pre.basic.length < spec.min[0]) return { reject: 'too-easy' };
 
   const sol = solve(stage, { maxStates: QUICK ? 200000 : MAX_STATES[n] });
-  if (!sol.basic) return { reject: 'basic-unproven' };
-  if (sol.basic.length < spec.min[0]) return { reject: 'too-easy' };
-  if (sol.basic.length > spec.min[1]) return { reject: 'too-hard' };
-  // 서로 다른 판단: 한 줄만 반복하는 풀이는 제외
-  const lines = new Set(sol.basic.moves.map((c) => c.slice(0, -1)));
-  const axes = new Set(sol.basic.moves.map((c) => c[0]));
-  if (lines.size < 2) return { reject: 'single-line' };
-  if (sol.basic.length >= 3 && axes.size < 2) return { reject: 'single-axis' };
-
-  // 보너스 포함 해답도 최단 증명된 판만 채택하고, 기본 해답과 너무 벌어지는 판은 제외한다.
-  if (!sol.full) return { reject: 'full-unproven' };
-  if (sol.full.length - sol.basic.length > 3) return { reject: 'bonus-too-far' };
-  const full = sol.full;
-  const fullProven = true;
-  const slack = SLACK[spec.group];
-  const target = fullProven ? full.length + slack : full.length;
-  stage.star3 = target;
-  stage.star2 = spec.bonus ? null : target + 2;
+  let best;
+  let proven;
+  if (sol.basic) {
+    if (sol.basic.length < spec.min[0]) return { reject: 'too-easy' };
+    if (sol.basic.length > spec.min[1]) return { reject: 'too-hard' };
+    // 서로 다른 판단: 한 줄만 반복하거나 한 축만 쓰는 풀이는 제외
+    const lines = new Set(sol.basic.moves.map((c) => c.slice(0, -1)));
+    const axes = new Set(sol.basic.moves.map((c) => c[0]));
+    if (lines.size < 2) return { reject: 'single-line' };
+    if (sol.basic.length >= 3 && axes.size < 2) return { reject: 'single-axis' };
+    best = sol.basic;
+    proven = true;
+  } else {
+    // 제한 안에서 못 찾음: "해답 없음"이 아니라 미증명이다. 알고 있는 해답(역순 셔플)을 목표로 쓴다.
+    if (!spec.deep || sol.checkedDepth + 1 < spec.min[0]) return { reject: 'unproven' };
+    best = { length: known.length, moves: known };
+    proven = false;
+  }
+  stage.star3 = best.length;
+  stage.star2 = best.length + STAR2_EXTRA;
   return {
     stage, form,
+    hamsters: stage.tiles.filter((t) => t.kind === 'goal').length,
     solution: {
-      basic: sol.basic, basicProven: true,
-      full, fullProven,
+      basic: best, basicProven: proven, full: best, fullProven: proven,
+      lowerBound: proven ? best.length : sol.checkedDepth + 1,
       states: sol.states, limitHit: sol.limitHit,
     },
   };
@@ -266,7 +210,7 @@ function generateGroup(plan, seedBase, seenForms, log) {
     const rejects = {};
     let made = 0;
     let attempts = 0;
-    const maxAttempts = 6000;
+    const maxAttempts = 4000;
     while (made < spec.count && attempts < maxAttempts) {
       attempts++;
       const c = tryCandidate(r, spec, seenForms);
@@ -274,7 +218,8 @@ function generateGroup(plan, seedBase, seenForms, log) {
       seenForms.add(c.form);
       out.push({ spec, ...c });
       made++;
-      process.stdout.write(`  ${spec.group} ${spec.size}x${spec.size} req${spec.req}+b${spec.bonus} ow${spec.oneway}: ${made}/${spec.count} (기본 ${c.solution.basic.length}수, 전체 ${c.solution.full.length}수${c.solution.fullProven ? '' : ' 미증명'}, 상태 ${c.solution.states})\n`);
+      const s = c.solution;
+      process.stdout.write(`  ${spec.group} ${spec.size}x${spec.size}: ${made}/${spec.count} (햄스터 ${c.hamsters}, ${s.basicProven ? `최단 ${s.basic.length}수` : `최단 ${s.lowerBound}수 이상·발견 ${s.basic.length}수`}, 상태 ${s.states})\n`);
     }
     log.push({ spec, made, attempts, rejects });
   });
@@ -288,10 +233,8 @@ const log = [];
 const stagesOut = [];
 const solutions = {};
 const reportRows = [];
-
 const rowsOf = (size, tiles) => Array.from({ length: size }, (_, rr) => tiles.slice(rr * size, rr * size + size).map(tileCode).join(' '));
 
-// 입문
 TUTORIALS.forEach((t, i) => {
   const stage = { size: t.size, tiles: t.tiles.flatMap((row) => row.split(' ')).map(parseTile), tutorial: true };
   const errs = validateStage(stage);
@@ -299,8 +242,8 @@ TUTORIALS.forEach((t, i) => {
   const sol = solve(stage, { maxStates: 200000 });
   if (!sol.basic || sol.basic.length < 1) throw new Error(`${t.id}: 입문 판 풀이 실패`);
   stagesOut.push({ id: t.id, group: 'tutorial', order: i + 1, size: t.size, tiles: t.tiles });
-  solutions[t.id] = { basic: sol.basic, basicProven: true, full: sol.full, fullProven: true, states: sol.states, limitHit: false };
-  reportRows.push({ id: t.id, group: 'tutorial', order: i + 1, size: t.size, req: stage.tiles.filter((x) => x.kind === 'goal' && !x.bonus).length, bonus: 0, oneway: 0, sol: solutions[t.id], star2: null, star3: null });
+  solutions[t.id] = { basic: sol.basic, basicProven: true, full: sol.basic, fullProven: true, lowerBound: sol.basic.length, states: sol.states, limitHit: false };
+  reportRows.push({ id: t.id, group: 'tutorial', order: i + 1, size: t.size, hamsters: stage.tiles.filter((x) => x.kind === 'goal').length, sol: solutions[t.id], star2: null, star3: null });
   seenForms.add(canonical(t.size, stage.tiles));
 });
 
@@ -308,18 +251,16 @@ console.log('정규 판 생성...');
 const regular = generateGroup(PLAN, BASE_SEED, seenForms, log);
 const prefix = { beginner: 'B', intermediate: 'M', advanced: 'A', daily: 'D' };
 for (const group of ['beginner', 'intermediate', 'advanced']) {
-  // 표시 순서: 판 크기 → 기본 최단 수 → 전체 최단 수
-  const list = regular.filter((x) => x.spec.group === group).sort((a, b) => a.spec.size - b.spec.size
-    || a.solution.basic.length - b.solution.basic.length || a.solution.full.length - b.solution.full.length);
+  // 표시 순서: 최단 수(미증명은 하한) → 판 크기 → 햄스터 수
+  const list = regular.filter((x) => x.spec.group === group).sort((a, b) => a.solution.lowerBound - b.solution.lowerBound
+    || a.stage.size - b.stage.size || a.solution.basic.length - b.solution.basic.length || a.hamsters - b.hamsters);
   list.forEach((x, i) => {
     const id = `${prefix[group]}${String(i + 1).padStart(2, '0')}`;
     const errs = validateStage({ ...x.stage });
     if (errs.length) throw new Error(`${id}: ${errs.join(', ')}`);
-    const entry = { id, group, order: i + 1, size: x.stage.size, tiles: rowsOf(x.stage.size, x.stage.tiles), star3: x.stage.star3 };
-    if (x.stage.star2 != null) entry.star2 = x.stage.star2;
-    stagesOut.push(entry);
+    stagesOut.push({ id, group, order: i + 1, size: x.stage.size, tiles: rowsOf(x.stage.size, x.stage.tiles), star2: x.stage.star2, star3: x.stage.star3 });
     solutions[id] = x.solution;
-    reportRows.push({ id, group, order: i + 1, size: x.stage.size, ...x.spec, sol: x.solution, star2: x.stage.star2, star3: x.stage.star3 });
+    reportRows.push({ id, group, order: i + 1, size: x.stage.size, hamsters: x.hamsters, sol: x.solution, star2: x.stage.star2, star3: x.stage.star3 });
   });
 }
 
@@ -336,8 +277,8 @@ while (d4.length || d5.length) {
 const dailyOut = dailyOrdered.map((x, i) => {
   const id = `D${String(i + 1).padStart(2, '0')}`;
   solutions[id] = x.solution;
-  reportRows.push({ id, group: 'daily', order: i + 1, size: x.stage.size, ...x.spec, sol: x.solution, star2: null, star3: x.stage.star3 });
-  return { id, group: 'daily', order: i + 1, size: x.stage.size, tiles: rowsOf(x.stage.size, x.stage.tiles), star3: x.stage.star3 };
+  reportRows.push({ id, group: 'daily', order: i + 1, size: x.stage.size, hamsters: x.hamsters, sol: x.solution, star2: x.stage.star2, star3: x.stage.star3 });
+  return { id, group: 'daily', order: i + 1, size: x.stage.size, tiles: rowsOf(x.stage.size, x.stage.tiles), star2: x.stage.star2, star3: x.stage.star3 };
 });
 
 mkdirSync(resolve(ROOT, 'src/data'), { recursive: true });
@@ -354,29 +295,28 @@ writeFileSync(resolve(ROOT, 'tools/out/solutions.json'), `${JSON.stringify({
 const groupName = { tutorial: '입문', beginner: '초급', intermediate: '중급', advanced: '고급', daily: '오늘의 도전' };
 const lines = [];
 lines.push('# 출시 판 목록 / 검증 보고서', '');
-lines.push(`- 생성 도구: \`node tools/generate.js --seed ${BASE_SEED}\`${QUICK ? ' --quick' : ''}`);
+lines.push(`- 생성 도구: \`node --max-old-space-size=8192 tools/generate.js --seed ${BASE_SEED}\`${QUICK ? ' --quick' : ''}`);
 lines.push(`- 콘텐츠 버전: ${CONTENT_VERSION}`);
 lines.push(`- 정규 판 ${stagesOut.length}개(입문 ${TUTORIALS.length} 포함), 오늘의 도전 ${dailyOut.length}개`);
-lines.push('- "최단 증명"은 판 상태 공간 BFS가 그 깊이 이전 단계를 모두 펼친 뒤 처음 찾은 해답이라는 뜻이다.');
-lines.push('- 미증명 판의 별 기준은 발견한 해답 길이이며 게임에서는 모든 수를 "목표 이동 수"로 표시한다.');
-lines.push('- 3별 기준 = 보너스 포함 해답 길이 + 난이도별 여유(초급 1, 중급 1, 고급 0, 일일 1). 보너스 없는 판의 2별 기준 = 3별 기준 + 2.', '');
-lines.push('| ID | 난이도 | 순서 | 크기 | 필수 | 보너스 | 방향 타일 | 기본 최단 | 보너스 포함 | 최단 증명(기본/보너스) | 2별 기준 | 3별 기준 | 탐색 상태 수 |');
-lines.push('|---|---|---|---|---|---|---|---|---|---|---|---|---|');
+lines.push('- 판 구성: 모든 칸이 하나의 굴(나무 구조)에 속하고, 가지 끝마다 햄스터가 있다. 모든 햄스터에게 길이 닿으면 완료. 보너스 없음.');
+lines.push('- "증명"은 판 상태 공간 BFS가 그 깊이 이전 단계를 모두 펼친 뒤 처음 찾은 해답이라는 뜻이다.');
+lines.push('- 미증명 판은 탐색 제한 안에서 해답을 찾지 못한 판이다. "최단 N수 이상"까지만 확인했고, 별 기준은 생성할 때 알고 있던 해답 길이다.');
+lines.push(`- 3별 기준 = 최단 수(미증명은 발견한 해답 길이), 2별 기준 = 3별 기준 + ${STAR2_EXTRA}. 게임에서는 모든 수를 "목표"로 표시한다.`, '');
+lines.push('| ID | 난이도 | 순서 | 크기 | 햄스터 | 최단 수 | 증명 | 3별 기준 | 2별 기준 | 탐색 상태 수 |');
+lines.push('|---|---|---|---|---|---|---|---|---|---|');
 for (const row of reportRows) {
   const s = row.sol;
-  lines.push(`| ${row.id} | ${groupName[row.group]} | ${row.order} | ${row.size}×${row.size} | ${row.req} | ${row.bonus} | ${row.oneway} | ${s.basic.length} | ${s.full ? s.full.length : '-'} | ${s.basicProven ? '예' : '아니오'}/${s.fullProven ? '예' : '아니오'} | ${row.star2 ?? '-'} | ${row.star3 ?? '-'} | ${s.states} |`);
+  lines.push(`| ${row.id} | ${groupName[row.group]} | ${row.order} | ${row.size}×${row.size} | ${row.hamsters} | ${s.basicProven ? s.basic.length : `${s.lowerBound} 이상 (발견 ${s.basic.length})`} | ${s.basicProven ? '예' : '아니오'} | ${row.star3 ?? '-'} | ${row.star2 ?? '-'} | ${s.states} |`);
 }
 lines.push('', '## 생성 통계와 제외 이유', '');
 lines.push('| 계획 | 채택 | 시도 | 제외 이유(횟수) |', '|---|---|---|---|');
 const rejectName = {
-  build: '정답 배치 구성 실패', replay: '역순 해답 재생 실패', duplicate: '회전/반사 중복',
-  'too-easy': '너무 쉬움', 'too-hard': '범위보다 김', 'basic-unproven': '제한 안에서 기본 해답 미발견',
-  'single-line': '한 줄 반복 풀이', 'single-axis': '한 방향 축만 쓰는 풀이',
-  'full-unproven': '제한 안에서 보너스 포함 해답 미증명', 'bonus-too-far': '보너스 해답이 기본보다 4수 이상 김',
+  replay: '역순 해답 재생 실패', duplicate: '회전/반사 중복', 'too-easy': '너무 쉬움', 'too-hard': '범위보다 김',
+  unproven: '제한 안에서 해답 미발견', 'single-line': '한 줄 반복 풀이', 'single-axis': '한 방향 축만 쓰는 풀이',
 };
 for (const l of log) {
   const why = Object.entries(l.rejects).map(([k, v]) => `${rejectName[k] || k} ${v}`).join(', ') || '-';
-  lines.push(`| ${groupName[l.spec.group]} ${l.spec.size}×${l.spec.size} 필수${l.spec.req} 보너스${l.spec.bonus} 방향${l.spec.oneway} 기본 ${l.spec.min[0]}~${l.spec.min[1]}수 | ${l.made}/${l.spec.count} | ${l.attempts} | ${why} |`);
+  lines.push(`| ${groupName[l.spec.group]} ${l.spec.size}×${l.spec.size} 최단 ${l.spec.min[0]}~${l.spec.min[1] === 99 ? '' : l.spec.min[1]}수${l.spec.deep ? ' (미증명 허용)' : ''} | ${l.made}/${l.spec.count} | ${l.attempts} | ${why} |`);
 }
 lines.push('', `생성 소요: ${((Date.now() - t0) / 1000).toFixed(1)}초`, '');
 writeFileSync(resolve(ROOT, 'docs/STAGE_REPORT.md'), lines.join('\n'));

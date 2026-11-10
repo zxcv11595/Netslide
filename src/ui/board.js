@@ -1,82 +1,86 @@
-// 보드 SVG 렌더링과 연출. 규칙 판정은 하지 않고 넘겨받은 cells/conn만 그린다.
-import { N, E, S, W, DIRS, tilePorts, isLineLocked, pathTo } from '../core/rules.js';
+// 보드 SVG 렌더링과 연출(땅속 굴 디자인). 규칙 판정은 하지 않고 넘겨받은 cells/conn만 그린다.
+import { N, E, S, W, DIRS, tilePorts, isLineLocked } from '../core/rules.js';
 import { CONFIG } from '../config.js';
-import { svg, hamsterFace, seedSprite, starPath, COLORS, prefersReducedMotion } from './art.js';
+import { svg, hamsterFace, seedSprite, prefersReducedMotion } from './art.js';
 import { createTransitionLock } from './transitionLock.js';
 
 const C = 100; // 칸 크기
 const BTN = 62; // 가장자리 버튼
 const GAP = 8;
-const PAD = 10;
+const PAD = 12;
 const OFF = BTN + GAP + PAD; // 보드 시작 좌표
 
 const EDGE = { [N]: [50, 0], [E]: [100, 50], [S]: [50, 100], [W]: [0, 50] };
 const ANGLE = { [N]: -90, [E]: 0, [S]: 90, [W]: 180 };
 const DIR_NAME = { [N]: '위로', [E]: '오른쪽으로', [S]: '아래로', [W]: '왼쪽으로' };
+const OPPOSITE = { [N]: S, [S]: N, [E]: W, [W]: E };
 
 function pipePath(mask) {
   return DIRS.filter((d) => mask & d).map((d) => `M50 50L${EDGE[d][0]} ${EDGE[d][1]}`).join('');
 }
 
-function pipeLayers(mask) {
+// 굴: 어두운 테두리 + 밝은 흙길. 간식이 흐르면 주황색 + 씨앗 점선(색 외에 모양으로도 구분).
+function tunnelLayers(mask, chamber) {
   const d = pipePath(mask);
   const g = svg('g', { class: 'pipe' });
-  if (!d) return g;
-  g.appendChild(svg('path', { d, class: 'pipe-wall' }));
-  g.appendChild(svg('circle', { cx: 50, cy: 50, r: 12, class: 'pipe-wall-dot' }));
-  g.appendChild(svg('path', { d, class: 'pipe-core' }));
-  g.appendChild(svg('circle', { cx: 50, cy: 50, r: 5, class: 'pipe-core-dot' }));
-  // 흐름 표시(색 + 가운데 밝은 줄)
+  if (d) {
+    g.appendChild(svg('path', { d, class: 'tunnel-edge' }));
+    g.appendChild(svg('circle', { cx: 50, cy: 50, r: 19, class: 'tunnel-edge-dot' }));
+  }
+  if (chamber) g.appendChild(svg('circle', { cx: 50, cy: 50, r: 42, class: 'tunnel-edge-dot' }));
+  if (d) {
+    g.appendChild(svg('path', { d, class: 'tunnel' }));
+    g.appendChild(svg('circle', { cx: 50, cy: 50, r: 15, class: 'tunnel-dot' }));
+  }
+  if (chamber) g.appendChild(svg('circle', { cx: 50, cy: 50, r: 38, class: 'tunnel-dot chamber' }));
   const flow = svg('g', { class: 'flow' });
-  flow.appendChild(svg('path', { d, class: 'flow-core' }));
-  flow.appendChild(svg('circle', { cx: 50, cy: 50, r: 6.5, class: 'flow-core-dot' }));
-  flow.appendChild(svg('path', { d, class: 'flow-shine' }));
+  if (d) {
+    flow.appendChild(svg('path', { d, class: 'flow-tunnel' }));
+    flow.appendChild(svg('circle', { cx: 50, cy: 50, r: 15, class: 'flow-dot' }));
+  }
+  if (chamber) flow.appendChild(svg('circle', { cx: 50, cy: 50, r: 38, class: 'flow-dot' }));
+  if (d) flow.appendChild(svg('path', { d, class: 'flow-seeds' }));
   g.appendChild(flow);
   return g;
 }
 
 function buildTile(tile, id) {
-  const outer = svg('g', { class: `tile kind-${tile.kind}${tile.bonus ? ' bonus' : ''}`, 'data-id': id });
+  const mask = tilePorts(tile);
+  const outer = svg('g', { class: `tile kind-${tile.kind}${mask ? '' : ' blank'}`, 'data-id': id });
   const mv = svg('g', { class: 'mv' });
   outer.appendChild(mv);
-  mv.appendChild(svg('rect', { x: 3, y: 3, width: 94, height: 94, rx: 16, class: 'tile-bg' }));
-  mv.appendChild(pipeLayers(tilePorts(tile)));
+  mv.appendChild(svg('rect', { x: 3, y: 3, width: 94, height: 94, rx: 12, class: 'tile-bg' }));
+  mv.appendChild(tunnelLayers(mask, tile.kind === 'source' || tile.kind === 'goal'));
 
   if (tile.kind === 'source') {
     outer.classList.add('lit');
-    mv.appendChild(svg('circle', { cx: 50, cy: 50, r: 29, class: 'source-plate' }));
-    const seed = seedSprite(50);
+    const seed = seedSprite(52);
     seed.setAttribute('transform', 'translate(50 50)');
     mv.appendChild(seed);
   } else if (tile.kind === 'goal') {
     const face = hamsterFace();
-    face.setAttribute('transform', 'translate(50 52)');
+    face.setAttribute('transform', 'translate(50 53) scale(0.92)');
     mv.appendChild(face);
-    if (tile.bonus) {
-      // 보너스: 점선 테두리 + 별 배지(색 외에 모양으로도 구분)
-      const badge = svg('g', { transform: 'translate(63 5) scale(1.25)', class: 'bonus-badge' });
-      badge.appendChild(starPath({ 'stroke-linejoin': 'round', 'stroke-width': 1.8 }));
-      mv.appendChild(badge);
-    }
+    // 길이 닿은 햄스터 표시(웃는 얼굴 + 초록 체크)
+    const ok = svg('g', { class: 'ok-badge' });
+    ok.appendChild(svg('circle', { cx: 82, cy: 18, r: 13 }));
+    ok.appendChild(svg('path', { d: 'M76 18l4.5 4.5L88 14' }));
+    mv.appendChild(ok);
   } else if (tile.kind === 'oneway') {
-    // 방향 타일: 입구 → 출구 화살표
+    // 방향 타일(현재 출시 판에서는 쓰지 않음): 입구 → 출구 화살표
     const arrow = svg('g', { transform: `translate(50 50) rotate(${ANGLE[tile.out]})`, class: 'oneway-arrow' });
     arrow.appendChild(svg('path', { d: 'M-12 -13 L13 0 L-12 13 Z', 'stroke-linejoin': 'round' }));
     mv.appendChild(arrow);
     const [ix, iy] = EDGE[tile.in];
-    const tick = svg('g', { transform: `translate(${50 + (ix - 50) * 0.62} ${50 + (iy - 50) * 0.62}) rotate(${ANGLE[oppositeOf(tile.in)]})`, class: 'oneway-tick' });
+    const tick = svg('g', { transform: `translate(${50 + (ix - 50) * 0.62} ${50 + (iy - 50) * 0.62}) rotate(${ANGLE[OPPOSITE[tile.in]]})`, class: 'oneway-tick' });
     tick.appendChild(svg('path', { d: 'M-5 -7 L5 0 L-5 7', fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
     mv.appendChild(tick);
   }
   return outer;
 }
 
-function oppositeOf(d) { return { [N]: S, [S]: N, [E]: W, [W]: E }[d]; }
-
 function arrowIcon(dir) {
-  return svg('path', {
-    d: 'M-13 0H11M2 -10L12 0L2 10', class: 'btn-arrow', transform: `rotate(${ANGLE[dir]})`,
-  });
+  return svg('path', { d: 'M-13 0H11M2 -10L12 0L2 10', class: 'btn-arrow', transform: `rotate(${ANGLE[dir]})` });
 }
 
 function lockIcon() {
@@ -93,7 +97,6 @@ export function createBoard({ stage, onMove, onLockedTap }) {
   const lock = createTransitionLock();
   const anims = new Set();
   const temps = new Set();
-  let raf = 0;
   let destroyed = false;
   let disabled = false;
   let litPrev = new Set();
@@ -103,10 +106,10 @@ export function createBoard({ stage, onMove, onLockedTap }) {
   });
   const clipId = `clip-${Math.random().toString(36).slice(2, 8)}`;
   root.appendChild(svg('defs', {}, [
-    svg('clipPath', { id: clipId }, [svg('rect', { x: OFF, y: OFF, width: n * C, height: n * C, rx: 14 })]),
+    svg('clipPath', { id: clipId }, [svg('rect', { x: OFF, y: OFF, width: n * C, height: n * C, rx: 10 })]),
   ]));
   root.appendChild(svg('rect', {
-    x: OFF - PAD, y: OFF - PAD, width: n * C + PAD * 2, height: n * C + PAD * 2, rx: 24, class: 'board-frame',
+    x: OFF - PAD, y: OFF - PAD, width: n * C + PAD * 2, height: n * C + PAD * 2, rx: 22, class: 'board-frame',
   }));
   const tilesLayer = svg('g', { 'clip-path': `url(#${clipId})` });
   const tilesInner = svg('g', { transform: `translate(${OFF} ${OFF})` });
@@ -114,8 +117,6 @@ export function createBoard({ stage, onMove, onLockedTap }) {
   root.appendChild(tilesLayer);
   const btnLayer = svg('g', { class: 'btns' });
   root.appendChild(btnLayer);
-  const fxLayer = svg('g', { class: 'fx', transform: `translate(${OFF} ${OFF})`, 'pointer-events': 'none' });
-  root.appendChild(fxLayer);
 
   const tileEls = stage.tiles.map((t, id) => {
     const node = buildTile(t, id);
@@ -138,7 +139,8 @@ export function createBoard({ stage, onMove, onLockedTap }) {
     const hw = axis === 'row' ? OFF - 4 : C;
     const hh = axis === 'row' ? C : OFF - 4;
     g.appendChild(svg('rect', { x: -hw / 2, y: -hh / 2, width: hw, height: hh, class: 'btn-hit' }));
-    g.appendChild(svg('rect', { x: -BTN / 2, y: -BTN / 2, width: BTN, height: BTN, rx: 16, class: 'btn-face' }));
+    g.appendChild(svg('rect', { x: -BTN / 2, y: -BTN / 2 + 5, width: BTN, height: BTN, rx: 12, class: 'btn-shadow' }));
+    g.appendChild(svg('rect', { x: -BTN / 2, y: -BTN / 2, width: BTN, height: BTN, rx: 12, class: 'btn-face' }));
     g.appendChild(locked ? lockIcon() : arrowIcon(arrowDir));
     const fire = () => {
       if (destroyed || disabled) return;
@@ -159,11 +161,11 @@ export function createBoard({ stage, onMove, onLockedTap }) {
     btnLayer.appendChild(g);
   }
   const edgeNear = BTN / 2;
-  const edgeFar = T - BTN / 2;
+  const edgeFar = T - BTN / 2 - 5;
   for (let i = 0; i < n; i++) {
     const mid = OFF + i * C + C / 2;
     addButton('row', i, 1, edgeNear, mid, E); // 왼쪽 버튼: 오른쪽으로 밀기
-    addButton('row', i, -1, edgeFar, mid, W);
+    addButton('row', i, -1, T - BTN / 2, mid, W);
     addButton('col', i, 1, mid, edgeNear, S); // 위쪽 버튼: 아래로 밀기
     addButton('col', i, -1, mid, edgeFar, N);
   }
@@ -197,7 +199,6 @@ export function createBoard({ stage, onMove, onLockedTap }) {
     anims.clear();
     for (const t of temps) t.remove();
     temps.clear();
-    if (raf) { cancelAnimationFrame(raf); raf = 0; }
   }
 
   // 한 칸 줄 이동 연출. 논리 상태(newCells)는 이미 확정되어 있다.
@@ -230,51 +231,12 @@ export function createBoard({ stage, onMove, onLockedTap }) {
         clone.removeAttribute('data-id');
         tilesInner.appendChild(clone);
         temps.add(clone);
-        const a = clone.querySelector('.mv').animate(frames, opts);
-        anims.add(a);
+        anims.add(clone.querySelector('.mv').animate(frames, opts));
       }
       last = node.querySelector('.mv').animate(frames, opts);
       anims.add(last);
     }
     last.finished.then(release, () => {});
-  }
-
-  // 완료 연출: 연결 판정에서 얻은 실제 경로를 따라 간식이 이동한다.
-  function playDelivery(cells, conn, done) {
-    const goals = conn.goals.filter((g) => g.connected);
-    const routes = goals.map((g) => pathTo(conn, g.pos)).filter(Boolean).map((p) => p.map((pos) => [
-      (pos % n) * C + C / 2, Math.floor(pos / n) * C + C / 2,
-    ]));
-    const finish = () => { clearTemps(); if (!destroyed) done?.(); };
-    if (prefersReducedMotion() || !routes.length) { finish(); return; }
-    const duration = CONFIG.anim.delivery;
-    const release = lock.begin(duration + 400, finish);
-    const seeds = routes.map((pts) => {
-      const seg = [0];
-      for (let i = 1; i < pts.length; i++) seg.push(seg[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
-      const node = seedSprite(46);
-      fxLayer.appendChild(node);
-      temps.add(node);
-      return { pts, seg, total: seg[seg.length - 1], node };
-    });
-    const t0 = performance.now();
-    const step = (now) => {
-      const t = Math.min(1, (now - t0) / duration);
-      const e = t < 0.5 ? 2 * t * t : 1 - ((-2 * t + 2) ** 2) / 2;
-      for (const s of seeds) {
-        const at = e * s.total;
-        let i = 1;
-        while (i < s.seg.length - 1 && s.seg[i] < at) i++;
-        const span = s.seg[i] - s.seg[i - 1] || 1;
-        const k = Math.max(0, Math.min(1, (at - s.seg[i - 1]) / span));
-        const x = s.pts[i - 1][0] + (s.pts[i][0] - s.pts[i - 1][0]) * k;
-        const y = s.pts[i - 1][1] + (s.pts[i][1] - s.pts[i - 1][1]) * k;
-        s.node.setAttribute('transform', `translate(${x} ${y}) scale(${t > 0.85 ? 1 - (t - 0.85) * 3 : 1})`);
-      }
-      if (t < 1) raf = requestAnimationFrame(step);
-      else { raf = 0; release(); }
-    };
-    raf = requestAnimationFrame(step);
   }
 
   return {
@@ -288,11 +250,12 @@ export function createBoard({ stage, onMove, onLockedTap }) {
       setFlow(cells, conn, { instant });
     },
     animateShift,
-    playDelivery,
     setDisabled(v) {
       disabled = v;
       root.classList.toggle('disabled', v);
     },
+    // 완료 순간: 굴 전체가 한 번 반짝인다
+    celebrate() { root.classList.add('all-done'); },
     destroy() {
       destroyed = true;
       lock.cancel();

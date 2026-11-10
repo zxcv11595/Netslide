@@ -94,6 +94,8 @@ export function solve(stage, { maxStates = 500000, maxDepth = 40 } = {}) {
     basicProven: basicAt >= 0,
     fullProven: fullAt >= 0,
     states: index.size,
+    // 이 깊이까지의 모든 배치를 확인했다. 해답을 못 찾았다면 최단 수는 checkedDepth보다 크다.
+    checkedDepth: depth,
     limitHit,
     exhausted,
   };

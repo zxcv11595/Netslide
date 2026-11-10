@@ -16,7 +16,7 @@ export const CONFIG = {
     shiftFallback: 320, // 전환 종료 이벤트가 오지 않아도 잠금을 푸는 시간
     flowStep: 40,
     flowMax: 320,
-    delivery: 520,
+    completeDelay: 520, // 모두 이어진 뒤 결과가 뜨기까지
     successSwap: 120,
     starStep: 100,
   },
@@ -40,7 +40,7 @@ export const GROUP_LABEL = {
 };
 
 export const TUTORIAL_TEXT = {
-  T1: '화살표를 누르면 그 줄이 한 칸 밀려요. 햄스터까지 간식 길을 이어 주세요.',
+  T1: '화살표를 누르면 그 줄이 한 칸 밀려요. 햄스터까지 굴을 이어 주세요.',
   T2: '끝에서 밀려난 타일은 반대편으로 돌아와요.',
-  T3: '자물쇠 줄은 간식 창고가 있어서 움직이지 않아요. 햄스터 모두에게 길을 이어 주세요.',
+  T3: '자물쇠 줄은 간식 창고가 있어서 움직이지 않아요. 햄스터 모두에게 굴을 이어 주면 배달 끝!',
 };
