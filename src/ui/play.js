@@ -110,10 +110,12 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   const undoBtn = el('button', { class: 'btn wide', type: 'button', onclick: handleUndo }, [icon('undo'), '되돌리기']);
   const restartBtn = el('button', { class: 'btn wide', type: 'button', onclick: handleRestart }, [icon('redo'), '재시작']);
   const controls = el('div', { class: 'two' }, [undoBtn, restartBtn]);
+  // 광고 배너가 들어갈 자리(아직 광고가 없어 점선으로만 표시)
+  const adSlot = el('div', { class: 'ghost ad-slot', 'aria-hidden': 'true', text: '광고 자리 · 준비 중' });
 
   const overlay = el('div', { class: 'result-overlay', hidden: true });
   const root = el('section', { class: 'screen play' }, [
-    head, el('div', { class: 'hr' }), chips, tip, boardWrap, meter, controls, overlay,
+    head, el('div', { class: 'hr' }), chips, tip, boardWrap, meter, controls, adSlot, overlay,
   ]);
 
   // ----- 상태 표시 -----
@@ -142,9 +144,17 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   }
 
   // ----- 입력 -----
+  // 입문에서는 다음에 누를 화살표를 항상 알려 준다(힌트 개수와 무관)
+  function guide() {
+    if (!stage.tutorial || completing || session.result.canComplete) return;
+    const hint = nextHint(stage, session.cells, session.historyCodes(), null);
+    if (hint.type === 'move') board.showHint(hint.move);
+  }
+
   function afterShift() {
     // 모든 햄스터에게 길이 닿으면 자동으로 배달 완료
     if (session.result.canComplete) complete();
+    else guide();
   }
 
   function handleMove(move) {
@@ -175,6 +185,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     refreshHud();
     persist();
     board.render(session.cells, session.conn);
+    guide();
   }
 
   // 힌트: 다음에 밀 줄 하나(또는 되돌리기)를 강조한다. 한 번 쓰면 1개가 줄어든다.
@@ -318,6 +329,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
 
   board.render(session.cells, session.conn, { instant: true });
   refreshHud();
+  guide();
 
   return {
     el: root,

@@ -25,6 +25,11 @@ export function icon(name, cls = '') {
     node.appendChild(svg('rect', { x: 4, y: 11, width: 16, height: 11, rx: 3, fill: 'currentColor' }));
     return node;
   }
+  if (name === 'noad') {
+    node.appendChild(svg('rect', { x: 3, y: 6, width: 18, height: 12, rx: 3 }));
+    node.appendChild(svg('path', { d: 'M4 20L20 4' }));
+    return node;
+  }
   if (name === 'gear') node.appendChild(svg('circle', { cx: 12, cy: 12, r: 3.2 }));
   if (name === 'cal') node.appendChild(svg('rect', { x: 4, y: 5, width: 16, height: 15, rx: 3 }));
   if (name === 'share') {

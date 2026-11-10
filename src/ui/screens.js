@@ -16,8 +16,8 @@ function shell(ctx, active, title, onBack, children) {
 // ----- 스테이지 목록: 난이도 하나의 판 번호 격자 -----
 export function createStagesScreen(ctx, { group }) {
   const { store, content } = ctx;
-  const g = TIERS.includes(group) ? group : 'beginner';
-  ctx.state.tab = g;
+  const g = group === 'tutorial' || TIERS.includes(group) ? group : 'beginner';
+  if (g !== 'tutorial') ctx.state.tab = g;
   const list = content.groups[g];
   const rec = (s) => getRecord(store, content, s.id);
   const done = list.filter((s) => rec(s)?.done).length;
@@ -35,10 +35,10 @@ export function createStagesScreen(ctx, { group }) {
         if (open) ctx.goPlay(s);
         else toast('앞 판을 끝내면 열려요');
       },
-    }, [pad2(s.order), r?.done ? starsRow(r.stars, 3, 12) : open ? null : icon('lock', 'lk')]));
+    }, [pad2(s.order), r?.done ? (s.tutorial ? el('small', { class: 'lv-done', text: '완료' }) : starsRow(r.stars, 3, 12)) : open ? null : icon('lock', 'lk')]));
   }
   return shell(ctx, 'home', GROUP_LABEL[g], () => ctx.go('home'), [
-    el('div', { class: 'head' }, ['스테이지', el('span', {}, [`${done} / ${list.length} · `, starIcon(true, 14), ` ${stars}`])]),
+    el('div', { class: 'head' }, ['스테이지', el('span', {}, g === 'tutorial' ? [`${done} / ${list.length}`] : [`${done} / ${list.length} · `, starIcon(true, 14), ` ${stars}`])]),
     grid,
   ]);
 }
@@ -98,7 +98,12 @@ export function createShopScreen(ctx) {
       ]),
       el('button', { class: 'mini-go', type: 'button', text: '도전', onclick: () => ctx.go('daily') }),
     ]),
-    el('p', { class: 'notice center', text: '광고 제거와 힌트 묶음은 앱 출시 때 여기에 추가됩니다.' }),
+    el('div', { class: 'head' }, ['준비 중', el('span', { text: '앱 출시 때 열려요' })]),
+    ...[['noad', '광고 제거', '판 사이 광고와 아래 배너를 없애요.'], ['bulb', '힌트 5개', '힌트 묶음'], ['bulb', '힌트 20개', '힌트 큰 묶음']].map(([ic, name, desc]) => el('div', { class: 'ghost prod' }, [
+      el('div', { class: 'prod-pic' }, [icon(ic)]),
+      el('div', { class: 'prod-txt' }, [el('b', { text: name }), el('small', { text: desc })]),
+      el('span', { class: 'soon', text: '준비 중' }),
+    ])),
   ]);
 }
 
@@ -150,9 +155,15 @@ export function createSettingsScreen(ctx) {
   });
   return shell(ctx, 'home', '설정', () => ctx.go('home'), [
     el('div', { class: 'card set' }, [
+      el('div', { class: 'r soon' }, ['소리', el('span', { text: '준비 중' })]),
       el('div', { class: 'r' }, ['진동', toggle]),
+      el('div', { class: 'r soon' }, ['언어', el('span', { text: '한국어 · 준비 중' })]),
+    ]),
+    el('div', { class: 'card set' }, [
+      el('div', { class: 'r soon' }, ['구매 복원', el('span', { text: '준비 중' })]),
+      el('div', { class: 'r soon' }, ['개인정보 처리방침', el('span', { text: '준비 중' })]),
+      el('div', { class: 'r soon' }, ['문의하기', el('span', { text: '준비 중' })]),
       el('div', { class: 'r' }, ['버전', el('span', { text: CONFIG.version })]),
     ]),
-    el('p', { class: 'notice center', text: '소리, 언어, 구매 복원, 개인정보 처리방침, 문의하기는 준비되는 대로 여기에 추가됩니다.' }),
   ]);
 }

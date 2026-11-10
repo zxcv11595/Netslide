@@ -42,6 +42,7 @@ export function createHomeScreen(ctx) {
   const root = el('section', { class: 'screen home' }, [body, tabbar(ctx, 'home')]);
 
   body.appendChild(el('div', { class: 'top-row' }, [
+    el('button', { class: 'btn ghost noad', type: 'button', onclick: () => toast('광고 제거는 앱 출시 때 추가돼요') }, [icon('noad'), '광고 제거']),
     el('button', { class: 'btn sq small', type: 'button', 'aria-label': '설정', onclick: () => ctx.go('settings') }, [icon('gear')]),
   ]));
   body.appendChild(el('div', { class: 'hero' }, [
@@ -108,24 +109,27 @@ export function createHomeScreen(ctx) {
   // 스테이지: 난이도 목록
   body.appendChild(el('div', { class: 'head' }, ['스테이지', el('span', { text: `${sum.done} / ${sum.count}` })]));
   if (!tutorialDone) body.appendChild(el('p', { class: 'hint-text', text: '짧은 입문 3판을 마치면 모든 난이도가 열려요.' }));
-  for (const g of TIERS) {
+  for (const g of ['tutorial', ...TIERS]) {
     const list = content.groups[g];
+    const open = g === 'tutorial' || tutorialDone;
     const done = list.filter((s) => rec(s)?.done).length;
     const stars = list.reduce((n, s) => n + (rec(s)?.stars ?? 0), 0);
-    const isCur = tutorialDone && ctx.state.tab === g;
+    const isCur = tutorialDone ? ctx.state.tab === g : g === 'tutorial';
     body.appendChild(el('button', {
-      class: `btn tier${isCur ? ' cur' : ''}${tutorialDone ? '' : ' lock'}`, type: 'button',
-      'aria-label': `${GROUP_LABEL[g]}, ${tutorialDone ? `${done}/${list.length} 완료, 별 ${stars}개` : '잠김'}`,
+      class: `btn tier${isCur ? ' cur' : ''}${open ? '' : ' lock'}`, type: 'button',
+      'aria-label': `${GROUP_LABEL[g]}, ${open ? `${done}/${list.length} 완료` : '잠김'}`,
       onclick: () => {
-        if (tutorialDone) ctx.go('stages', { group: g });
+        if (open) ctx.go('stages', { group: g });
         else toast('입문을 먼저 마쳐 주세요');
       },
     }, [
       el('b', { text: GROUP_LABEL[g] }),
-      el('span', { class: 'meta' }, tutorialDone ? [`${done} / ${list.length} `, starIcon(true, 14), ` ${stars}`] : [icon('lock')]),
-      tutorialDone ? el('span', { class: 'bar' }, [el('i', { style: `width:${(done / list.length) * 100}%` })]) : null,
+      el('span', { class: 'meta' }, !open ? [icon('lock')] : g === 'tutorial' ? [`${done} / ${list.length}`] : [`${done} / ${list.length} `, starIcon(true, 14), ` ${stars}`]),
+      open ? el('span', { class: 'bar' }, [el('i', { style: `width:${(done / list.length) * 100}%` })]) : null,
     ]));
   }
+  // 나중에 추가할 난이도 자리
+  body.appendChild(el('div', { class: 'ghost tier-soon' }, [el('b', { text: '익스트림' }), el('span', { text: '준비 중' })]));
 
   body.appendChild(el('p', {
     class: 'notice',

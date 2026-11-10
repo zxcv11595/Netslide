@@ -375,3 +375,18 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
     transition: none !important;
   }
 }
+
+/* ---------- 준비 중인 자리: 점선 ---------- */
+.ghost { background: transparent; border: 2px dashed var(--edge); box-shadow: none; color: var(--soft); border-radius: 16px; }
+.btn.ghost:active { transform: none; box-shadow: none; }
+.noad { height: 42px; padding: 0 12px; font-size: 0.82rem; border-radius: 14px; }
+.tier-soon { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; min-height: 52px; }
+.tier-soon b { font-size: 1.12rem; font-weight: 900; }
+.tier-soon span, .soon { font-size: 0.8rem; font-weight: 700; color: var(--soft); white-space: nowrap; }
+.ghost.prod { opacity: 0.85; }
+.ghost.prod .prod-pic { background: transparent; border-style: dashed; }
+.ad-slot { height: 48px; display: grid; place-items: center; font-size: 0.75rem; font-weight: 500; border-radius: 10px; flex: none; }
+.set .r.soon { color: var(--soft); }
+.set .r.soon span { border: 1.5px dashed var(--edge); border-radius: 999px; padding: 1px 10px; font-size: 0.75rem; }
+@media (max-height: 620px) { .ad-slot { height: 38px; } }
+.lv-done { font-size: 0.7rem; color: var(--soft); font-weight: 700; }
