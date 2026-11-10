@@ -45,24 +45,27 @@ function rng(seed) {
 }
 const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
 
-// ---------- 입문(수작업): 규칙을 하나씩 익히도록 빈 칸을 둔 작은 판 ----------
+// ---------- 입문(수작업): 2×2. 줄 하나를 밀면 두 칸이 자리를 바꾸는 가장 작은 판 ----------
 const TUTORIALS = [
-  { id: 'T1', size: 3, tiles: ['p0 p0 g8', 'p0 s2 p0', 'p0 p0 p0'] },
-  { id: 'T2', size: 3, tiles: ['g8 p0 p6', 'p0 s1 p0', 'p0 p0 p0'] },
-  { id: 'T3', size: 3, tiles: ['p0 p0 g8', 'p0 s6 p0', 'g1 p0 p0'] },
+  { id: 'T1', size: 2, tiles: ['s2 p0', 'p0 g8'] }, // 세로줄 한 번
+  { id: 'T2', size: 2, tiles: ['s4 p0', 'p0 g1'] }, // 가로줄 한 번
+  { id: 'T3', size: 2, tiles: ['s6 g1', 'p0 g8'] }, // 두 마리, 두 번
 ];
 
 // ---------- 생성 계획 ----------
 // min: 최단 이동 수 허용 범위. shuffle: 정답에서 섞는 횟수(기본 = min 상한).
 // deep: 제한 안에서 해답을 못 찾아도, 확인한 깊이가 min 하한 이상이면 "미증명" 판으로 채택한다.
+// 난이도는 판 크기로 나눈다: 초급 3×3, 중급 4×4, 고급 5×5. (익스트림은 나중에 추가)
 const PLAN = [
-  { group: 'beginner', size: 3, min: [2, 3], count: 3 },
-  { group: 'beginner', size: 3, min: [4, 6], shuffle: 8, count: 3 },
-  { group: 'beginner', size: 4, min: [3, 4], count: 6 },
-  { group: 'intermediate', size: 4, min: [5, 6], count: 8 },
-  { group: 'intermediate', size: 5, min: [4, 5], count: 4 },
-  { group: 'advanced', size: 4, min: [7, 8], shuffle: 8, deep: true, count: 5 },
-  { group: 'advanced', size: 5, min: [6, 99], shuffle: 11, deep: true, count: 6 },
+  { group: 'beginner', size: 3, min: [2, 3], count: 4 },
+  { group: 'beginner', size: 3, min: [4, 5], shuffle: 7, count: 4 },
+  { group: 'beginner', size: 3, min: [6, 7], shuffle: 10, count: 4 },
+  { group: 'intermediate', size: 4, min: [3, 4], count: 4 },
+  { group: 'intermediate', size: 4, min: [5, 6], count: 6 },
+  { group: 'intermediate', size: 4, min: [7, 8], shuffle: 8, deep: true, count: 2 },
+  { group: 'advanced', size: 5, min: [4, 5], count: 4 },
+  { group: 'advanced', size: 5, min: [6, 99], shuffle: 9, deep: true, count: 4 },
+  { group: 'advanced', size: 5, min: [6, 99], shuffle: 12, deep: true, count: 4 },
 ];
 const DAILY_PLAN = [
   { group: 'daily', size: 4, min: [5, 6], count: 21 },

@@ -239,7 +239,7 @@ export function evaluateResult(stage, conn, moves) {
 export function validateStage(stage) {
   const errors = [];
   const n = stage.size;
-  if (![3, 4, 5].includes(n)) errors.push('size는 3, 4, 5만 지원');
+  if (![2, 3, 4, 5].includes(n)) errors.push('size는 2~5만 지원');
   if (!Array.isArray(stage.tiles) || stage.tiles.length !== n * n) {
     errors.push('타일 수가 size*size와 다름');
     return errors;
@@ -250,7 +250,9 @@ export function validateStage(stage) {
     const sp = sourcePos(stage);
     const r = Math.floor(sp / n);
     const c = sp % n;
-    if (n === 4) {
+    if (n === 2) {
+      // 2×2(입문)는 중앙이 없으므로 어느 칸이든 된다
+    } else if (n === 4) {
       if (![1, 2].includes(r) || ![1, 2].includes(c)) errors.push('4×4 공급원은 중앙 네 칸 중 하나');
     } else if (r !== (n - 1) / 2 || c !== (n - 1) / 2) errors.push('공급원은 중앙이어야 함');
   }
