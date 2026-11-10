@@ -1,6 +1,7 @@
 // 버전이 있는 localStorage 저장. 손상·저장 실패·구버전 데이터로 게임이 멈추지 않게 한다.
 // 구매 권한 같은 값은 여기에 두지 않는다.
 export const SAVE_VERSION = 1;
+export const START_HINTS = 3;
 
 function isObj(x) { return !!x && typeof x === 'object' && !Array.isArray(x); }
 const posInt = (x) => (Number.isInteger(x) && x >= 0 ? x : null);
@@ -14,6 +15,8 @@ export function emptyData() {
     v: SAVE_VERSION,
     content: {}, // 콘텐츠 버전별 기록. 버전이 다른 판 기록은 섞지 않는다.
     ads: { playMs: 0, doneIds: [], lastShownAt: 0, impressions: 0 },
+    hints: START_HINTS, // 남은 힌트 수
+    settings: { vibrate: true },
   };
 }
 
@@ -55,6 +58,8 @@ export function sanitize(raw) {
       data.content[ver] = out;
     }
   }
+  if (Number.isInteger(raw.hints) && raw.hints >= 0) data.hints = Math.min(raw.hints, 999);
+  if (isObj(raw.settings) && typeof raw.settings.vibrate === 'boolean') data.settings.vibrate = raw.settings.vibrate;
   if (isObj(raw.ads)) {
     data.ads.playMs = posInt(Math.floor(Number(raw.ads.playMs))) ?? 0;
     data.ads.doneIds = Array.isArray(raw.ads.doneIds) ? raw.ads.doneIds.filter((x) => typeof x === 'string') : [];

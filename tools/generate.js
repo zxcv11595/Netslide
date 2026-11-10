@@ -291,6 +291,12 @@ writeFileSync(resolve(ROOT, 'tools/out/solutions.json'), `${JSON.stringify({
   contentVersion: CONTENT_VERSION, seed: BASE_SEED, solutions,
 }, null, 2)}\n`);
 
+// 힌트용 해답(게임이 힌트를 쓸 때만 따로 불러온다)
+writeFileSync(resolve(ROOT, 'src/data/hints.json'), `${JSON.stringify({
+  contentVersion: CONTENT_VERSION, hints: Object.fromEntries(Object.entries(solutions).map(([id, s]) => [id, s.basic.moves])),
+})}
+`);
+
 // ---------- 보고서 ----------
 const groupName = { tutorial: '입문', beginner: '초급', intermediate: '중급', advanced: '고급', daily: '오늘의 도전' };
 const lines = [];

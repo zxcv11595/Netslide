@@ -264,3 +264,58 @@ test('공유 문구에는 별·이동 수·보너스 여부가 들어가고 완�
   assert.equal(text, 'G · 중급 2\n★★☆ · 7수 · 보너스 미달성');
   assert.equal(shareText({ gameName: 'G', title: '초급 1', stars: 3, moves: 2, hasBonus: false }), 'G · 초급 1\n★★★ · 2수');
 });
+
+// ---------- 연속 기록 / 힌트 ----------
+import { dailyStreak } from '../src/game/daily.js';
+import { nextHint } from '../src/game/hint.js';
+import { emptyData } from '../src/storage/storage.js';
+
+test('연속 도전 일수: 오늘을 아직 안 풀었어도 어제까지 이어졌으면 유지', () => {
+  const done = (...days) => Object.fromEntries(days.map((d) => [d, { id: 'D01', stars: 1, moves: 5, bonus: false }]));
+  assert.equal(dailyStreak({}, '2026-11-11'), 0);
+  assert.equal(dailyStreak(done('2026-11-11'), '2026-11-11'), 1);
+  assert.equal(dailyStreak(done('2026-11-09', '2026-11-10'), '2026-11-11'), 2);
+  assert.equal(dailyStreak(done('2026-11-09', '2026-11-10', '2026-11-11'), '2026-11-11'), 3);
+  assert.equal(dailyStreak(done('2026-11-08', '2026-11-09'), '2026-11-11'), 0, '하루를 건너뛰면 끊긴다');
+  assert.equal(dailyStreak(done('2026-10-31', '2026-11-01'), '2026-11-01'), 2, '달이 바뀌어도 이어진다');
+});
+
+test('저장 기본값과 정리: 힌트 개수와 설정', () => {
+  assert.deepEqual([emptyData().hints, emptyData().settings.vibrate], [3, true]);
+  const d = sanitize({ v: 1, hints: 7, settings: { vibrate: false } });
+  assert.deepEqual([d.hints, d.settings.vibrate], [7, false]);
+  const bad = sanitize({ v: 1, hints: -2, settings: { vibrate: 'yes' } });
+  assert.deepEqual([bad.hints, bad.settings.vibrate], [3, true]);
+});
+
+test('힌트: 힌트대로만 따라가면 판이 풀린다', () => {
+  for (const id of ['B01', 'B07', 'M02', 'M08']) {
+    const stage = content.byId.get(id);
+    const session = createSession(stage);
+    let steps = 0;
+    while (!session.result.canComplete && steps < 30) {
+      const hint = nextHint(stage, session.cells, session.historyCodes(), sols[id].basic.moves);
+      assert.equal(hint.type, 'move', `${id} ${steps}번째`);
+      assert.equal(session.move(hint.move).ok, true);
+      steps++;
+    }
+    assert.equal(session.result.canComplete, true, id);
+    assert.equal(steps, sols[id].basic.length, `${id}: 힌트는 최단 풀이를 따른다`);
+  }
+});
+
+test('힌트: 탐색 범위를 넘으면 해답 경로를 따르고, 벗어났으면 되돌리기를 권한다', () => {
+  const stage = content.byId.get('A01');
+  const solution = sols.A01.basic.moves;
+  const tiny = { maxStates: 50 };
+  const session = createSession(stage);
+  assert.deepEqual(nextHint(stage, session.cells, [], solution, tiny), { type: 'move', move: moveFromCode(solution[0]) });
+  session.move(moveFromCode(solution[0]));
+  assert.deepEqual(nextHint(stage, session.cells, session.historyCodes(), solution, tiny), { type: 'move', move: moveFromCode(solution[1]) });
+  // 해답과 다른 수를 두면 되돌리기
+  const first = moveFromCode(solution[1]);
+  session.move({ ...first, dir: -first.dir });
+  assert.deepEqual(nextHint(stage, session.cells, session.historyCodes(), solution, tiny), { type: 'undo' });
+  // 해답 자료가 없고 한 수도 두지 않았으면 알려 줄 것이 없다
+  assert.deepEqual(nextHint(stage, createSession(stage).cells, [], null, tiny), { type: 'none' });
+});

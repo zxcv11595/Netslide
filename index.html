@@ -3,13 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#fff6e5" />
-    <meta name="description" content="줄을 밀어 터널을 잇고 햄스터에게 간식을 보내는 퍼즐" />
+    <meta name="theme-color" content="#fff9ee" />
+    <meta name="description" content="줄을 밀어 굴을 잇고 햄스터에게 간식을 보내는 퍼즐" />
     <title>햄스터 간식 배달</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='16' cy='16' r='9' fill='%23f9b45c' stroke='%235a3418' stroke-width='3'/%3E%3Ccircle cx='48' cy='16' r='9' fill='%23f9b45c' stroke='%235a3418' stroke-width='3'/%3E%3Cellipse cx='32' cy='36' rx='26' ry='23' fill='%23f9b45c' stroke='%235a3418' stroke-width='3'/%3E%3Cellipse cx='32' cy='43' rx='17' ry='12' fill='%23fff1da'/%3E%3Ccircle cx='23' cy='33' r='3.4' fill='%235a3418'/%3E%3Ccircle cx='41' cy='33' r='3.4' fill='%235a3418'/%3E%3C/svg%3E" />
+    <link rel="preload" as="image" href="assets/hamster-idle.png" />
+    <style>
+      /* 로딩 화면: 스크립트가 준비되면 #app 내용이 통째로 바뀌면서 사라진다 */
+      html, body { margin: 0; background: #fff9ee; }
+      .loading {
+        min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+        padding: 0 24px 40px; box-sizing: border-box; color: #55301d;
+        font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+      }
+      .loading h1 { margin: 0; position: relative; font-size: clamp(2.4rem, 13vw, 3.2rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.04em; text-align: center; word-break: keep-all; max-width: 6em; }
+      .loading h1::after { content: ""; position: absolute; left: 50%; margin-left: -90px; bottom: -16px; width: 180px; height: 11px; border-radius: 999px; background: #ee962b; transform: rotate(-3deg); }
+      .loading img { width: min(62vw, 250px); aspect-ratio: 1312 / 1199; margin-top: 22px; }
+      .loading svg { width: min(78vw, 300px); height: auto; }
+      .loading .fill { stroke-dasharray: 210; stroke-dashoffset: 210; animation: load-fill 1.6s ease-out forwards; }
+      @keyframes load-fill { to { stroke-dashoffset: 30; } }
+      @media (prefers-reduced-motion: reduce) { .loading .fill { animation: none; stroke-dashoffset: 30; } }
+    </style>
   </head>
   <body>
-    <main id="app"></main>
+    <main id="app">
+      <div class="loading" role="status" aria-label="불러오는 중">
+        <h1>햄스터<br />간식 배달</h1>
+        <img src="assets/hamster-success.png" alt="" />
+        <svg viewBox="0 0 300 90" aria-hidden="true">
+          <path d="M45 45H255" stroke="#5e371c" stroke-width="34" stroke-linecap="round" />
+          <path d="M45 45H255" stroke="#c9a57b" stroke-width="25" stroke-linecap="round" />
+          <path class="fill" d="M45 45H255" stroke="#ffb53d" stroke-width="25" stroke-linecap="round" />
+          <circle cx="45" cy="45" r="38" fill="#5e371c" /><circle cx="45" cy="45" r="33.5" fill="#ffd666" />
+          <image href="assets/snack-seed.png" x="22" y="22" width="46" height="46" />
+          <circle cx="255" cy="45" r="38" fill="#5e371c" /><circle cx="255" cy="45" r="33.5" fill="#fff6e3" />
+          <svg x="221" y="9" width="68" height="68" viewBox="118 28 420 420"><image href="assets/hamster-idle.png" width="656" height="600" /></svg>
+        </svg>
+      </div>
+    </main>
     <noscript>이 게임은 자바스크립트가 필요해요.</noscript>
     <script type="module" src="/src/main.js"></script>
   </body>

@@ -5,9 +5,9 @@ import { svg, hamsterFace, seedSprite, prefersReducedMotion } from './art.js';
 import { createTransitionLock } from './transitionLock.js';
 
 const C = 100; // 칸 크기
-const BTN = 62; // 가장자리 버튼
-const GAP = 8;
-const PAD = 12;
+const BTN = 54; // 가장자리 버튼
+const GAP = 6;
+const PAD = 10;
 const OFF = BTN + GAP + PAD; // 보드 시작 좌표
 
 const EDGE = { [N]: [50, 0], [E]: [100, 50], [S]: [50, 100], [W]: [0, 50] };
@@ -25,31 +25,53 @@ function tunnelLayers(mask, chamber) {
   const g = svg('g', { class: 'pipe' });
   if (d) {
     g.appendChild(svg('path', { d, class: 'tunnel-edge' }));
-    g.appendChild(svg('circle', { cx: 50, cy: 50, r: 19, class: 'tunnel-edge-dot' }));
+    g.appendChild(svg('circle', { cx: 50, cy: 50, r: 18, class: 'tunnel-edge-dot' }));
   }
-  if (chamber) g.appendChild(svg('circle', { cx: 50, cy: 50, r: 42, class: 'tunnel-edge-dot' }));
+  if (chamber) g.appendChild(svg('circle', { cx: 50, cy: 50, r: 41, class: 'tunnel-edge-dot' }));
   if (d) {
     g.appendChild(svg('path', { d, class: 'tunnel' }));
-    g.appendChild(svg('circle', { cx: 50, cy: 50, r: 15, class: 'tunnel-dot' }));
+    g.appendChild(svg('circle', { cx: 50, cy: 50, r: 13.5, class: 'tunnel-dot' }));
   }
-  if (chamber) g.appendChild(svg('circle', { cx: 50, cy: 50, r: 38, class: 'tunnel-dot chamber' }));
+  if (chamber) g.appendChild(svg('circle', { cx: 50, cy: 50, r: 36.5, class: 'tunnel-dot chamber' }));
   const flow = svg('g', { class: 'flow' });
   if (d) {
     flow.appendChild(svg('path', { d, class: 'flow-tunnel' }));
-    flow.appendChild(svg('circle', { cx: 50, cy: 50, r: 15, class: 'flow-dot' }));
+    flow.appendChild(svg('circle', { cx: 50, cy: 50, r: 13.5, class: 'flow-dot' }));
   }
-  if (chamber) flow.appendChild(svg('circle', { cx: 50, cy: 50, r: 38, class: 'flow-dot' }));
+  if (chamber) flow.appendChild(svg('circle', { cx: 50, cy: 50, r: 36.5, class: 'flow-dot' }));
   if (d) flow.appendChild(svg('path', { d, class: 'flow-seeds' }));
   g.appendChild(flow);
   return g;
 }
 
-function buildTile(tile, id) {
+// 타일 속 햄스터: 제공된 그림의 얼굴 부분을 그대로 쓴다(대기/성공). 이미지를 못 불러오면 코드 얼굴로 대체.
+function photoFace(clipId) {
+  const g = svg('g', { class: 'face-photo', transform: 'translate(50 51) scale(0.98)' });
+  g.appendChild(svg('clipPath', { id: clipId }, [svg('circle', { r: 30 })]));
+  const inner = svg('g', { 'clip-path': `url(#${clipId})` });
+  const fallback = () => {
+    if (g.classList.contains('fallback')) return;
+    g.classList.add('fallback');
+    g.replaceChildren(hamsterFace());
+    g.setAttribute('transform', 'translate(50 53) scale(0.92)');
+  };
+  for (const [cls, src, box] of [['face-idle', CONFIG.assets.hamsterIdle, '118 28 420 420'], ['face-happy', CONFIG.assets.hamsterSuccess, '118 20 420 420']]) {
+    const part = svg('svg', { x: -32, y: -34, width: 64, height: 64, viewBox: box, class: cls });
+    const img = svg('image', { href: src, width: 656, height: 600 });
+    img.addEventListener('error', fallback, { once: true });
+    part.appendChild(img);
+    inner.appendChild(part);
+  }
+  g.appendChild(inner);
+  return g;
+}
+
+function buildTile(tile, id, clipKey) {
   const mask = tilePorts(tile);
   const outer = svg('g', { class: `tile kind-${tile.kind}${mask ? '' : ' blank'}`, 'data-id': id });
   const mv = svg('g', { class: 'mv' });
   outer.appendChild(mv);
-  mv.appendChild(svg('rect', { x: 3, y: 3, width: 94, height: 94, rx: 12, class: 'tile-bg' }));
+  mv.appendChild(svg('rect', { x: 3, y: 3, width: 94, height: 94, rx: 14, class: 'tile-bg' }));
   mv.appendChild(tunnelLayers(mask, tile.kind === 'source' || tile.kind === 'goal'));
 
   if (tile.kind === 'source') {
@@ -58,9 +80,7 @@ function buildTile(tile, id) {
     seed.setAttribute('transform', 'translate(50 50)');
     mv.appendChild(seed);
   } else if (tile.kind === 'goal') {
-    const face = hamsterFace();
-    face.setAttribute('transform', 'translate(50 53) scale(0.92)');
-    mv.appendChild(face);
+    mv.appendChild(photoFace(`${clipKey}-f${id}`));
     // 길이 닿은 햄스터 표시(웃는 얼굴 + 초록 체크)
     const ok = svg('g', { class: 'ok-badge' });
     ok.appendChild(svg('circle', { cx: 82, cy: 18, r: 13 }));
@@ -100,6 +120,7 @@ export function createBoard({ stage, onMove, onLockedTap }) {
   let destroyed = false;
   let disabled = false;
   let litPrev = new Set();
+  const btnMap = new Map();
 
   const root = svg('svg', {
     viewBox: `0 0 ${T} ${T}`, class: 'board', role: 'group', 'aria-label': `${n}×${n} 퍼즐 판`,
@@ -119,7 +140,7 @@ export function createBoard({ stage, onMove, onLockedTap }) {
   root.appendChild(btnLayer);
 
   const tileEls = stage.tiles.map((t, id) => {
-    const node = buildTile(t, id);
+    const node = buildTile(t, id, clipId);
     tilesInner.appendChild(node);
     return node;
   });
@@ -139,8 +160,8 @@ export function createBoard({ stage, onMove, onLockedTap }) {
     const hw = axis === 'row' ? OFF - 4 : C;
     const hh = axis === 'row' ? C : OFF - 4;
     g.appendChild(svg('rect', { x: -hw / 2, y: -hh / 2, width: hw, height: hh, class: 'btn-hit' }));
-    g.appendChild(svg('rect', { x: -BTN / 2, y: -BTN / 2 + 5, width: BTN, height: BTN, rx: 12, class: 'btn-shadow' }));
-    g.appendChild(svg('rect', { x: -BTN / 2, y: -BTN / 2, width: BTN, height: BTN, rx: 12, class: 'btn-face' }));
+    g.appendChild(svg('rect', { x: -BTN / 2, y: -BTN / 2 + 4, width: BTN, height: BTN, rx: 15, class: 'btn-shadow' }));
+    g.appendChild(svg('rect', { x: -BTN / 2, y: -BTN / 2, width: BTN, height: BTN, rx: 15, class: 'btn-face' }));
     g.appendChild(locked ? lockIcon() : arrowIcon(arrowDir));
     const fire = () => {
       if (destroyed || disabled) return;
@@ -159,9 +180,10 @@ export function createBoard({ stage, onMove, onLockedTap }) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fire(); }
     });
     btnLayer.appendChild(g);
+    btnMap.set(`${axis}:${index}:${dir}`, g);
   }
   const edgeNear = BTN / 2;
-  const edgeFar = T - BTN / 2 - 5;
+  const edgeFar = T - BTN / 2 - 4;
   for (let i = 0; i < n; i++) {
     const mid = OFF + i * C + C / 2;
     addButton('row', i, 1, edgeNear, mid, E); // 왼쪽 버튼: 오른쪽으로 밀기
@@ -253,6 +275,11 @@ export function createBoard({ stage, onMove, onLockedTap }) {
     setDisabled(v) {
       disabled = v;
       root.classList.toggle('disabled', v);
+    },
+    // 힌트: 누를 화살표를 강조한다. null이면 강조를 지운다.
+    showHint(move) {
+      for (const g of btnMap.values()) g.classList.remove('hinted');
+      if (move) btnMap.get(`${move.axis}:${move.index}:${move.dir}`)?.classList.add('hinted');
     },
     // 완료 순간: 굴 전체가 한 번 반짝인다
     celebrate() { root.classList.add('all-done'); },

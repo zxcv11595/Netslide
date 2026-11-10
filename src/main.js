@@ -6,7 +6,10 @@ import { createAdManager } from './ads/adManager.js';
 import { isTutorialDone, nextTutorial, getCurrent, clearCurrent } from './game/progress.js';
 import { parseLink } from './game/links.js';
 import { kstDateString } from './game/daily.js';
-import { createHomeScreen } from './ui/home.js';
+import { createHomeScreen, TIERS } from './ui/home.js';
+import {
+  createStagesScreen, createDailyScreen, createShopScreen, createRecordsScreen, createSettingsScreen,
+} from './ui/screens.js';
 import { createPlayScreen, stageTitle } from './ui/play.js';
 import { toast } from './ui/toast.js';
 
@@ -40,7 +43,7 @@ async function boot() {
     config: adConfig,
     provider,
     store,
-    // 광고가 실제로 표시되는 동안에만 게임 입력을 멈춘다(오디오는 첫 버전에 없음).
+    // 광고가 실제로 표시되는 동안에만 게임 입력을 멈춘다(오디오는 아직 없음).
     onPause: () => { app.inert = true; app.classList.add('paused'); },
     onResume: () => { app.inert = false; app.classList.remove('paused'); },
   });
@@ -56,23 +59,33 @@ async function boot() {
     window.scrollTo(0, 0);
   }
 
-  function goHome() {
-    mount(createHomeScreen({ store, content, goPlay, state }));
+  const SCREENS = {
+    home: createHomeScreen,
+    stages: createStagesScreen,
+    daily: createDailyScreen,
+    shop: createShopScreen,
+    records: createRecordsScreen,
+    settings: createSettingsScreen,
+  };
+  const ctx = { store, content, ads, state, go, goPlay };
+
+  function go(name, params = {}) {
+    mount((SCREENS[name] || createHomeScreen)(ctx, params));
   }
 
   function goPlay(stage, opts = {}) {
-    if (['beginner', 'intermediate', 'advanced'].includes(stage.group)) state.tab = stage.group;
+    if (TIERS.includes(stage.group)) state.tab = stage.group;
     let afterTutorial = null;
     if (stage.tutorial && pendingShared) {
       const shared = pendingShared;
       afterTutorial = {
-        label: '공유받은 판으로 가기',
+        label: '공유받은 판',
         go: () => { pendingShared = null; goPlay(shared.stage, { date: shared.date }); },
       };
     }
     // 다른 판을 새로 시작하면 이전에 하던 판의 저장은 지운다(이어하기는 history를 넘겨받는다).
     if (!opts.history) clearCurrent(store, content);
-    mount(createPlayScreen({ store, content, ads, goHome, goPlay, afterTutorial }, { stage, ...opts }));
+    mount(createPlayScreen({ ...ctx, afterTutorial }, { stage, ...opts }));
   }
 
   // 첫 진입: 공유 링크 → 하던 판 복원 → 홈
@@ -84,7 +97,7 @@ async function boot() {
     history.replaceState(null, '', clean);
   }
   if (link.type === 'error') {
-    goHome();
+    go('home');
     toast(LINK_ERROR[link.reason], 4000);
   } else if (link.type === 'stage') {
     if (!isTutorialDone(store, content) && !link.stage.tutorial) {
@@ -97,7 +110,7 @@ async function boot() {
   } else {
     const cur = getCurrent(store, content);
     if (cur) goPlay(cur.stage, { date: cur.date, history: cur.history });
-    else goHome();
+    else go('home');
   }
 
   if (store.issue && store.issue !== 'corrupt' && store.issue !== 'newer') {

@@ -1,6 +1,8 @@
 // 게임 전역 설정. 이름·이미지 경로·광고 실험값은 여기 한곳에서 바꾼다.
 export const CONFIG = {
   gameName: '햄스터 간식 배달', // 가칭
+  logoLines: ['햄스터', '간식 배달'], // 홈과 로딩 화면에서 줄을 나눠 크게 보여 주는 이름
+  version: '1.0.0',
   storageKey: 'hamster-snack-delivery',
 
   // public/ 아래 경로(배포 하위 경로에서도 동작하도록 상대 경로)

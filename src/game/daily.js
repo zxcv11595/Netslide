@@ -23,3 +23,17 @@ export function dailyStageFor(content, dateStr) {
   const diff = dayNumber(dateStr) - dayNumber(content.dailyEpoch);
   return content.daily[((diff % n) + n) % n];
 }
+
+function addDays(dateStr, n) {
+  return new Date(Date.parse(`${dateStr}T00:00:00Z`) + n * DAY_MS).toISOString().slice(0, 10);
+}
+export { addDays };
+
+// 오늘(또는 어제)까지 하루도 빠지지 않고 도전을 끝낸 날 수.
+// 오늘 판을 아직 안 풀었어도 어제까지 이어졌다면 끊긴 것으로 보지 않는다.
+export function dailyStreak(dailyMap, todayStr) {
+  let day = dailyMap[todayStr] ? todayStr : addDays(todayStr, -1);
+  let n = 0;
+  while (dailyMap[day]) { n++; day = addDays(day, -1); }
+  return n;
+}
