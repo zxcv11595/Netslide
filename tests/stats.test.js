@@ -47,7 +47,7 @@ test('오늘의 도전 기록: 이번 달, 지금 연속, 최고 연속, 별 3�
 test('성취: 진행도는 최대값을 넘지 않고, 달성 수가 섹션마다 계산된다', () => {
   const s = newStore();
   let secs = achievementSections(s, content, '2026-11-10');
-  assert.deepEqual(secs.map((x) => x.title), ['첫 걸음', '판 성공', '별 모으기', '깃발 모으기', '오늘의 도전']);
+  assert.deepEqual(secs.map((x) => x.title), ['첫 걸음', '판 성공', '별 모으기', '깃발 모으기', '길 잇기', '오늘의 도전']);
   assert.ok(secs.every((x) => x.done === 0));
   const t1 = content.groups.tutorial[0];
   confirmCompletion(s, content, t1, res(3), t1.star3);
@@ -58,6 +58,9 @@ test('성취: 진행도는 최대값을 넘지 않고, 달성 수가 섹션마�
   assert.equal(find('tutorial1').done, true);
   assert.equal(find('tutorialAll').now, 1);
   assert.equal(find('beginner1').done, true);
+  // 길 잇기: 성공한 판(입문 1·초급 1)의 길 조각 수를 더한다
+  const pieces = (st) => st.tiles.filter((x) => x.kind !== 'source' && x.ports).length;
+  assert.equal(find('logs10').now, Math.min(10, pieces(t1) + pieces(b1)));
   assert.equal(find('beginnerAll').done, false);
   assert.equal(find('firstClear').done, true);
   assert.equal(find('firstThree').done, true);

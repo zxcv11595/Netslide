@@ -139,7 +139,10 @@ test('별 경계: 보너스 있는 판', () => {
   assert.deepEqual([4, 5].map((m) => evaluateResult(full, conn, m).stars), [3, 2]);
   const basic = mk(['b2 p0 p0', 'p0 s10 g8', 'p0 p0 p0'], { star2: null, star3: 4 });
   const c2 = evaluateConnections(basic, initialCells(basic));
-  assert.deepEqual([0, 4, 50].map((m) => evaluateResult(basic, c2, m).stars), [1, 1, 1]);
+  // 새 규칙: 끊어진 조각이 하나라도 있으면(여기서는 왼쪽 위 조각) 도토리에 닿아 있어도 성공이 아니다
+  assert.deepEqual([0, 4, 50].map((m) => evaluateResult(basic, c2, m).stars), [0, 0, 0]);
+  assert.equal(evaluateResult(basic, c2, 0).canComplete, false);
+  assert.deepEqual([c2.pathConnected, c2.pathTotal], [1, 2]);
 });
 
 test('입문도 이동 수에 따라 별을 받는다', () => {
@@ -215,4 +218,21 @@ test('저장된 이력에서 복원하고, 잘못된 이력은 처음부터', ()
     assert.equal(c.moves, 0);
     assert.deepEqual(c.cells, initialCells(S4));
   }
+});
+
+test('성공 조건: 도토리에 닿아도 끊어진 길이 남으면 아직이고, 모든 길이 이어져야 성공이다', () => {
+  // 입문 3과 같은 판: 오른쪽 세로줄을 위로 밀면 도토리에는 닿지만 길 한 조각이 남는다
+  const st = mk(['p0 g2 p0', 'p0 s2 p12', 'p0 p10 p9'], { star2: 5, star3: 2 });
+  const start = initialCells(st);
+  const c0 = evaluateConnections(st, start);
+  assert.deepEqual([c0.requiredConnected, c0.pathConnected, c0.pathTotal], [0, 3, 4]);
+  const trap = shiftBoard(st, start, moveFromCode('c2-')).cells;
+  const c1 = evaluateConnections(st, trap);
+  assert.deepEqual([c1.requiredConnected, c1.requiredTotal, c1.pathConnected, c1.pathTotal], [1, 1, 3, 4]);
+  assert.equal(evaluateResult(st, c1, 1).canComplete, false);
+  let cells = start;
+  for (const code of ['r0-', 'c0-']) cells = shiftBoard(st, cells, moveFromCode(code)).cells;
+  const c2 = evaluateConnections(st, cells);
+  assert.deepEqual([c2.pathConnected, c2.pathTotal], [4, 4]);
+  assert.deepEqual([evaluateResult(st, c2, 2).canComplete, evaluateResult(st, c2, 2).stars], [true, 3]);
 });

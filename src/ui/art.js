@@ -94,6 +94,16 @@ export function flagIcon(size = 18) {
   ]);
 }
 
+// 통나무(길 조각) 그림: 계기판의 "이어진 길" 수 앞에 쓴다. 옆으로 누운 원기둥과 나이테가 보이는 단면.
+export function logIcon(size = 24) {
+  return svg('svg', { viewBox: '0 0 28 24', width: Math.round(size * 28 / 24), height: size, class: 'log-ic', 'aria-hidden': 'true' }, [
+    svg('path', { d: 'M8 5h13a4.5 7 0 0 1 0 14H8z', fill: '#c98a4b', stroke: '#55301d', 'stroke-width': 2, 'stroke-linejoin': 'round' }),
+    svg('path', { d: 'M12 9.5h5M14 14.5h6', fill: 'none', stroke: '#8a5a33', 'stroke-width': 1.6, 'stroke-linecap': 'round' }),
+    svg('ellipse', { cx: 8, cy: 12, rx: 4.5, ry: 7, fill: '#f4d9a8', stroke: '#55301d', 'stroke-width': 2 }),
+    svg('ellipse', { cx: 8, cy: 12, rx: 2, ry: 3.4, fill: 'none', stroke: '#c98a4b', 'stroke-width': 1.4 }),
+  ]);
+}
+
 export function starsRow(count, total = 3, size = 20) {
   const row = el('span', { class: 'stars-row', role: 'img', 'aria-label': t('별 {n}개', { n: count }) });
   for (let i = 0; i < total; i++) row.appendChild(starIcon(i < count, size));

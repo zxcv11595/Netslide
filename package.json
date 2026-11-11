@@ -12,7 +12,8 @@
     "verify": "node --max-old-space-size=8192 tools/verify.js",
     "deploy": "node tools/deploy.js",
     "app:sync": "vite build && cap sync android",
-    "app:open": "cap open android"
+    "app:open": "cap open android",
+    "app:build": "node tools/app-build.js"
   },
   "devDependencies": {
     "@capacitor/cli": "^7.6.10",

@@ -183,9 +183,9 @@ test('하던 판 저장/복원/삭제', () => {
 
 test('콘텐츠 버전이 다른 기록은 섞이지 않는다', () => {
   const s = createStore({ key: KEY, backend: memBackend() });
-  const v2 = { ...content, version: 2 };
+  const other = { ...content, version: content.version + 1 };
   confirmCompletion(s, content, content.byId.get('T1'), { canComplete: true, stars: 0, bonusDone: false }, 1);
-  assert.equal(getRecord(s, v2, 'T1'), null);
+  assert.equal(getRecord(s, other, 'T1'), null);
   assert.equal(getRecord(s, content, 'T1').done, true);
 });
 
@@ -214,9 +214,9 @@ test('일일 기록은 날짜별로 남고 최고 기록을 유지한다', () =>
   const st = dailyStageFor(content, '2026-11-11');
   confirmCompletion(s, content, st, res(2, true), 7, { date: '2026-11-11' });
   confirmCompletion(s, content, st, res(1, false), 5, { date: '2026-11-11' });
-  assert.deepEqual(s.content(1).daily['2026-11-11'], { id: st.id, stars: 2, moves: 5, bonus: true });
+  assert.deepEqual(s.content(content.version).daily['2026-11-11'], { id: st.id, stars: 2, moves: 5, bonus: true });
   confirmCompletion(s, content, st, res(3, true), 6);
-  assert.equal(Object.keys(s.content(1).daily).length, 1, '날짜 없이 완료하면 일일 기록을 만들지 않는다');
+  assert.equal(Object.keys(s.content(content.version).daily).length, 1, '날짜 없이 완료하면 일일 기록을 만들지 않는다');
 });
 
 // ---------- 링크 ----------

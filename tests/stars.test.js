@@ -23,8 +23,8 @@ test('입문 1~3별 실제 풀이, 저장 왕복, 되돌리기와 재시작', ()
   for (const s of content.groups.tutorial) for (const loops of [0,1,3]) {
     const session=createSession(s), solution=solutions[s.id].basic.moves;
     const move=moveFromCode(solution[0]);
-    // 2×2 한 줄을 두 번 밀면 같은 배치: 불필요한 이동 후 실제 해답을 푼다.
-    for(let i=0;i<loops*2;i++)session.move(move);
+    // 한 줄을 판 크기만큼 밀면 같은 배치로 돌아온다: 불필요한 이동 후 실제 해답을 푼다.
+    for(let i=0;i<loops*s.size;i++)session.move(move);
     for(const code of solution)session.move(moveFromCode(code));
     assert.equal(session.result.canComplete,true);
     const expected=starsAt(s,session.moves);
@@ -32,7 +32,7 @@ test('입문 1~3별 실제 풀이, 저장 왕복, 되돌리기와 재시작', ()
     const key=s.id+loops,store=createStore({key,backend});
     confirmCompletion(store,content,s,session.result,session.moves);
     assert.equal(createStore({key,backend}).content(content.version).records[s.id].stars,expected);
-    session.undo(); assert.equal(session.moves,loops*2+solution.length-1);
+    session.undo(); assert.equal(session.moves,loops*s.size+solution.length-1);
     session.restart(); assert.equal(starGauge(s,session.moves),1);
   }
 });

@@ -1084,3 +1084,34 @@ html[lang="en"] .mi-chip { font-size: 0.82rem; }
 .mi-sec { padding: 0 16px; }
 /* 성취 묶음 사이를 띄운다(앞 묶음의 마지막 카드와 다음 묶음 제목 사이) */
 .mi-list + .mi-sec { margin-top: clamp(12px, 2.2dvh, 20px); }
+
+.hud-ham .log-ic { flex: none; }
+.hud-ham.full .log-ic { animation: hud-cheer 520ms ease-in-out 2; }
+
+/* 계기판 왼쪽 세 줄: 최단 경로 / 통나무(이어진 길) / 도토리(찾은 수). 그림 칸 폭을 같게 해 숫자가 한 줄로 선다 */
+/* 왼쪽은 두 묶음: 최단 경로 | (도토리·통나무). 묶음 사이는 넓게, 비슷한 정보인 도토리·통나무 사이는 좁게.
+   숫자는 모두 "6번"과 같은 크기·굵기·색으로 맞춘다 (2026-11-12) */
+.hud-right { align-self: center; display: flex; flex-direction: column; align-items: center; gap: clamp(9px, 1.7dvh, 14px); }
+.hud-counts { display: grid; justify-content: center; gap: clamp(3px, 0.6dvh, 5px); }
+.hud-right .hud-short b, .hud-counts .hud-ham span, .hud-counts .hud-ham span i { font-size: 1.1rem; font-weight: 900; color: var(--ink); line-height: 1.2; }
+@media (max-width: 350px) {
+  .hud-right .hud-short b, .hud-counts .hud-ham span, .hud-counts .hud-ham span i { font-size: 0.98rem; }
+}
+/* 도토리·통나무 두 줄을 칸 맞춰 세운다: 그림 | 찾은 수(오른쪽 맞춤) | "/ 전체"(왼쪽 맞춤). 두 줄의 "/"가 같은 세로선에 선다 */
+.hud-counts { grid-template-columns: auto auto auto; column-gap: 0; }
+.hud-counts .hud-ham { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; align-items: center; gap: 0; }
+.hud-counts .hud-ham span { display: contents; }
+.hud-counts .hud-ham span b { text-align: right; padding-left: 6px; font-variant-numeric: tabular-nums; }
+.hud-counts .hud-ham span i { text-align: left; white-space: pre; font-variant-numeric: tabular-nums; }
+.hud-counts .hud-ham { justify-content: flex-start; gap: 4px; }
+.hud-counts .hud-ham .log-ic, .hud-counts .hud-ham img { width: 26px; height: 22px; object-fit: contain; }
+@media (max-width: 350px) {
+  .hud-counts .hud-ham .log-ic, .hud-counts .hud-ham img { width: 23px; height: 19px; }
+}
+
+
+/* ---------- 벽 보기 벽 (2026-11-12 사용자 지정: 보드는 예전 모양, 벽만 새 모양) ----------
+   칸 경계를 따라 이어진 울타리(판 둘레 포함) + 칸 모서리마다 흰 점. */
+.board .walls .wall-edge { fill: none; stroke: #55301d; stroke-width: 9; stroke-linecap: butt; }
+.board .walls .wall-face { fill: none; stroke: #dfb179; stroke-width: 4; stroke-linecap: butt; }
+.board .walls .wall-post { fill: #fff; stroke: #55301d; stroke-width: 2.6; }

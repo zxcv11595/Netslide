@@ -68,6 +68,10 @@ async function boot() {
   }
   const store = createStore({ key: CONFIG.storageKey });
   const content = CONTENT;
+  // 판 내용이 바뀌어 콘텐츠 버전이 오르면, 예전 버전의 판 기록(성공·별·오늘의 도전)은 지운다(힌트 수·설정은 남는다).
+  // 2026-11-12: 새 규칙·새 판으로 버전 2가 되면서 공개 링크에서 예전 판을 푼 기록을 모두 없앴다.
+  const stale = Object.keys(store.data.content).filter((k) => k !== String(content.version));
+  if (stale.length) { for (const k of stale) delete store.data.content[k]; store.save(); }
   migrateTutorialStars(store, content);
   migrateStarThresholds(store, content);
   initSound(store.data.settings);

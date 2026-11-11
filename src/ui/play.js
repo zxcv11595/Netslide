@@ -16,7 +16,7 @@ import hintData from '../data/hints.json';
 import { moveFromCode, moveToCode, inverseMove } from '../core/rules.js';
 import { solutionWalls } from '../core/walls.js';
 import { createBoard } from './board.js';
-import { el, hamsterFrame, starIcon, flagIcon, prefersReducedMotion } from './art.js';
+import { el, hamsterFrame, starIcon, flagIcon, logIcon, prefersReducedMotion } from './art.js';
 import { icon, pad2 } from './common.js';
 import { shareResult } from './share.js';
 import { toast, hideToast } from './toast.js';
@@ -106,21 +106,27 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     el('span', { class: 'ring-value' }, [movesEl, el('span', { class: 'ring-unit', text: t('번@ring') })]),
   ]);
   const ring = el('div', { class: 'ring', role: 'img' }, [ringSvg, moveCount]);
-  const hamImg = el('img', { src: CONFIG.assets.snackSeed, alt: '', draggable: 'false' });
+  // 이어진 길: 통나무 그림 + "이어진 조각 수 / 전체 조각 수"(햄스터 칸과 빈 블록은 세지 않는다). 다 차면 성공이다.
   const litEl = el('b', { text: '0' });
-  const hamBox = el('div', { class: 'hud-ham', role: 'img' }, [hamImg, el('span', {}, [litEl, el('i', { text: ` / ${session.conn.requiredTotal}` })])]);
+  const hamBox = el('div', { class: 'hud-ham', role: 'img' }, [logIcon(22), el('span', {}, [litEl, el('i', { text: ` / ${session.conn.pathTotal}` })])]);
+  // 찾은 도토리: 도토리 그림 + "길이 닿은 도토리 수 / 전체"(2026-11-11 밤: 최단 경로·통나무·도토리 세 줄)
+  const acornEl = el('b', { text: '0' });
+  const acornBox = el('div', { class: 'hud-ham hud-acorn', role: 'img' }, [
+    el('img', { src: CONFIG.assets.snackSeed, alt: '', draggable: 'false' }),
+    el('span', {}, [acornEl, el('i', { text: ` / ${session.conn.requiredTotal}` })]),
+  ]);
   const lineEls = [[3, stage.star3], [2, stage.star2], [1, null]].map(([n, limit]) => el('div', { class: 'hud-line', 'data-n': String(n) }, [
     el('span', { class: 'st', 'aria-hidden': 'true' }, Array.from({ length: 3 }, (_, i) => starIcon(i < n, 15))),
     el('b', { text: limit == null ? t('성공') : String(limit) }), // 별 줄에는 단위(번)를 붙이지 않는다
   ]));
-  // 왼쪽 최단 경로와 찾은 도토리 수 · 가운데 횟수 게이지 · 오른쪽 별 기준 세 줄 (2026-11-12 확정)
+  // 왼쪽 최단 경로·이어진 길·찾은 도토리 세 줄 · 가운데 횟수 게이지 · 오른쪽 별 기준 세 줄 (2026-11-12 확정)
   // 표시된 최단보다 짧게 푼 기록이 있으면(최단이 증명되지 않은 판) 그 기록을 최단 경로로 보여 준다
   const shortAtStart = shownShortest(stage, getRecord(store, content, stage.id));
   // 이 판을 시작할 때 깃발이 하나도 없었으면, 첫 깃발을 받을 때 한 줄로 설명한다
   const noFlagYet = ![...content.byId.values()].some((s) => hasFlag(s, getRecord(store, content, s.id)));
   const shortEl = el('div', { class: 'hud-short' }, [el('span', {}, [flagIcon(13), t('최단 경로')]), el('b', { text: t('{moves}번', { moves: shortAtStart }) })]);
   const dash = el('div', { class: 'dash hud' }, [
-    el('div', { class: 'hud-right' }, [shortEl, hamBox]),
+    el('div', { class: 'hud-right' }, [shortEl, el('div', { class: 'hud-counts' }, [acornBox, hamBox])]),
     ring,
     el('div', { class: 'hud-info' }, lineEls),
   ]);
@@ -171,7 +177,8 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
 
   // ----- 입문 1의 안내: 화면을 어둡게 하고 한 곳씩 밝혀 설명한다 -----
   // 1단계 "무엇을 하는 게임인지"(판을 밝힘) → 2단계 "이 화살표를 누르세요"(화살표만 밝힘, 그것만 눌림)
-  const coach = stage.id === 'T1' ? createCoach() : null;
+  // 입문 01 안내는 처음 성공하기 전까지만 보여 준다(한 번 끝낸 뒤 다시 들어가면 안내 없이 바로 푼다)
+  const coach = stage.id === 'T1' && !getRecord(store, content, 'T1')?.done ? createCoach() : null;
   let coachStep = null;
   const unionRect = (nodes) => {
     let box = null;
@@ -181,6 +188,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     }
     return box ? { left: box.left, top: box.top, width: box.right - box.left, height: box.bottom - box.top } : null;
   };
+  let warnedLoose = false; // '끊어진 길이 남았어요'를 이 판에서 이미 알렸는가
   function coachPress() {
     coachStep = 'press';
     coach.show({
@@ -192,7 +200,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     if (!coach || session.moves > 0) return;
     coachStep = 'goal';
     coach.show({
-      title: t('햄스터가 도토리를 찾아가요'), text: t('나무 길이 모든 도토리까지 이어지면 성공이에요.'), button: t('다음'), onNext: coachPress, pad: 4, round: 20,
+      title: t('끊어진 길을 모두 이어 주세요'), text: t('길이 전부 이어지면 햄스터가 도토리를 찾아가요.'), button: t('다음'), onNext: coachPress, pad: 4, round: 20,
       rect: () => unionRect(root.querySelectorAll('.board .tile')),
     });
   }
@@ -209,10 +217,13 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
       movesEl.classList.add('bump');
     }
     movesEl.textContent = count;
-    const full = conn.requiredTotal > 0 && conn.requiredConnected >= conn.requiredTotal;
-    litEl.textContent = String(conn.requiredConnected);
+    const full = conn.pathTotal > 0 && conn.pathConnected >= conn.pathTotal;
+    litEl.textContent = String(conn.pathConnected);
     hamBox.classList.toggle('full', full);
-    hamBox.setAttribute('aria-label', t('찾은 도토리 {a}개, 전체 {b}개', { a: conn.requiredConnected, b: conn.requiredTotal }));
+    hamBox.setAttribute('aria-label', t('이어진 길 {a}개, 전체 {b}개', { a: conn.pathConnected, b: conn.pathTotal }));
+    acornEl.textContent = String(conn.requiredConnected);
+    acornBox.classList.toggle('full', conn.requiredTotal > 0 && conn.requiredConnected >= conn.requiredTotal);
+    acornBox.setAttribute('aria-label', t('찾은 도토리 {a}개, 전체 {b}개', { a: conn.requiredConnected, b: conn.requiredTotal }));
     if (conn.requiredConnected > lastFed && !session.result.canComplete) sound.fed();
     lastFed = conn.requiredConnected;
     const now = starsAt(stage, session.moves);
@@ -241,15 +252,22 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   // ----- 입력 -----
   // 입문 1에서만 다음에 누를 화살표를 알려 준다(힌트 개수와 무관). 입문 2·3은 화살표 없이 스스로 푼다.
   function guide() {
-    if (!stage.tutorial || stage.id !== 'T1' || completing || session.result.canComplete) return;
+    // 화살표 안내도 안내 창과 같이 입문 01을 처음 성공하기 전까지만
+    if (!coach || completing || session.result.canComplete) return;
     const hint = nextHint(stage, session.cells, session.historyCodes(), null);
     if (hint.type === 'move') board.showHint(hint.move);
   }
 
   function afterShift() {
-    // 모든 햄스터에게 길이 닿으면 자동으로 배달 완료
-    if (session.result.canComplete) complete();
-    else guide();
+    // 모든 길이 이어지면 자동으로 성공
+    if (session.result.canComplete) { complete(); return; }
+    // 도토리에는 다 닿았는데 끊어진 길이 남은 순간: 한 판에 한 번 알려 준다(입문 3이 이 순간을 겪게 만든 판이다)
+    const c = session.conn;
+    if (!warnedLoose && c.requiredTotal > 0 && c.requiredConnected === c.requiredTotal) {
+      warnedLoose = true;
+      note(t('끊어진 길이 남았어요'), t('모든 길을 이어야 성공이에요'), 3200);
+    }
+    guide();
   }
 
   function handleMove(move) {

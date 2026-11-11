@@ -4,6 +4,7 @@
     { "name": "dev", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--", "--port", "5173", "--strictPort"], "port": 5173 },
     { "name": "dev-check", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--", "--port", "5174", "--strictPort"], "port": 5174 },
     { "name": "dev-phone", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--", "--host", "--port", "5176", "--strictPort"], "port": 5176 },
+    { "name": "dev-board", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--", "--port", "5180", "--strictPort"], "port": 5180 },
     { "name": "built", "runtimeExecutable": "npm", "runtimeArgs": ["run", "preview", "--", "--port", "5178", "--strictPort"], "port": 5178 }
   ]
 }

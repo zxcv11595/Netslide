@@ -145,6 +145,7 @@ export function moveFromCode(code) {
 //   dist[pos]     : 공급원에서의 칸 수 (닿지 않으면 -1)
 //   parent[pos]   : 처음 닿았을 때의 이전 칸 (공급원/미도달은 -1) — 전달 연출의 실제 경로
 //   goals         : [{ pos, tileId, bonus, connected }]
+//   pathTotal / pathConnected : 길 조각 수(햄스터 칸·빈 블록 제외)와 그중 햄스터와 이어진 수
 export function evaluateConnections(stage, cells) {
   const n = stage.size;
   const total = n * n;
@@ -202,9 +203,19 @@ export function evaluateConnections(stage, cells) {
     if (t.bonus) { bonusTotal++; if (connected) bonusConnected++; }
     else { requiredTotal++; if (connected) requiredConnected++; }
   }
+  // 길 조각: 햄스터 칸과 빈 블록을 뺀 모든 타일(길과 도토리). 성공 조건과 계기판의 "이어진 길"이 이 수를 쓴다.
+  let pathTotal = 0;
+  let pathConnected = 0;
+  for (let pos = 0; pos < total; pos++) {
+    const t = tiles[cells[pos]];
+    if (t.kind === 'source' || !tilePorts(t)) continue;
+    pathTotal++;
+    if (reached[pos] === 1) pathConnected++;
+  }
   return {
     reached, dist, parent, goals,
     requiredTotal, requiredConnected, bonusTotal, bonusConnected,
+    pathTotal, pathConnected,
   };
 }
 
@@ -222,7 +233,9 @@ export function pathTo(conn, pos) {
 // - 보너스 있는 판: 1=필수 / 2=필수+모든 보너스 / 3=2별 조건 + star3 이동 수 이내
 // - 보너스 없는 판: 1=필수 / 2=star2 이내 / 3=star3 이내 (star3 < star2)
 export function evaluateResult(stage, conn, moves) {
-  const requiredDone = conn.requiredTotal > 0 && conn.requiredConnected === conn.requiredTotal;
+  // 성공 조건(2026-11-11 밤, 원작 Netslide 방식): 모든 길 조각이 햄스터와 이어져야 한다.
+  // 도토리는 길 끝마다 있으므로 길이 다 이어지면 도토리에도 모두 닿는다. 도토리에만 닿는 지름길로는 끝나지 않는다.
+  const requiredDone = conn.requiredTotal > 0 && conn.pathTotal > 0 && conn.pathConnected === conn.pathTotal;
   const hasBonus = conn.bonusTotal > 0;
   const bonusDone = requiredDone && hasBonus && conn.bonusConnected === conn.bonusTotal;
   let stars = 0;

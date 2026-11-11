@@ -14,7 +14,7 @@
 //   src/data/stages.json        게임이 읽는 판 데이터(해답 없음)
 //   tools/out/solutions.json    개발용 검증 자료(해답·탐색량)
 //   docs/STAGE_REPORT.md        판 목록/검증 보고서
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import {
@@ -33,7 +33,11 @@ const argOf = (name, def) => {
 };
 const BASE_SEED = Number(argOf('--seed', 20261111));
 const QUICK = args.includes('--quick');
-const CONTENT_VERSION = 1; // 아직 공개 전이라 1을 유지한다. 공개 뒤에 판을 바꾸면 올린다.
+// --groups beginner,daily 처럼 주면 그 묶음만 새로 만들고, 나머지는 지금 있는 판을 그대로 둔다(입문은 항상 다시 만든다).
+// 그대로 둔 판 가운데 보관 해답이 새 규칙으로 끝나지 않는 판은 다시 풀어서 최단 경로와 별 기준만 고친다.
+const ONLY = argOf('--groups', '') ? new Set(String(argOf('--groups', '')).split(',')) : null;
+const want = (g) => !ONLY || ONLY.has(g);
+const CONTENT_VERSION = 2; // 판을 바꾸면 올린다. 2026-11-12: 새 규칙(모든 길 연결)·빈 블록 없음·십자 조각 없음으로 전체를 다시 만들며 2로 올렸다(예전 기록은 시작할 때 지운다).
 const DAILY_EPOCH = '2026-11-11';
 
 // ---------- 난수 ----------
@@ -51,9 +55,9 @@ const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
 
 // ---------- 입문(수작업): 2×2. 줄 하나를 밀면 두 칸이 자리를 바꾸는 가장 작은 판 ----------
 const TUTORIALS = [
-  { id: 'T1', size: 2, tiles: ['s2 p0', 'p0 g8'] }, // 세로줄 한 번
-  { id: 'T2', size: 2, tiles: ['s4 p0', 'p0 g1'] }, // 가로줄 한 번
-  { id: 'T3', size: 2, tiles: ['s6 g1', 'p0 g8'] }, // 두 마리, 두 번
+  { id: 'T1', size: 2, tiles: ['s2 g1', 'p0 p12'] }, // 세로줄 한 번: 끊어진 길 한 조각과 도토리를 잇는다
+  { id: 'T2', size: 2, tiles: ['s4 p0', 'g8 p3'] }, // 가로줄 한 번
+  { id: 'T3', size: 2, tiles: ['s6 g1', 'p0 g8'] }, // 두 도토리, 두 번 (2026-11-12 사용자 지정: 2×2 유지)
 ];
 
 // ---------- 생성 계획 ----------
@@ -66,45 +70,67 @@ const TUTORIALS = [
 // 판은 단계 순서대로 놓이므로 뒤로 갈수록 어려워진다.
 const PLAN = [
   // 최단 수가 한 수씩 올라간다(초급 2~7, 중급 3~9, 고급 4~14). 햄스터 수는 단계마다 범위를 주어 대체로 함께 늘어난다.
-  // blanks: 길이 없는 빈 블록(p0) 개수 범위. 난이도 안에서 뒤로 갈수록 줄어든다(2 → 1 → 0).
+  // blanks: 길이 없는 빈 블록(p0) 개수 범위. 2026-11-12부터 원작 Netslide처럼 빈 블록은 쓰지 않는다(모두 [0, 0]).
   // 2026-11-11 결정: 원작 Netslide처럼 가짜 길은 쓰지 않는다. 그래서 decoys는 모두 [0, 0]이다(만드는 코드는 남겨 두었다).
   // decoys: 가짜 길 개수 범위. sneaky: 진짜 길에 붙은 곁가지·빈 끝을 더 많이 섞는다(고급 뒤쪽).
   // 빈 블록과 떨어진 조각을 합쳐 판의 4분의 1을 넘지 않는다.
-  { group: 'beginner', size: 3, min: [2, 2], ham: [1, 2], blanks: [1, 2], decoys: [0, 0], count: 3 },
-  { group: 'beginner', size: 3, min: [3, 3], ham: [1, 3], blanks: [1, 2], decoys: [0, 0], count: 3 },
-  { group: 'beginner', size: 3, min: [4, 4], ham: [2, 3], blanks: [0, 1], decoys: [0, 0], count: 4 },
-  { group: 'beginner', size: 3, min: [5, 5], ham: [2, 4], blanks: [0, 1], decoys: [0, 0], count: 4 },
+  { group: 'beginner', size: 3, min: [2, 2], ham: [1, 2], blanks: [0, 0], decoys: [0, 0], count: 3 },
+  { group: 'beginner', size: 3, min: [3, 3], ham: [1, 3], blanks: [0, 0], decoys: [0, 0], count: 3 },
+  { group: 'beginner', size: 3, min: [4, 4], ham: [2, 3], blanks: [0, 0], decoys: [0, 0], count: 4 },
+  { group: 'beginner', size: 3, min: [5, 5], ham: [2, 4], blanks: [0, 0], decoys: [0, 0], count: 4 },
   { group: 'beginner', size: 3, min: [6, 6], ham: [3, 5], blanks: [0, 0], decoys: [0, 0], count: 3 },
   { group: 'beginner', size: 3, min: [7, 7], ham: [3, 5], blanks: [0, 0], decoys: [0, 0], count: 3 },
-  { group: 'intermediate', size: 4, min: [3, 3], ham: [1, 2], windy: [0.9, 1], blanks: [1, 2], decoys: [0, 0], count: 3 },
-  { group: 'intermediate', size: 4, min: [4, 4], ham: [2, 3], blanks: [1, 2], decoys: [0, 0], count: 5 },
-  { group: 'intermediate', size: 4, min: [5, 5], ham: [2, 4], blanks: [0, 1], decoys: [0, 0], count: 6 },
-  { group: 'intermediate', size: 4, min: [6, 6], ham: [3, 5], blanks: [0, 1], decoys: [0, 0], count: 6 },
+  { group: 'intermediate', size: 4, min: [3, 3], ham: [1, 2], windy: [0.9, 1], blanks: [0, 0], decoys: [0, 0], count: 3 },
+  { group: 'intermediate', size: 4, min: [4, 4], ham: [2, 3], blanks: [0, 0], decoys: [0, 0], count: 5 },
+  { group: 'intermediate', size: 4, min: [5, 5], ham: [2, 4], blanks: [0, 0], decoys: [0, 0], count: 6 },
+  { group: 'intermediate', size: 4, min: [6, 6], ham: [3, 5], blanks: [0, 0], decoys: [0, 0], count: 6 },
   { group: 'intermediate', size: 4, min: [6, 7], shuffle: 7, deep: true, ham: [4, 6], blanks: [0, 0], decoys: [0, 0], count: 6 },
   { group: 'intermediate', size: 4, min: [7, 8], shuffle: 8, deep: true, ham: [5, 7], blanks: [0, 0], decoys: [0, 0], count: 7 },
   { group: 'intermediate', size: 4, min: [8, 9], shuffle: 9, deep: true, ham: [5, 7], blanks: [0, 0], decoys: [0, 0], count: 7 },
-  { group: 'advanced', size: 5, min: [4, 4], ham: [2, 3], windy: [0.8, 1], blanks: [1, 2], decoys: [0, 0], count: 4 },
-  { group: 'advanced', size: 5, min: [5, 5], ham: [2, 4], blanks: [1, 2], decoys: [0, 0], count: 4 },
-  { group: 'advanced', size: 5, min: [6, 6], ham: [3, 4], blanks: [1, 2], decoys: [0, 0], count: 5 },
-  { group: 'advanced', size: 5, min: [6, 7], shuffle: 7, deep: true, ham: [3, 5], blanks: [0, 1], decoys: [0, 0], count: 5 },
-  { group: 'advanced', size: 5, min: [7, 8], shuffle: 8, deep: true, ham: [4, 6], blanks: [0, 1], decoys: [0, 0], count: 6 },
-  { group: 'advanced', size: 5, min: [8, 9], shuffle: 9, deep: true, ham: [4, 6], blanks: [0, 1], decoys: [0, 0], count: 6 },
-  { group: 'advanced', size: 5, min: [9, 10], shuffle: 10, deep: true, ham: [5, 7], blanks: [0, 1], decoys: [0, 0], count: 6 },
+  { group: 'advanced', size: 5, min: [4, 4], ham: [2, 3], windy: [0.8, 1], blanks: [0, 0], decoys: [0, 0], count: 4 },
+  { group: 'advanced', size: 5, min: [5, 5], ham: [2, 4], blanks: [0, 0], decoys: [0, 0], count: 4 },
+  { group: 'advanced', size: 5, min: [6, 6], ham: [3, 4], blanks: [0, 0], decoys: [0, 0], count: 5 },
+  { group: 'advanced', size: 5, min: [6, 7], shuffle: 7, deep: true, ham: [3, 5], blanks: [0, 0], decoys: [0, 0], count: 5 },
+  { group: 'advanced', size: 5, min: [7, 8], shuffle: 8, deep: true, ham: [4, 6], blanks: [0, 0], decoys: [0, 0], count: 6 },
+  { group: 'advanced', size: 5, min: [8, 9], shuffle: 9, deep: true, ham: [4, 6], blanks: [0, 0], decoys: [0, 0], count: 6 },
+  { group: 'advanced', size: 5, min: [9, 10], shuffle: 10, deep: true, ham: [5, 7], blanks: [0, 0], decoys: [0, 0], count: 6 },
   { group: 'advanced', size: 5, min: [10, 11], shuffle: 11, deep: true, ham: [5, 7], blanks: [0, 0], decoys: [0, 0], count: 6 },
   { group: 'advanced', size: 5, min: [11, 12], shuffle: 12, deep: true, ham: [6, 8], blanks: [0, 0], decoys: [0, 0], count: 8 },
   { group: 'advanced', size: 5, min: [12, 13], shuffle: 13, deep: true, ham: [7, 9], blanks: [0, 0], decoys: [0, 0], count: 9 },
   { group: 'advanced', size: 5, min: [13, 14], shuffle: 14, deep: true, ham: [7, 9], blanks: [0, 0], decoys: [0, 0], count: 9 },
 ];
+// 오늘의 도전(2026-11-12): 1년 치. 평일은 4×4(최단 5~7번), 토·일은 5×5(최단 6~8번).
+// 실제로는 --daily-part 로 여러 프로세스가 나눠 만들고 tools/merge-daily.js 가 날짜에 맞춰 합친다.
 const DAILY_PLAN = [
-  { group: 'daily', size: 4, min: [5, 6], blanks: [0, 1], decoys: [0, 0], count: 21 },
-  { group: 'daily', size: 5, min: [4, 5], blanks: [0, 1], decoys: [0, 0], count: 7 },
+  { group: 'daily', size: 4, min: [5, 5], blanks: [0, 0], decoys: [0, 0], count: 88 },
+  { group: 'daily', size: 4, min: [6, 6], blanks: [0, 0], decoys: [0, 0], count: 87 },
+  { group: 'daily', size: 4, min: [7, 7], shuffle: 7, deep: true, blanks: [0, 0], decoys: [0, 0], count: 87 },
+  { group: 'daily', size: 5, min: [6, 6], ham: [3, 6], blanks: [0, 0], decoys: [0, 0], count: 35 },
+  { group: 'daily', size: 5, min: [7, 7], shuffle: 7, deep: true, ham: [3, 6], blanks: [0, 0], decoys: [0, 0], count: 35 },
+  { group: 'daily', size: 5, min: [8, 8], shuffle: 8, deep: true, ham: [4, 7], blanks: [0, 0], decoys: [0, 0], count: 34 },
 ];
+// --daily-part i/k : 오늘의 도전만, 계획표의 판 수를 k로 나눠(여유 5%) i번째 몫을 만들어 tools/out/daily-parts/part-i.json 에 쓰고 끝낸다
+const DAILY_PART = argOf('--daily-part', '') ? String(argOf('--daily-part', '')).split('/').map(Number) : null;
+if (DAILY_PART) {
+  const [pi, pk] = DAILY_PART;
+  for (const spec of DAILY_PLAN) spec.count = Math.ceil((spec.count * 1.05) / pk);
+  DAILY_PLAN.partSeed = pi * 104729;
+}
 const MAX_STATES = { 3: 200000, 4: 3000000, 5: 2000000 };
 // 별 기준은 src/core/stars.js 한곳에서 정한다(3별 = 최단 + 최단/4 올림, 2별 = 3별 + 3)
 const MAX_HAMSTERS = 9; // 한 판의 도토리(가지 끝) 수 상한. 4×4는 계획표에서 7까지만 쓴다
 
 // ---------- 정답 배치: 모든 칸을 잇는 무작위 나무 ----------
+// 원작 Netslide처럼 네 방향 십자 조각은 만들지 않는다(세 갈래까지). 나무가 막히면 처음부터 다시 만든다.
 function buildSolved(r, spec) {
+  for (let i = 0; i < 200; i++) {
+    const out = buildSolvedOnce(r, spec);
+    if (out) return out;
+  }
+  throw new Error('정답 배치를 만들지 못함');
+}
+const bitCount = (m) => (m & 1) + ((m >> 1) & 1) + ((m >> 2) & 1) + ((m >> 3) & 1);
+function buildSolvedOnce(r, spec) {
   const n = spec.size;
   const total = n * n;
   const src = n === 4 ? pick(r, [5, 6, 9, 10]) : (total - 1) / 2;
@@ -131,8 +157,10 @@ function buildSolved(r, spec) {
   const target = total - blanks - kinds.stray;
   let count = 1;
   while (count < target) {
+    if (!active.length) return null; // 남은 칸에 닿을 수 있는 길 끝이 없다(세 갈래 제한 때문에 막힘)
     const i = r() < windy ? active.length - 1 : Math.floor(r() * active.length);
     const u = active[i];
+    if (bitCount(ports[u]) >= 3) { active.splice(i, 1); continue; } // 세 갈래가 된 칸에서는 더 뻗지 않는다
     const options = [];
     for (const d of DIRS) {
       const { dr, dc } = dirDelta(d);
@@ -290,6 +318,7 @@ function tryCandidate(r, spec, seenForms) {
 function generateGroup(plan, seedBase, seenForms, log) {
   const out = [];
   plan.forEach((spec, si) => {
+    if (!want(spec.group)) return; // 난수는 단계 번호로 정하므로 건너뛰어도 다른 단계의 결과는 같다
     const r = rng(seedBase + si * 7919);
     const rejects = {};
     let made = 0;
@@ -339,7 +368,36 @@ TUTORIALS.forEach((t, i) => {
 console.log('정규 판 생성...');
 const regular = generateGroup(PLAN, BASE_SEED, seenForms, log);
 const prefix = { beginner: 'B', intermediate: 'M', advanced: 'A', daily: 'D' };
+// 그대로 두는 판: 지금 자료에서 가져오고, 새 규칙으로 보관 해답이 끝나지 않으면 다시 푼다
+const prev = ONLY ? {
+  data: JSON.parse(readFileSync(resolve(ROOT, 'src/data/stages.json'), 'utf8')),
+  sols: JSON.parse(readFileSync(resolve(ROOT, 'tools/out/solutions.json'), 'utf8')).solutions,
+} : null;
+const needRegen = [];
+function carry(raw) {
+  const stage = { size: raw.size, tiles: raw.tiles.flatMap((row) => row.split(' ')).map(parseTile), tutorial: false, star2: raw.star2, star3: raw.star3 };
+  let sol = prev.sols[raw.id];
+  let out = raw;
+  const rep = replay(stage, sol.basic.moves, moveFromCode);
+  if (!rep.ok || !evaluateResult(stage, evaluateConnections(stage, rep.cells), sol.basic.length).requiredDone) {
+    const again = solve(stage, { maxStates: 30000000, deadline: Date.now() + 420000 });
+    if (again.basic) {
+      out = { ...raw, shortest: again.basic.length, star2: star2For(again.basic.length), star3: star3For(again.basic.length) };
+      sol = { basic: again.basic, basicProven: true, full: again.basic, fullProven: true, lowerBound: again.basic.length, states: again.states, limitHit: false };
+      console.log(`  ${raw.id}: 새 규칙으로 다시 풂 — 최단 ${raw.shortest} → ${again.basic.length}`);
+    } else {
+      needRegen.push(raw.id);
+      console.log(`  ${raw.id}: 새 규칙의 해답을 제한 안에 찾지 못함(전체 재생성 때 바뀐다)`);
+    }
+  }
+  solutions[raw.id] = sol;
+  const kinds = stage.tiles;
+  reportRows.push({ id: raw.id, group: raw.group, order: raw.order, size: raw.size, hamsters: kinds.filter((x) => x.kind === 'goal').length,
+    blanks: kinds.filter((x) => x.kind === 'pipe' && !x.ports).length, decoys: 0, sol, star2: out.star2, star3: out.star3 });
+  return out;
+}
 for (const group of ['beginner', 'intermediate', 'advanced']) {
+  if (!want(group)) { for (const raw of prev.data.stages.filter((x) => x.group === group)) stagesOut.push(carry(raw)); continue; }
   // 표시 순서: 별 3개 기준 이동 수 → 햄스터 수 → 단계. 이동 수는 뒤로 갈수록 줄어들지 않는다.
   const list = regular.filter((x) => x.spec.group === group).sort((a, b) => a.solution.basic.length - b.solution.basic.length
     || a.hamsters - b.hamsters || PLAN.indexOf(a.spec) - PLAN.indexOf(b.spec));
@@ -354,7 +412,17 @@ for (const group of ['beginner', 'intermediate', 'advanced']) {
 }
 
 console.log('오늘의 도전 판 생성...');
-const dailyRaw = generateGroup(DAILY_PLAN, BASE_SEED + 500009, seenForms, log);
+const dailyRaw = want('daily') ? generateGroup(DAILY_PLAN, BASE_SEED + 500009 + (DAILY_PLAN.partSeed || 0), seenForms, log) : [];
+if (DAILY_PART) {
+  mkdirSync(resolve(ROOT, 'tools/out/daily-parts'), { recursive: true });
+  const items = dailyRaw.map((x) => ({
+    size: x.stage.size, tiles: rowsOf(x.stage.size, x.stage.tiles), shortest: x.stage.shortest, star2: x.stage.star2, star3: x.stage.star3,
+    hamsters: x.hamsters, form: x.form, solution: x.solution,
+  }));
+  writeFileSync(resolve(ROOT, `tools/out/daily-parts/part-${DAILY_PART[0]}.json`), JSON.stringify(items));
+  console.log(`오늘의 도전 몫 ${DAILY_PART[0]}/${DAILY_PART[1]}: ${items.length}판, ${((Date.now() - t0) / 1000).toFixed(1)}초`);
+  process.exit(0);
+}
 // 4일마다 5×5가 한 번 오도록 섞는다
 const d4 = dailyRaw.filter((x) => x.spec.size === 4);
 const d5 = dailyRaw.filter((x) => x.spec.size === 5);
@@ -363,7 +431,7 @@ while (d4.length || d5.length) {
   for (let k = 0; k < 3 && d4.length; k++) dailyOrdered.push(d4.shift());
   if (d5.length) dailyOrdered.push(d5.shift());
 }
-const dailyOut = dailyOrdered.map((x, i) => {
+const dailyOut = !want('daily') ? prev.data.daily.map(carry) : dailyOrdered.map((x, i) => {
   const id = `D${String(i + 1).padStart(2, '0')}`;
   solutions[id] = x.solution;
   reportRows.push({ id, group: 'daily', order: i + 1, size: x.stage.size, hamsters: x.hamsters, blanks: x.blanks, decoys: x.decoys, sol: x.solution, star2: x.stage.star2, star3: x.stage.star3 });
@@ -393,10 +461,10 @@ lines.push('# 출시 판 목록 / 검증 보고서', '');
 lines.push(`- 생성 도구: \`node --max-old-space-size=8192 tools/generate.js --seed ${BASE_SEED}\`${QUICK ? ' --quick' : ''}`);
 lines.push(`- 콘텐츠 버전: ${CONTENT_VERSION}`);
 lines.push(`- 정규 판 ${stagesOut.length}개(입문 ${TUTORIALS.length} 포함), 오늘의 도전 ${dailyOut.length}개`);
-lines.push('- 판 구성: 가운데 햄스터에서 뻗는 나무 길의 가지 끝에 도토리가 있다. 모든 도토리에 길이 닿으면 성공. 빈 블록은 뒤로 갈수록 줄고(2 → 0), 가짜 길(정답에 안 쓰이는 길)은 뒤쪽 판에만 있다.');
+lines.push('- 판 구성: 가운데 햄스터에서 뻗는 나무 길의 가지 끝마다 도토리가 있다. 모든 길 조각이 햄스터와 이어지면 성공(원작 Netslide 방식). 빈 블록은 뒤로 갈수록 줄고(2 → 0), 가짜 길은 없다.');
 lines.push('- "증명"은 판 상태 공간 BFS가 그 깊이 이전 단계를 모두 펼친 뒤 처음 찾은 해답이라는 뜻이다.');
 lines.push('- 미증명 판은 탐색 제한 안에서 해답을 찾지 못한 판이다. "최단 N수 이상"까지만 확인했고, 별 기준은 생성할 때 알고 있던 해답 길이다.');
-lines.push(`- 3별 기준 = 최단 수(미증명은 발견한 해답 길이) + 최단 수의 4분의 1(올림), 2별 기준 = 3별 기준 + ${STAR2_EXTRA}. 입문은 3별 = 최단 수 그대로. 입문도 같은 별 기준을 사용하며 게임에서는 별 아이콘과 감소형 게이지로 표시한다.`, '');
+lines.push('- 3별 기준 = 최단 수(미증명은 발견한 해답 길이)의 2배, 2별 기준 = 3배. 입문은 3별 = 최단 수 그대로, 2별 = 3별 + 3.', '');
 lines.push('| ID | 난이도 | 순서 | 크기 | 도토리 | 빈 블록 | 가짜 길 | 최단 수 | 증명 | 3별 기준 | 2별 기준 | 탐색 상태 수 |');
 lines.push('|---|---|---|---|---|---|---|---|---|---|---|---|');
 for (const row of reportRows) {
@@ -418,6 +486,7 @@ writeFileSync(resolve(ROOT, 'docs/STAGE_REPORT.md'), lines.join('\n'));
 
 const short = log.filter((l) => l.made < l.spec.count);
 console.log(`완료: 정규 ${stagesOut.length}개, 일일 ${dailyOut.length}개, ${((Date.now() - t0) / 1000).toFixed(1)}초`);
+if (needRegen.length) console.log(`새 규칙의 해답을 못 찾은 판(전체 재생성 필요): ${needRegen.join(', ')}`);
 if (short.length) {
   console.log('목표 수량 미달 계획:');
   for (const l of short) console.log(`  ${l.spec.group} ${l.spec.size}x${l.spec.size}: ${l.made}/${l.spec.count}`, l.rejects);

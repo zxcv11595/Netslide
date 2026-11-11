@@ -228,15 +228,10 @@ export function createBoard({ stage, onMove, onLockedTap }) {
   // 이미 켜져 있던 타일은 그대로 두고 새로 켜지는 타일만 순서대로.
   function setFlow(cells, conn, { instant = false } = {}) {
     const reduce = instant || prefersReducedMotion();
-    // 켜지는 길은 "햄스터와 도토리가 실제로 이어진 길"뿐이다.
-    // 햄스터에서 이어지기만 하고 도토리에 닿지 못한 막다른 길은 켜지 않는다(이어진 것처럼 보이면 안 된다).
+    // 켜지는 길은 햄스터와 이어진 모든 길 조각이다(2026-11-11 밤: 성공 조건이 "모든 길 연결"로 바뀌었다).
     // lit: 칸 번호 → 햄스터에서 몇 칸째인지(햄스터 칸이 0)
     const lit = new Map();
-    for (let pos = 0; pos < cells.length; pos++) if (conn.dist[pos] === 0) lit.set(cells[pos], 0);
-    for (const g of conn.goals) {
-      if (!g.connected) continue;
-      for (let p = g.pos; p !== -1; p = conn.parent[p]) lit.set(cells[p], conn.dist[p] < 0 ? 0 : conn.dist[p]);
-    }
+    for (let pos = 0; pos < cells.length; pos++) if (conn.reached[pos]) lit.set(cells[pos], Math.max(0, conn.dist[pos]));
     let minNew = Infinity;
     for (const [id, d] of lit) if (!litPrev.has(id)) minNew = Math.min(minNew, d);
     tileEls.forEach((node, id) => {
@@ -314,26 +309,34 @@ export function createBoard({ stage, onMove, onLockedTap }) {
       for (const g of btnMap.values()) g.classList.remove('hinted');
       if (move) btnMap.get(`${move.axis}:${move.index}:${move.dir}`)?.classList.add('hinted');
     },
-    // 벽 보기 힌트: 나무 울타리 모양의 벽을 칸 사이에 세운다. 조각을 밀어도 벽은 제자리에 남는다.
+    // 벽 보기 힌트: 칸 경계를 따라 이어진 나무 울타리. 판 둘레에도 칸마다 치고, 칸 모서리마다 흰 점(기둥)을 둔다.
+    // 조각을 밀어도 벽은 제자리에 남는다. (2026-11-12 사용자 지정: 보드는 예전 모양, 벽만 새 모양)
     setWalls(walls) {
       root.querySelector('.walls')?.remove();
       if (!walls || !walls.length) return;
       const g = svg('g', { class: 'walls', transform: `translate(${OFF} ${OFF})`, 'pointer-events': 'none' });
-      for (const w of walls) {
-        const [x1, y1, x2, y2] = w.dir === 'v'
-          ? [(w.c + 1) * C, w.r * C + 14, (w.c + 1) * C, w.r * C + 86]
-          : [w.c * C + 14, (w.r + 1) * C, w.c * C + 86, (w.r + 1) * C];
-        g.appendChild(svg('line', { x1, y1, x2, y2, class: 'wall-edge' }));
-        g.appendChild(svg('line', { x1, y1, x2, y2, class: 'wall-face' }));
-      }
-      // 판 가장자리: 길은 판 밖으로 이어지지 않으므로 둘레에도 칸마다 벽을 세운다
       const edge = n * C;
-      for (let i = 0; i < n; i++) {
-        for (const [x1, y1, x2, y2] of [[i * C + 14, 0, i * C + 86, 0], [i * C + 14, edge, i * C + 86, edge], [0, i * C + 14, 0, i * C + 86], [edge, i * C + 14, edge, i * C + 86]]) {
-          g.appendChild(svg('line', { x1, y1, x2, y2, class: 'wall-edge' }));
-          g.appendChild(svg('line', { x1, y1, x2, y2, class: 'wall-face' }));
-        }
+      const segs = new Map();
+      const add = (x1, y1, x2, y2) => segs.set(`${x1},${y1},${x2},${y2}`, [x1, y1, x2, y2]);
+      for (const w of walls) {
+        if (w.dir === 'v') add((w.c + 1) * C, w.r * C, (w.c + 1) * C, (w.r + 1) * C);
+        else add(w.c * C, (w.r + 1) * C, (w.c + 1) * C, (w.r + 1) * C);
       }
+      for (let i = 0; i < n; i++) {
+        add(i * C, 0, (i + 1) * C, 0);
+        add(i * C, edge, (i + 1) * C, edge);
+        add(0, i * C, 0, (i + 1) * C);
+        add(edge, i * C, edge, (i + 1) * C);
+      }
+      const joints = new Map();
+      const d = [...segs.values()].map(([x1, y1, x2, y2]) => {
+        joints.set(`${x1},${y1}`, [x1, y1]);
+        joints.set(`${x2},${y2}`, [x2, y2]);
+        return `M${x1} ${y1}L${x2} ${y2}`;
+      }).join('');
+      g.appendChild(svg('path', { d, class: 'wall-edge' }));
+      g.appendChild(svg('path', { d, class: 'wall-face' }));
+      for (const [cx, cy] of joints.values()) g.appendChild(svg('circle', { cx, cy, r: 5.5, class: 'wall-post' }));
       tilesLayer.after(g);
     },
     // 완료 순간: 굴 전체가 한 번 반짝인다
