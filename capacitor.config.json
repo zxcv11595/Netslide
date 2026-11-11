@@ -1,0 +1,7 @@
+{
+  "appId": "io.github.zxcv11595.nutslide",
+  "appName": "Nutslide",
+  "webDir": "dist",
+  "backgroundColor": "#fff9ee",
+  "android": { "allowMixedContent": false }
+}
