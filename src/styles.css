@@ -1,14 +1,14 @@
 /* 크림 톤 디자인(확정 시안 8차). 굴과 햄스터 얼굴은 보드 SVG에서 그린다. */
 :root {
-  --bg: #fff9ee;
-  --panel: #fff1d8;
-  --tile: #f4e0bd;
-  --ink: #55301d;
-  --soft: #9a7a5a;
-  --pt: #ee962b;
-  --pt-d: #c96f12;
-  --line: #e1c59e;
-  --edge: #b98f5e;
+  --bg: #faf6ed;
+  --panel: #f4e8d2;
+  --tile: #e9d6b4;
+  --ink: #593d29;
+  --soft: #876c50;
+  --pt: #df9b3b;
+  --pt-d: #ac6d27;
+  --line: #dbc5a2;
+  --edge: #b48d5b;
   color-scheme: light;
 }
 
@@ -35,30 +35,24 @@ svg.ic.bulb { width: 26px; height: 26px; fill: #ffd04a; stroke: var(--ink); stro
 svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 
 /* ---------- 공통 조각 ---------- */
-.btn {
-  background: var(--panel); border: 2px solid var(--edge); border-radius: 16px; box-shadow: 0 3px 0 var(--line);
+.btn { border-radius: 16px;
   display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 900;
 }
-.btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--line); }
 .btn:disabled { opacity: 0.45; cursor: default; }
 .btn.sq { width: 46px; height: 46px; flex: none; padding: 0; }
 .btn.sq.small { width: 42px; height: 42px; border-radius: 14px; }
 .sq-space { width: 46px; flex: none; }
 .btn.wide { height: 54px; font-size: 1.05rem; }
 .go {
-  width: 100%; height: 60px; border-radius: 999px; flex: none;
-  background: linear-gradient(180deg, #f8aa3f, #ee8a1f); color: #fff; font-size: 1.35rem; font-weight: 900;
+  width: 100%; height: 60px; border-radius: 999px; flex: none; color: #fff; font-size: 1.35rem; font-weight: 900;
   display: flex; align-items: center; justify-content: center; gap: 12px;
-  border: 2px solid var(--pt-d); box-shadow: 0 4px 0 var(--pt-d);
 }
 .go:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--pt-d); }
 .mini-go {
-  margin-left: auto; height: 38px; padding: 0 18px; border-radius: 999px; flex: none;
-  background: linear-gradient(180deg, #f8aa3f, #ee8a1f); color: #fff; font-weight: 900; font-size: 0.95rem;
-  border: 2px solid var(--pt-d); box-shadow: 0 3px 0 var(--pt-d);
+  margin-left: auto; height: 38px; padding: 0 18px; border-radius: 999px; flex: none; color: #fff; font-weight: 900; font-size: 0.95rem;
 }
-.card { background: var(--panel); border: 2px solid var(--line); border-radius: 20px; }
-.hr { height: 2px; background: var(--line); border-radius: 2px; flex: none; }
+.card { border-radius: 20px; }
+.hr { height: 2px; border-radius: 2px; flex: none; }
 .head-row { display: flex; align-items: center; gap: 10px; }
 .screen-title { flex: 1; text-align: center; font-size: 1.5rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .head { display: flex; align-items: center; justify-content: space-between; font-size: 1.2rem; font-weight: 900; }
@@ -66,7 +60,6 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 .notice { color: var(--soft); font-size: 0.78rem; font-weight: 500; }
 .notice.center { text-align: center; }
 .notice.warn { background: #ffe9c7; border: 2px solid var(--pt); border-radius: 12px; padding: 8px 12px; color: var(--ink); font-size: 0.9rem; font-weight: 700; }
-.hint-text { color: var(--soft); font-size: 0.9rem; text-align: center; }
 
 .screen { min-height: 100vh; min-height: 100dvh; }
 .pad {
@@ -77,10 +70,8 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 
 /* ---------- 아래 탭 ---------- */
 .tabbar {
-  position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; width: min(100%, 480px); z-index: 5;
-  height: calc(68px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);
-  background: var(--panel); border-top: 2px solid var(--line);
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; width: min(100%, 480px); z-index: 5; padding-bottom: env(safe-area-inset-bottom);
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; /* 탭 개수에 맞춰 같은 너비로 나눈다 */
 }
 .tabbar button {
   border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
@@ -88,7 +79,7 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 }
 .tabbar svg.ic { width: 25px; height: 25px; }
 .tabbar .on { color: var(--ink); }
-.tabbar .on span { background: var(--pt); color: #fff; border-radius: 999px; padding: 1px 10px; }
+.tabbar .on span { background: var(--pt); color: #fff; border-radius: 999px; }
 
 /* ---------- 햄스터 프레임 (원본 비율 고정) ---------- */
 .hamster-frame { position: relative; aspect-ratio: 1312 / 1199; flex: none; }
@@ -115,7 +106,6 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 
 /* ---------- 별 ---------- */
 .star path { fill: #f7a928; stroke: var(--pt-d); stroke-width: 1.4; stroke-linejoin: round; }
-.star.off path { fill: #e6d3b3; stroke: #d2bb95; }
 .stars-row { display: inline-flex; gap: 1px; vertical-align: middle; }
 .result-stars { display: flex; justify-content: center; gap: 4px; min-height: 50px; }
 .result-stars .star.pending path { fill: #e6d3b3; stroke: #d2bb95; }
@@ -127,17 +117,17 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 }
 
 /* ---------- 홈 ---------- */
-.top-row { display: flex; justify-content: flex-end; gap: 8px; height: 42px; }
 .hero { position: relative; height: 128px; margin-top: -16px; }
 .logo {
   position: absolute; left: 2px; top: 8px; width: 58%;
   font-size: clamp(1.9rem, 10vw, 2.45rem); font-weight: 900; line-height: 1.12; letter-spacing: -0.04em; word-break: keep-all;
 }
 .logo::after {
-  content: ""; position: absolute; left: 6px; bottom: -12px; width: 150px; max-width: 80%; height: 9px;
+  content: ""; position: absolute; bottom: -12px; width: 150px; max-width: 80%; height: 9px;
   border-radius: 999px; background: var(--pt); transform: rotate(-3deg);
 }
 .hero-ham { position: absolute; right: -6px; top: -14px; width: min(43%, 168px); }
+.logo-sub { position: absolute; left: 6px; top: 80px; font-size: 0.92rem; font-weight: 800; color: var(--soft); letter-spacing: -0.01em; white-space: nowrap; }
 .go-sub { text-align: center; font-size: 0.95rem; margin-top: -6px; }
 .daily { padding: 10px 14px 12px; }
 .daily-top { display: flex; align-items: center; gap: 8px; }
@@ -147,54 +137,59 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 .week { display: flex; justify-content: space-between; margin-top: 8px; }
 .day { width: 40px; text-align: center; font-size: 0.7rem; color: var(--soft); }
 .day i {
-  display: grid; place-items: center; width: 34px; height: 34px; margin: 2px auto 0; border-radius: 50%;
-  background: #fff; border: 2px solid var(--line); font-style: normal; font-size: 0.8rem; font-weight: 900; color: var(--soft);
+  display: grid; place-items: center; width: 34px; height: 34px; margin: 2px auto 0; border-radius: 50%; border: 2px solid var(--line); font-style: normal; font-size: 0.8rem; font-weight: 900; color: var(--soft);
 }
 .day.done i { background: #f7a928; border-color: var(--pt-d); color: #fff; }
 .day.today i { border: 3px solid var(--pt); color: var(--ink); }
 .stat3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.stat3 > div {
-  background: var(--panel); border: 2px solid var(--line); border-radius: 14px; padding: 6px 4px;
+.stat3 > div { border-radius: 14px; padding: 6px 4px;
   text-align: center; font-size: 0.75rem; color: var(--soft); line-height: 1.3;
 }
 .stat3 b { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 1.2rem; font-weight: 900; color: var(--ink); }
-.tier { position: relative; width: 100%; padding: 10px 14px 16px; text-align: left; min-height: 56px; }
+.tier, .tier-soon { min-height: 64px; }
+.tier { position: relative; width: 100%; padding: 10px 14px 16px; text-align: left; }
 .tier b { font-size: 1.12rem; font-weight: 900; flex: 1; }
 .tier .meta, .rec .meta { font-size: 0.88rem; font-weight: 900; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.tier .tier-progress { flex-direction: column; align-items: flex-end; gap: 2px; }
+.tier .tier-stars { display: inline-flex; align-items: center; gap: 4px; }
 .bar { position: absolute; left: 14px; right: 14px; bottom: 7px; height: 5px; border-radius: 9px; background: var(--line); overflow: hidden; }
 .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--pt); }
-.tier.cur { border-color: var(--pt); box-shadow: 0 0 0 2px var(--pt), 0 3px 0 var(--line); background: #ffe7bf; }
-.tier.lock { background: #f3e7d0; color: #b09a7c; box-shadow: none; border-color: var(--line); }
 
 /* ---------- 스테이지 목록 ---------- */
 .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 .lv {
-  height: 76px; border-radius: 14px; background: var(--tile); border: 2px solid var(--line); box-shadow: 0 3px 0 var(--line);
+  height: 76px; border-radius: 14px;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   font-size: 1.3rem; font-weight: 900;
 }
 .lv.done { background: var(--panel); }
-.lv.cur { background: #ffe1ae; border: 3px solid var(--pt); box-shadow: 0 3px 0 var(--pt-d); }
-.lv.lock { color: #a58a68; box-shadow: none; cursor: default; }
+.lv.cur { border: 3px solid var(--pt); }
+.lv.lock { cursor: default; }
 
 /* ---------- 오늘의 도전(달력) ---------- */
-.cal { padding: 12px; }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
-.cal-grid .dow { font-size: 0.72rem; color: var(--soft); }
+.cal { padding: 14px 10px 10px; }
+.cal-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.cal-nav b { font-size: 1.25rem; font-weight: 900; }
+.cal-nav .flip svg { transform: scaleX(-1); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 4px; text-align: center; }
+.cal-grid .dow { font-size: 0.78rem; font-weight: 800; color: var(--soft); padding-bottom: 8px; border-bottom: 2px solid var(--line); margin-bottom: 6px; }
+.cal-grid .dow.sun, .cal-day.sun b { color: #c2553a; }
+.cal-grid .dow.sat, .cal-day.sat b { color: #4f7ca8; }
 .cal-day {
-  height: 44px; border-radius: 10px; background: #fff; border: 2px solid var(--line); padding: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 900; line-height: 1.1;
+  height: 50px; padding: 0; border: 0; border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 1px;
 }
-.cal-day small { font-size: 0.56rem; color: var(--pt-d); }
-.cal-day.miss { background: #f6ecd8; color: var(--soft); }
-.cal-day.done { background: #ffe7bf; border-color: var(--pt); }
-.cal-day.today { background: var(--pt); color: #fff; border-color: var(--pt-d); }
-.cal-day.today small { color: #fff; }
-.cal-day.future { background: transparent; border-style: dashed; color: #c9b79b; cursor: default; }
+.cal-day b { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 0.98rem; font-weight: 800; border: 2px solid transparent; }
+.cal-day small { height: 12px; font-size: 0.56rem; line-height: 12px; letter-spacing: -0.06em; color: var(--pt-d); }
+.cal-day.done b { background: #ffe7bf; border-color: var(--pt); }
+.cal-day.today b, .cal-day.today.sun b, .cal-day.today.sat b { background: var(--pt); border-color: var(--pt-d); color: #fff; }
+.cal-day.future { cursor: default; }
+.cal-day:not(:disabled):active b { transform: scale(0.94); }
+.cal-streak { text-align: center; font-size: 0.88rem; font-weight: 800; color: var(--pt-d); min-height: 1.2em; margin: -4px 0; }
 
 /* ---------- 상점 / 기록 / 설정 ---------- */
 .prod { display: flex; align-items: center; gap: 12px; padding: 14px; }
-.prod-pic { width: 54px; height: 54px; border-radius: 16px; background: #fff; border: 2px solid var(--line); display: grid; place-items: center; flex: none; }
+.prod-pic { width: 54px; height: 54px; border-radius: 16px; border: 2px solid var(--line); display: grid; place-items: center; flex: none; }
 .prod-txt { flex: 1; min-width: 0; }
 .prod-txt b { display: block; font-size: 1.08rem; font-weight: 900; }
 .prod-txt small { display: block; font-size: 0.8rem; color: var(--soft); line-height: 1.35; }
@@ -205,14 +200,12 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 .set .r { display: flex; align-items: center; min-height: 54px; border-bottom: 2px solid var(--line); font-size: 1rem; font-weight: 900; }
 .set .r:last-child { border-bottom: 0; }
 .set .r span { margin-left: auto; font-size: 0.88rem; color: var(--soft); }
-.tg { margin-left: auto; width: 52px; height: 30px; border-radius: 999px; background: var(--pt); border: 2px solid var(--pt-d); position: relative; padding: 0; }
-.tg::after { content: ""; position: absolute; right: 2px; top: 2px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: right 120ms; }
-.tg.off { background: #d9c8ab; border-color: #bfa983; }
-.tg.off::after { right: 24px; }
+.tg { margin-left: auto; border-radius: 999px; position: relative; padding: 0; }
+.tg::after { content: ""; position: absolute; border-radius: 50%; transition: right 120ms; }
 
 /* ---------- 게임 ---------- */
 .screen.play {
-  height: 100vh; height: 100dvh; display: flex; flex-direction: column; gap: 10px;
+  height: 100vh; height: 100dvh; display: flex; flex-direction: column;
   padding: calc(12px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right))
     calc(14px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));
 }
@@ -224,43 +217,42 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 .chip b { font-size: 1.1rem; color: var(--ink); font-weight: 900; }
 .hint { position: relative; }
 .hint .cnt {
-  position: absolute; right: -7px; top: -8px; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 999px;
-  background: var(--pt); color: #fff; border: 2px solid #fff; display: grid; place-items: center; font-size: 0.75rem; font-weight: 900;
+  position: absolute; right: -7px; top: -8px; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 999px; display: grid; place-items: center; font-size: 0.75rem; font-weight: 900;
 }
-.tip { padding: 8px 12px; font-size: 0.95rem; text-align: center; }
-.board-wrap { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; margin: 0 -8px; }
-.board { width: 100%; height: 100%; display: block; user-select: none; -webkit-user-select: none; }
-.meter { display: flex; align-items: center; gap: 10px; padding: 6px 14px 18px; border-radius: 16px; }
-.live-stars { display: flex; gap: 1px; flex: none; }
-.track { position: relative; flex: 1; height: 10px; border-radius: 999px; background: var(--line); }
+/* 별은 위, 보드는 가운데, 되돌리기/재시작은 보드 아래에 둔다. */
+.screen.play > .sky { flex-shrink: 0; }
+.play-controls { margin-top: 0; flex: none; }
+.board-wrap { flex: 1 1 0; min-height: min(70vw, 240px); display: flex; align-items: center; justify-content: center; margin: 0 -8px; }
+.screen.play > .board-wrap { padding-bottom: 18px; }
+.board-cluster { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-height: 100%; min-height: 0; }
+.board-cluster > .board { flex: 0 1 auto; min-height: 0; }
+.board-cluster > .play-controls {
+  width: auto; min-width: 240px; height: 54px; margin-top: 0; flex: none;
+  display: flex; align-items: flex-start; justify-content: center; gap: 22px;
+  transform: translateY(24px);
+}
+.screen.play .play-controls > .btn.wide {
+  height: 50px; min-width: 128px; padding: 0 16px; border-radius: 999px; font-size: .96rem;
+}
+.board { overflow: visible; width: 100%; height: auto; max-height: 100%; display: block; user-select: none; -webkit-user-select: none; }
+/* 기존 입문 설명 두 줄의 공간만 남겨 보드 중심을 유지한다. */
+.track { position: relative; margin-left: 76px; height: 8px; border-radius: 999px; background: var(--line); }
 .track .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--pt); transition: width 160ms ease-out; }
-.track .mark { position: absolute; top: 14px; white-space: nowrap; font-size: 0.68rem; line-height: 1; color: var(--soft); }
-.track .mark.m3 { transform: translateX(-100%); padding-right: 1px; }
-.track .mark.m3 i { left: 100%; }
-.track .mark.m2 { transform: translateX(-12%); }
-.track .mark.m2 i { left: 12%; }
-.track .mark i { position: absolute; top: -18px; width: 2.5px; height: 18px; margin-left: -1.25px; border-radius: 2px; background: var(--ink); opacity: 0.55; }
-.two { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 12px; }
+.track .mark { position: absolute; top: -20px; display: flex; gap: 1px; line-height: 0; transform: translateX(-50%); padding: 0; }
+.track .mark i { position: absolute; left: 50%; top: 12px; width: 2px; height: 16px; margin-left: -1px; border-radius: 2px; background: var(--ink); opacity: .55; }
+.two { margin-top: 18px; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 12px; }
+/* 약한 버튼: 위의 이동·배달 칩과 같은 색, 입체감 없음 */
 .btn.hinted { border-color: var(--pt); box-shadow: 0 0 0 3px var(--pt), 0 3px 0 var(--line); animation: hint-pulse 900ms ease-in-out infinite; }
 
 /* ---------- 보드 SVG ---------- */
-.board-frame { fill: #ecd6ae; stroke: #d3b585; stroke-width: 3; }
-.tile-bg { fill: var(--tile); stroke: var(--line); stroke-width: 2; }
 
-.tunnel-edge { fill: none; stroke: #5e371c; stroke-width: 36; }
-.tunnel-edge-dot { fill: #5e371c; }
-.tunnel { fill: none; stroke: #c9a57b; stroke-width: 27; }
-.tunnel-dot { fill: #c9a57b; }
-.tunnel-dot.chamber { fill: #fff6e3; }
-.kind-source .tunnel-dot.chamber { fill: #ffd666; }
+.tunnel-edge { fill: none; }
+.tunnel { fill: none; }
 
 .flow { opacity: 0; transition: opacity 130ms linear; }
 .tile.lit .flow { opacity: 1; transition-delay: var(--flow-delay, 0ms); }
-.flow-tunnel { fill: none; stroke: #ffb53d; stroke-width: 27; }
-.flow-dot { fill: #ffb53d; }
-.kind-goal .flow-dot { fill: #ffd27a; }
-.kind-source .flow-dot { fill: #ffd666; }
-.flow-seeds { fill: none; stroke: #7a4a21; stroke-width: 6.5; stroke-linecap: round; stroke-dasharray: 1 17; }
+.flow-tunnel { fill: none; }
+.flow-seeds { fill: none; stroke-linecap: round; }
 .board.all-done .flow-seeds { animation: seeds-run 500ms linear 2; }
 @keyframes seeds-run { to { stroke-dashoffset: -36; } }
 
@@ -270,24 +262,15 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 .eyes-happy { opacity: 0; }
 .tile.lit .eyes-happy { opacity: 1; }
 .tile.lit .eyes-open { opacity: 0; }
-.ok-badge { opacity: 0; }
-.ok-badge circle { fill: #5aa33a; stroke: #fff; stroke-width: 3; }
-.ok-badge path { fill: none; stroke: #fff; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
-.tile.lit .ok-badge { opacity: 1; transition: opacity 80ms linear var(--flow-delay, 0ms); }
-.oneway-arrow path { fill: #fffaf0; stroke: #5e371c; stroke-width: 3.5; }
-.oneway-tick path { stroke: #5e371c; stroke-width: 3.5; }
+.oneway-arrow path { stroke-width: 3.5; }
+.oneway-tick path { stroke-width: 3.5; }
 
 .btns .edge-btn { cursor: pointer; outline: none; }
 .btn-hit { fill: transparent; }
-.btn-shadow { fill: var(--line); }
-.btn-face { fill: #fff6e3; stroke: var(--edge); stroke-width: 2.5; }
-.btn-arrow { fill: none; stroke: var(--ink); stroke-width: 5.5; stroke-linecap: round; stroke-linejoin: round; }
-.btns .edge-btn:active .btn-face { fill: #ffe1ae; }
+.btn-arrow { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .btns .edge-btn:focus-visible .btn-face { stroke: #1f5fbf; stroke-width: 5; }
 .btns .edge-btn.locked { cursor: default; }
-.btns .edge-btn.locked .btn-face { fill: #efe3cc; stroke: #cdb893; }
-.btn-lock { fill: #9a8364; stroke: #9a8364; stroke-width: 4; stroke-linecap: round; }
-.btns .edge-btn.hinted .btn-face { fill: #ffd04a; stroke: var(--pt-d); stroke-width: 5; animation: hint-pulse 900ms ease-in-out infinite; }
+.btn-lock { stroke-width: 4; stroke-linecap: round; }
 @keyframes hint-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.55; }
@@ -303,18 +286,16 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 /* ---------- 결과 ---------- */
 .result-overlay, .modal-overlay {
   position: fixed; inset: 0; z-index: 20;
-  display: grid; place-items: center; padding: 22px;
-  background: rgba(60, 40, 22, 0.58); overflow-y: auto;
+  display: grid; place-items: center; padding: 22px; overflow-y: auto;
 }
 .result-card, .modal-card {
-  width: min(100%, 350px); padding: 24px 24px 18px;
-  background: var(--bg); border: 3px solid var(--edge); outline: 2px solid var(--line); outline-offset: -10px; border-radius: 30px;
+  width: min(100%, 350px); padding: 24px 24px 18px; outline-offset: -10px;
   display: flex; flex-direction: column; gap: 12px; text-align: center;
   animation: card-in 160ms ease-out 1;
 }
 @keyframes card-in { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
 .result-card h2 { font-size: 2.05rem; font-weight: 900; letter-spacing: -0.02em; }
-.res-ham { position: relative; width: min(52vw, 210px); margin: 0 auto; }
+.res-ham { position: relative; }
 .res-ham i { position: absolute; width: 20px; height: 7px; border-radius: 9px; background: var(--pt); opacity: 0; transition: opacity 160ms linear; }
 .res-ham.cheer i { opacity: 1; }
 .res-ham i:nth-child(1) { left: -8px; top: 26%; transform: rotate(35deg); }
@@ -322,27 +303,23 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 .res-ham i:nth-child(3) { right: -8px; top: 26%; transform: rotate(-35deg); }
 .res-ham i:nth-child(4) { right: -18px; top: 40%; transform: rotate(-10deg); }
 .pill {
-  align-self: center; padding: 4px 20px; border-radius: 999px; background: var(--panel); border: 2px solid var(--line);
+  align-self: center; padding: 4px 20px; border-radius: 999px; background: var(--panel);
   font-size: 0.95rem; color: var(--soft); display: flex; align-items: center; gap: 6px;
 }
 .pill b { font-size: 1.25rem; color: var(--ink); font-weight: 900; }
 .new { background: var(--pt); color: #fff; border-radius: 999px; padding: 1px 10px; font-size: 0.75rem; font-weight: 900; }
 .new.plain { background: var(--tile); color: var(--ink); }
 .got-hint { font-size: 0.88rem; display: flex; align-items: center; justify-content: center; gap: 4px; }
-.result-card .btn.wide { height: 50px; font-size: 1rem; }
+.result-card .btn.wide { font-size: 1rem; }
 .link-btn { border: 0; background: none; font-size: 1rem; font-weight: 900; text-decoration: underline; text-underline-offset: 5px; padding: 4px; align-self: center; }
 .copy-area { width: 100%; font: inherit; font-weight: 500; border: 2px solid var(--line); border-radius: 10px; padding: 8px; resize: none; }
 
 /* ---------- 안내 ---------- */
 .toast {
-  position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom)); z-index: 40;
-  transform: translate(-50%, 12px);
-  max-width: min(92vw, 420px); padding: 10px 16px;
-  border-radius: 14px; background: var(--ink); color: #fff;
-  font-size: 0.92rem; text-align: center;
+  position: fixed; left: 50%; z-index: 40; text-align: center;
   opacity: 0; pointer-events: none; transition: opacity 160ms, transform 160ms;
 }
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.show { opacity: 1; }
 
 #app.paused { filter: saturate(0.6) brightness(0.9); }
 
@@ -362,10 +339,9 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
   .day i { width: 30px; height: 30px; }
 }
 @media (max-height: 620px) {
-  .screen.play { gap: 7px; padding-top: calc(8px + env(safe-area-inset-top)); padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
+  .screen.play { padding-top: calc(8px + env(safe-area-inset-top)); padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
   .btn.wide { height: 46px; }
   .chip { height: 32px; }
-  .meter { padding: 4px 12px 16px; }
 }
 
 /* ---------- 동작 줄이기 ---------- */
@@ -377,16 +353,756 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
 }
 
 /* ---------- 준비 중인 자리: 점선 ---------- */
-.ghost { background: transparent; border: 2px dashed var(--edge); box-shadow: none; color: var(--soft); border-radius: 16px; }
+.ghost { color: var(--soft); border-radius: 16px; }
 .btn.ghost:active { transform: none; box-shadow: none; }
 .noad { height: 42px; padding: 0 12px; font-size: 0.82rem; border-radius: 14px; }
-.tier-soon { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; min-height: 52px; }
+.tier-soon { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; }
 .tier-soon b { font-size: 1.12rem; font-weight: 900; }
 .tier-soon span, .soon { font-size: 0.8rem; font-weight: 700; color: var(--soft); white-space: nowrap; }
 .ghost.prod { opacity: 0.85; }
 .ghost.prod .prod-pic { background: transparent; border-style: dashed; }
-.ad-slot { height: 48px; display: grid; place-items: center; font-size: 0.75rem; font-weight: 500; border-radius: 10px; flex: none; }
 .set .r.soon { color: var(--soft); }
 .set .r.soon span { border: 1.5px dashed var(--edge); border-radius: 999px; padding: 1px 10px; font-size: 0.75rem; }
-@media (max-height: 620px) { .ad-slot { height: 38px; } }
-.lv-done { font-size: 0.7rem; color: var(--soft); font-weight: 700; }
+
+/* ---------- 밝은 원목: 배치/간격/조작은 유지하고 표면만 통일 ---------- */
+/* 일반 화면도 원목 보드와 같은 크림·꿀색 계열로 맞춘다. */
+.btn:not(.ghost), .lv, .card:not(.meter) {
+  background-image: linear-gradient(180deg, rgba(255,255,255,.22), rgba(188,145,83,.035));
+}
+.go, .mini-go { background: linear-gradient(180deg, #edb454, #d88c2c); }
+.day i, .cal-day, .prod-pic { background: #fffaf1; }
+.star.off path { fill: #e9dcc5; stroke: #bfa780; }
+
+/* 하늘/잔디/땅의 단면을 없애고 하나의 밝은 작업판으로 읽히게 한다. */
+.screen.play { background: #f4ead9; color: var(--ink); }
+.screen.play .sky {
+  position: relative; margin: calc(-12px - env(safe-area-inset-top)) calc(-14px - env(safe-area-inset-right)) 0 calc(-14px - env(safe-area-inset-left));
+  padding: calc(10px + env(safe-area-inset-top)) 14px 34px;
+  display: flex; flex-direction: column; gap: 8px;
+  background: linear-gradient(180deg, #fcf8f0, #f4ead9); color: var(--ink);
+}
+.screen.play .sky::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 24px;
+  background: transparent; border-top: 4px solid transparent; border-radius: 0;
+}
+.screen.play .btn.hinted { box-shadow: 0 0 0 3px #e5a13c, 0 4px 0 #d1b17d; }
+.screen.play .chip {
+  background: #fcf5e7; border: 3px solid #cfb48a; box-shadow: 0 3px 0 #e2ccaa; color: #84694a;
+}
+.screen.play .chip b { color: #593d29; }
+.screen.play .track { background: #ddc9a8; }
+.screen.play .track .mark { color: #795b3c; }
+.screen.play .track .mark i { background: #795b3c; opacity: .65; }
+.screen.play .star path { stroke: #ac6d27; }
+
+/* 어두운 굴의 내벽 대신, 나무 길의 두께와 밝은 윗면을 표현한다. */
+.board-frame { fill: var(--wood-rim, #ceaa75); stroke: #a47b4d; stroke-width: 4; }
+.tile-bg { fill: var(--wood-tile, #e4cfaa); stroke: #c7a574; stroke-width: 1.5; }
+.wood-grain { fill: none; stroke: #a47740; stroke-width: 1.15; opacity: .17; stroke-linecap: round; pointer-events: none; }
+.walk-shadow { fill: none; stroke: #ac8350; stroke-width: 35; transform: translateY(3px); opacity: .65; }
+.tunnel-edge { stroke: #ae844d; stroke-width: 33; }
+.tunnel-edge-dot { fill: #ae844d; }
+.tunnel { stroke: var(--wood-walk, #f5dba5); stroke-width: 28; }
+.tunnel-dot { fill: var(--wood-walk, #f4d99f); }
+.tunnel-dot.chamber { fill: #fff2ce; }
+.kind-source .tunnel-dot.chamber { fill: #f6d187; }
+.flow-tunnel { stroke: #eab35b; stroke-width: 28; }
+.flow-dot { fill: #eab35b; }
+.kind-goal .flow-dot { fill: #f6d99e; }
+.kind-source .flow-dot { fill: #f4cd79; }
+/* 길 중앙의 상시 점선은 빼고 완료 순간의 짧은 도토리 연출만 남긴다. */
+.flow-seeds { opacity: 0; stroke: #946331; stroke-width: 4.5; stroke-dasharray: 1 17; }
+.board.all-done .flow-seeds { opacity: .7; }
+.oneway-arrow path { fill: #fff8e7; stroke: #886236; }
+.oneway-tick path { stroke: #886236; }
+.btn-face { fill: #f2ddb6; stroke-width: 3.5; }
+.btn-arrow { stroke-width: 6; }
+.btns .edge-btn:active .btn-face { fill: #e6c58f; }
+.btns .edge-btn.locked .btn-face { fill: #e5ddcd; }
+.btn-lock { fill: #9a8c74; stroke: #9a8c74; }
+.result-overlay, .modal-overlay { background: rgba(70, 52, 31, .48); }
+.result-card, .modal-card { background: var(--panel); }
+
+/* 둥근 길의 모양·밝은 색을 유지하며 잔결만 얹는다. 판재 이음새는 넣지 않는다. */
+.walk-surface-grain {
+  fill: none; stroke: #b78a4c; stroke-width: 1.15; opacity: .28;
+  stroke-linecap: round; pointer-events: none;
+}
+
+/* ---------- 힌트 창(힌트 보기 / 바로 클리어 / 돌아가는 길 확인) ---------- */
+.hint-sheet { gap: 10px; }
+.hint-sheet h2 { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.hint-sheet h2 b { display: inline-flex; align-items: center; gap: 2px; font-size: 1.05rem; padding: 2px 12px; border-radius: 999px; background: var(--panel); }
+.hint-sheet .choice { width: 100%; height: auto; min-height: 64px; padding: 9px 16px; border-radius: 18px; flex-direction: column; gap: 2px; font-size: 1.1rem; }
+.hint-sheet .choice .ch-main { display: flex; align-items: center; gap: 10px; }
+.hint-sheet .choice em { font-style: normal; display: inline-flex; align-items: center; font-size: 0.95rem; }
+.hint-sheet .choice em svg.ic.bulb { width: 20px; height: 20px; }
+.hint-sheet .choice small { font-size: 0.76rem; font-weight: 500; opacity: 0.9; }
+.hint-sheet .choice:disabled { opacity: 0.45; cursor: default; transform: none; }
+.hint-sheet .notice { font-size: 0.82rem; }
+.hint-sheet .soon-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem; font-weight: 700; }
+.btn.sq.hint.busy { animation: hint-pulse 900ms ease-in-out infinite; opacity: 0.7; }
+
+/* ---------- 힌트 길을 찾는 동안 판 위에 뜨는 표시 ---------- */
+.board-wrap { position: relative; }
+.seeking {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5;
+  display: flex; align-items: center; justify-content: center; border-radius: 999px;
+  font-weight: 900; line-height: 1.3; white-space: nowrap; pointer-events: none;
+  animation: seeking-enter 140ms ease-out;
+}
+.seeking[hidden] { display: none; }
+.seeking-dots { display: inline-flex; align-items: center; flex: none; }
+.seeking-dots b { border-radius: 70% 30% 65% 35%; background: var(--pt); }
+@keyframes seeking-enter {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 3px)); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+@media (prefers-reduced-motion: reduce) { .seeking { animation: none; } }
+
+/* ---------- 탭바 글씨가 두 줄로 꺾이지 않게 ---------- */
+.tabbar span { white-space: nowrap; }
+
+/* ---------- 판 가운데 안내(길 찾는 중 / 힌트 안내) ---------- */
+.board-note {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5;
+  width: max-content; max-width: min(86vw, 320px); padding: 14px 22px; border-radius: 22px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
+  pointer-events: none; animation: seeking-enter 140ms ease-out;
+}
+.board-note[hidden] { display: none; }
+.board-note b { font-size: 1.2rem; font-weight: 900; line-height: 1.3; }
+.board-note span { font-size: 0.9rem; font-weight: 700; line-height: 1.5; color: var(--soft); word-break: keep-all; }
+
+/* ---------- 힌트 화살표: 누른 색과 헷갈리지 않게 깜빡인다 ---------- */
+.btns .edge-btn.hinted .btn-face { fill: #ffd04a; stroke-width: 4; animation: edge-blink 760ms ease-in-out infinite; }
+@keyframes edge-blink {
+  0%, 100% { fill: #fff3cf; filter: drop-shadow(0 0 0 rgba(238, 150, 43, 0)); }
+  50% { fill: #f5a02c; filter: drop-shadow(0 0 7px rgba(238, 150, 43, 0.95)); }
+}
+
+/* ---------- 힌트 창: 받는 법 목록, 안내 글 ---------- */
+.hint-sheet .earn { display: flex; flex-direction: column; gap: 6px; text-align: left; margin-top: 2px; }
+.hint-sheet .earn h3 { margin: 8px 2px 0; font-size: 0.82rem; font-weight: 900; color: var(--soft); }
+.hint-sheet .earn-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 14px; background: var(--panel); font-size: 0.92rem; font-weight: 800; }
+.hint-sheet .earn-row > svg { flex: none; }
+.hint-sheet .earn-row span { flex: 1; }
+.hint-sheet .earn-row b { display: inline-flex; align-items: center; gap: 2px; font-weight: 900; color: var(--pt-d); }
+.hint-sheet .earn-row b svg.ic.bulb { width: 18px; height: 18px; }
+.hint-sheet .soon-row { padding: 9px 12px; border-radius: 14px; }
+.hint-sheet .sheet-text { font-size: 1rem; font-weight: 700; line-height: 1.6; word-break: keep-all; }
+.hint-sheet .sheet-text b { font-weight: 900; color: var(--pt-d); }
+.hint-sheet .sheet-sub { font-size: 0.82rem; font-weight: 700; color: var(--soft); margin-top: -4px; }
+.hint-sheet .go.choice .ch-main { gap: 8px; }
+@media (prefers-reduced-motion: reduce) {
+  .board-note { animation: none; }
+  .btns .edge-btn.hinted .btn-face { animation: none; fill: #f5a02c; }
+}
+
+/* ---------- 떠오르는 안내는 한 가지 모양으로 통일 ----------
+   길 찾는 중(.seeking) · 판 가운데 안내(.board-note) · 아래 짧은 알림(.toast)
+   모두 크림 바탕, 갈색 테두리 2px, 아래 그림자. 창(.modal-card, .result-card)과 같은 색을 쓴다. */
+.seeking, .board-note, .toast {
+  background: var(--panel); color: var(--ink);
+}
+.seeking { padding: 13px 24px; font-size: 1.15rem; }
+.seeking-dots { gap: 4px; }
+.seeking-dots b { width: 8px; height: 11px; }
+.toast { line-height: 1.5; word-break: keep-all; }
+/* 짧은 알림도 판 가운데 안내와 같이 화면 가운데에 띄운다 */
+.toast { top: 50%; bottom: auto; transform: translate(-50%, calc(-50% + 8px)); width: max-content; max-width: min(86vw, 320px); border-radius: 22px; padding: 14px 22px; font-size: 1rem; font-weight: 900; }
+.toast.show { transform: translate(-50%, -50%); }
+
+/* 길을 찾는 중 뒤의 점 세 개: 하나씩 생겼다가 처음으로 돌아간다 */
+.seeking { gap: 0; }
+.seeking .seeking-dots { margin-right: 10px; }
+.seeking-trail { display: inline-flex; width: 1.3em; }
+.seeking-trail i { font-style: normal; opacity: 0; animation: seeking-dot 900ms steps(1, end) infinite; }
+.seeking-trail i:nth-child(1) { animation-name: seeking-dot-1; }
+.seeking-trail i:nth-child(2) { animation-name: seeking-dot-2; }
+.seeking-trail i:nth-child(3) { animation-name: seeking-dot-3; }
+@keyframes seeking-dot-1 { 0% { opacity: 0; } 20%, 100% { opacity: 1; } }
+@keyframes seeking-dot-2 { 0% { opacity: 0; } 45%, 100% { opacity: 1; } }
+@keyframes seeking-dot-3 { 0% { opacity: 0; } 70%, 100% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .seeking-trail i { animation: none; opacity: 1; } }
+
+/* 오늘의 도전 설명: 문장마다 한 줄, 줄 사이를 띄운다 */
+.notice-lines { display: flex; flex-direction: column; gap: 8px; text-align: center; margin-top: 4px; }
+.notice-lines p { font-size: 0.82rem; font-weight: 600; line-height: 1.5; color: var(--soft); word-break: keep-all; }
+
+/* ---------- 입문 판의 한 줄 설명 ---------- */
+
+/* ---------- 설정의 눌러서 이동하는 줄, 개인정보 처리방침 ---------- */
+.set .r.link { width: 100%; background: none; border: 0; border-bottom: 2px solid var(--line); padding: 0; color: inherit; text-decoration: none; text-align: left; font: inherit; font-size: 1rem; font-weight: 900; cursor: pointer; }
+.set .r.link:last-child { border-bottom: 0; }
+.set .r.link > svg { margin-left: auto; width: 16px; height: 16px; color: var(--soft); }
+.policy { padding: 6px 16px 14px; }
+.policy-sec h2 { font-size: 1rem; font-weight: 900; margin: 14px 0 4px; }
+.policy-sec p { font-size: 0.88rem; font-weight: 500; line-height: 1.7; color: var(--soft); word-break: keep-all; }
+.policy-sec p + p { margin-top: 6px; }
+
+/* 잠긴 난이도와 잠긴 도전 버튼: 눌리지 않는다 */
+.tier:disabled { cursor: default; opacity: 1; }
+.go:disabled { opacity: 0.5; cursor: default; }
+
+/* ---------- 입문 1의 안내: 화면을 어둡게 하고 한 곳만 밝힌다 ---------- */
+.coach { position: fixed; inset: 0; z-index: 15; pointer-events: none; }
+.coach[hidden] { display: none; }
+/* 어두운 막: 화면 전체 그림에서 밝힐 곳만 둥글게 파낸다. 구멍은 버튼 크기에 딱 맞춰 주변 배경이 같이 밝아지지 않는다 */
+.coach-shade { position: fixed; left: 0; top: 0; pointer-events: none; }
+.coach-shade path { fill: rgba(60, 36, 20, 0.64); }
+.coach-block { position: fixed; pointer-events: auto; }
+.coach-ring { position: fixed; pointer-events: none; border: 3px solid #ffb43a; }
+.coach-ring::after { content: ""; position: absolute; inset: -3px; border-radius: inherit; animation: coach-pulse 1100ms ease-in-out infinite; }
+@keyframes coach-pulse { 0%, 100% { box-shadow: 0 0 0 2px rgba(255, 180, 58, 0.6); } 50% { box-shadow: 0 0 0 12px rgba(255, 180, 58, 0); } }
+.coach-card {
+  position: fixed; transform: translateX(-50%); width: max-content; max-width: min(86vw, 320px); pointer-events: auto;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 20px; text-align: center;
+  /* 어두운 막 위에 뜨므로 그림자도 어둡게 한다(밝은 그림자는 막 위에서 밝은 띠처럼 보인다) */
+  background: var(--bg); color: var(--ink); border: 2px solid var(--chunk); border-radius: 22px; box-shadow: 0 5px 0 rgba(38, 22, 12, 0.55);
+}
+/* 밝힌 곳을 가리키는 꼬리 */
+.coach-card::before {
+  content: ""; position: absolute; left: var(--tail, 50%); width: 14px; height: 14px; margin-left: -7px;
+  background: var(--bg); border-left: 2px solid var(--chunk); border-top: 2px solid var(--chunk);
+}
+.coach-card:not(.above)::before { top: 0; transform: translateY(-9px) rotate(45deg); }
+.coach-card.above::before { bottom: 0; transform: translateY(9px) rotate(225deg); }
+.coach-card b { font-size: 1.12rem; font-weight: 900; line-height: 1.35; word-break: keep-all; }
+.coach-card span { font-size: 0.92rem; font-weight: 700; line-height: 1.5; color: var(--soft); word-break: keep-all; }
+.coach-card [hidden] { display: none; }
+.coach-next { margin-top: 6px; min-width: 120px; height: 44px; padding: 0 22px; border-radius: 999px; font-size: 1.05rem; font-weight: 900; color: #fff;
+  background: linear-gradient(180deg, #f8aa3f, #ee8a1f); border: 2px solid var(--chunk); box-shadow: 0 4px 0 var(--chunk); }
+.coach-next:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--chunk); }
+@media (prefers-reduced-motion: reduce) { .coach-ring::after { animation: none; } }
+
+/* =====================================================================================
+   게임 전체 공통 모양 (2026-11-12 확정: 시안 A1)
+   - 누르는 것(버튼): 진한 갈색 테두리 2px + 같은 색의 두꺼운 아래 그림자. 누르면 내려앉는다.
+   - 담는 것(패널·카드·창): 진한 갈색 테두리 2px + 옅은 갈색 아래 그림자.
+   - 색은 크림·갈색·주황 계열만. 모든 화면이 이 규칙을 따른다.
+   ===================================================================================== */
+:root { --chunk: #55301d; --chunk-soft: #e1c59e; }
+.btn, .lv, .mini-go, .go, .tg {
+  border: 2px solid var(--chunk);
+}
+.btn, .lv { background: var(--panel); color: var(--ink); }
+.screen.play .btn.sq, .btn.sq { background: var(--panel); border: 2px solid var(--chunk); border-radius: 16px; color: var(--ink); }
+.screen.play .btn.sq:active, .btn.sq:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--chunk); background: var(--tile); }
+.card, .tier, .stat3 > div, .dash {
+  border: 2px solid var(--chunk); background: var(--tile);
+}
+.tier { background: var(--panel); }
+.tier.cur, .lv.cur { background: #ffe1ad; border-color: var(--chunk); }
+.tier.lock, .lv.lock, .tier:disabled, .lv:disabled { background: #f1e6d2; color: #a58f73; border-color: #c9b08a; }
+.btn.ghost, .ghost { border: 2px dashed #b99a72; box-shadow: none; background: transparent; }
+.result-card, .modal-card { border: 2px solid var(--chunk); outline: none; border-radius: 26px; }
+.seeking, .board-note, .toast { border: 2px solid var(--chunk); box-shadow: 0 4px 0 var(--chunk-soft); }
+.tabbar { border-top: 2px solid var(--chunk); background: var(--panel); }
+.tabbar .on span { border: 2px solid var(--chunk); padding: 0 10px; }
+.pill, .hint-sheet h2 b, .hint-sheet .earn-row { border: 2px solid var(--chunk); }
+.set .r, .cal-grid .dow { border-color: var(--chunk-soft); }
+.tg::after { box-sizing: border-box; }
+.hr { background: var(--chunk); opacity: 0.25; }
+.hint .cnt { border: 2px solid var(--chunk); color: var(--chunk); background: #ffd98f; }
+
+/* ---------- 게임 화면: 계기판(햄스터 얼굴 + 민 횟수 + 별 게이지) ---------- */
+.screen.play { gap: 12px; }
+.dash { position: relative; flex: none; padding: 10px 16px 13px; border-radius: 22px; }
+/* 세로 점선 두 개: 오른쪽이 별 3개 기준, 왼쪽이 별 2개 기준 *//* 왼쪽 끝에서 잘리지 않게 */
+
+/* ---------- 게임 화면: 아래 버튼 세 개(재시작 · 힌트 · 되돌리기) ---------- */
+.board-cluster > .play-controls.dock-row { width: 100%; min-width: 0; height: 66px; gap: 26px; align-items: center; transform: translateY(20px); }
+.btn.dock { width: 62px; height: 56px; padding: 0; border-radius: 22px; position: relative; flex: none; }
+.btn.dock svg.ic { width: 28px; height: 28px; stroke-width: 2.6; }
+.btn.dock.hint { width: 76px; height: 64px; border-radius: 24px; background: linear-gradient(180deg, #f8b655, #ee962b); }
+.btn.dock.hint svg.ic.bulb { width: 32px; height: 32px; }
+.btn.dock.hint .cnt { right: -8px; top: -9px; min-width: 26px; height: 26px; font-size: 0.85rem; }
+.btn.dock.hinted { animation: hint-pulse 900ms ease-in-out infinite; }
+.btn.dock.hint.busy { opacity: 0.75; }
+.dock-space { width: 76px; flex: none; }
+@media (max-height: 620px) {
+  .dash { padding: 7px 14px 10px; }
+  .btn.dock { width: 56px; height: 50px; }
+  .btn.dock.hint { width: 68px; height: 56px; }
+  .board-cluster > .play-controls.dock-row { height: 58px; transform: translateY(12px); }
+}
+
+/* 톱니바퀴는 선이 촘촘해서 조금 가늘게 그린다 */
+svg.ic.gear { stroke-width: 2; }
+
+/* ---------- 홈: 위쪽 설정 버튼을 뺀 자리(설정은 아래 탭으로 옮김), 오늘의 도전 제목 크게 ---------- */
+.screen.home .hero { margin-top: 14px; }
+.daily-top b { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; }
+.daily-top .streak { margin-left: 8px; vertical-align: 3px; }
+/* 탭이 다섯 개라 글씨를 조금 줄인다 */
+.tabbar span { font-size: 0.74rem; }
+
+/* ---------- 클리어 창 배치 (2026-11-12 확정): 위·가운데·아래 세 덩어리, 버튼 높이·간격 통일, 목록은 밑줄 글자 ---------- */
+.result-card { padding: 24px 24px 22px; gap: 0; }
+.result-card h2 { margin-bottom: 8px; }
+.result-stars { margin-bottom: 6px; }
+.res-ham { width: min(36vw, 150px); margin: 0 auto 16px; }
+.res-ham .hamster-frame.big { width: 100%; }
+.result-card .pill { margin-bottom: 6px; }
+.result-card .got-hint { margin: 6px 0 0; }
+.result-card .go { margin-top: 18px; height: 50px; }
+.result-card .two { margin-top: 10px; gap: 10px; }
+.result-card .btn.wide { height: 50px; }
+.result-card .link-btn { margin-top: 10px; }
+
+/* ---------- 카드 색 통일 (2026-11-12 확정, 시안 B): 모든 카드·통계 칸을 입문~고급 줄과 같은 연한 크림으로 ---------- */
+.card:not(.meter), .stat3 > div, .dash { background-color: var(--panel); }
+
+/* ---------- 계기판이 가득 찼을 때: 도토리 든 햄스터들이 차례로 통통 뛴다 ---------- */
+@keyframes friend-cheer { 0%, 100% { transform: translateY(-2px) scale(1.08); } 40% { transform: translateY(-9px) scale(1.18); } }
+
+/* ---------- 로고 글꼴 (2026-11-12 확정): 타이틀과 같은 주아. 글꼴 파일은 index.html의 @font-face ---------- */
+.hero .logo, .hero .logo-sub { font-family: "Jua", "Pretendard", "Malgun Gothic", system-ui, sans-serif; font-weight: 400; }
+
+/* ---------- 스위치 (2026-11-12 확정, C1+G1): 평평하게, 켜짐은 연한 꿀색, 꺼짐은 옅은 회색 ---------- */
+.tg { width: 54px; height: 30px; border: 2px solid var(--chunk); }
+.tg::after { top: 2px; right: 2px; width: 22px; height: 22px; background: #fffaf1; border: 2px solid var(--chunk); }
+.tg.off { border-color: var(--chunk); }
+.tg.off::after { right: 26px; }
+
+/* ---------- 별 수와 클리어 수는 어디서나 두 줄: 윗줄 별, 아랫줄 N / M (2026-11-12 확정) ---------- */
+.rec .tier-progress, .head .tier-progress { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+
+
+/* ---------- 게임 화면 계기판 (2026-11-12 확정, 시안 E1): 동그란 게이지 + 햄스터 한 마리 + 별 기준 세 줄 ---------- */
+.ring { position: relative; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 10; }
+.ring .ring-track { stroke: var(--chunk-soft); }
+.ring .ring-fill { stroke: var(--pt); stroke-linecap: round; transition: stroke-dasharray 200ms ease-out; }
+.ring[data-stars="2"] .ring-fill { stroke: #f0b25c; }
+.ring[data-stars="1"] .ring-fill { stroke: #d9b98a; }
+.ring-num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--ink); line-height: 1; white-space: nowrap; }
+.ring-num b { font-weight: 900; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.ring-num small { font-weight: 900; opacity: 0.7; }
+.hud-ham { display: flex; align-items: center; }
+.hud-ham img { object-fit: contain; flex: none; }
+.hud-ham span { font-weight: 900; color: var(--ink); }
+.hud-ham span i { font-style: normal; color: #8a6a4a; font-weight: 800; }
+.hud-ham.full img { animation: hud-cheer 520ms ease-in-out 2; }
+@keyframes hud-cheer { 0%, 100% { transform: translateY(0) scale(1); } 40% { transform: translateY(-5px) scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .hud-ham.full img { animation: none; } }
+.hud-info { flex: none; flex-direction: column; gap: 6px; }
+.hud-line { display: flex; align-items: center; border-radius: 12px; border: 2px solid transparent; font-weight: 800; color: #8a6a4a; }
+.hud-line b { color: var(--ink); font-weight: 900; }
+.hud-line .st { display: flex; gap: 1px; }
+.hud-line.cur { background: #ffe7bf; border-color: var(--pt); color: var(--ink); }
+.hud-line.lost { opacity: 0.5; }
+.hud-line.lost .star path { fill: #e6d3b3; stroke: #d2bb95; }
+
+/* ---------- 계기판 최종 (2026-11-12, 12차 시안 확정): 별은 왼쪽·숫자는 오른쪽 정렬, 별은 항상 3칸(못 받는 별은 빈 별), 여백 같게 ---------- */
+.dash.hud { padding: 12px 14px; }
+.ring-num { gap: 1px; }
+.ring-num b { line-height: 1; }
+.ring-num small { margin: 0; }
+.hud-line { justify-content: space-between; padding: 4px 12px; }
+
+/* ---------- 계기판은 화면 높이에 맞춰 부드럽게 줄고 늘어난다 (2026-11-12): 낮은 폰일수록 보드에 자리를 내준다 ---------- */
+.screen.play { gap: clamp(6px, 1.4dvh, 12px); }
+
+/* =====================================================================================
+   화면 높이에 맞춘 유동 크기 (2026-11-12): 모든 화면의 간격·높이를 폰 높이에 따라 부드럽게 줄고 늘어나게 한다.
+   기준은 844px 높이 폰이고, 아래 clamp(최소, 높이비례, 최대)의 최대값이 기준 크기다. 낮은 폰일수록 여백이 줄어 내용이 한 화면에 더 들어온다.
+   ===================================================================================== */
+:root { --tab-h: clamp(56px, 8dvh, 68px); }
+.pad { gap: clamp(9px, 1.66dvh, 14px); padding-top: calc(clamp(8px, 1.42dvh, 12px) + env(safe-area-inset-top)); padding-bottom: calc(var(--tab-h) + 20px + env(safe-area-inset-bottom)); }
+.tabbar { height: calc(var(--tab-h) + env(safe-area-inset-bottom)); }
+.tabbar svg.ic { width: clamp(22px, 3dvh, 25px); height: clamp(22px, 3dvh, 25px); }
+.screen-title { font-size: clamp(1.25rem, 3dvh, 1.5rem); }
+.btn.sq { width: clamp(42px, 5.5dvh, 46px); height: clamp(42px, 5.5dvh, 46px); }
+.btn.wide { height: clamp(46px, 6.4dvh, 54px); }
+.go { height: clamp(48px, 7.1dvh, 60px); font-size: clamp(1.1rem, 2.6dvh, 1.35rem); }
+/* 홈 */
+.hero { height: clamp(108px, 16.2dvh, 136px); }
+.logo-sub { top: clamp(74px, 10.4dvh, 88px); } /* 제목 밑 주황 선과 부제 사이를 더 띄운다 */
+.hero-ham { width: min(43%, clamp(120px, 19.9dvh, 168px)); }
+.tier, .tier-soon { min-height: clamp(52px, 7.6dvh, 64px); }
+.tier { padding: clamp(8px, 1.2dvh, 10px) 14px clamp(13px, 1.9dvh, 16px); }
+.stat3 > div { padding: clamp(3px, 0.7dvh, 6px) 4px; }
+.daily { padding: clamp(8px, 1.2dvh, 10px) 14px clamp(9px, 1.4dvh, 12px); }
+.day i { width: clamp(28px, 4dvh, 34px); height: clamp(28px, 4dvh, 34px); }
+/* 스테이지 목록 */
+/* 오늘의 도전 달력 */
+.cal { padding: clamp(9px, 1.6dvh, 14px) 10px clamp(6px, 1.2dvh, 10px); }
+.cal-day { height: clamp(38px, 5.9dvh, 50px); }
+.cal-day b { width: clamp(26px, 3.8dvh, 32px); height: clamp(26px, 3.8dvh, 32px); }
+.cal-grid .dow { padding-bottom: clamp(4px, 0.9dvh, 8px); margin-bottom: clamp(3px, 0.7dvh, 6px); }
+/* 상점·기록·설정은 한 화면에 다 들어가므로 줄이지 않는다 */
+/* 게임 화면 아래 버튼 */
+.board-cluster > .play-controls.dock-row { height: clamp(54px, 7.8dvh, 66px); gap: clamp(18px, 3.1dvh, 26px); transform: translateY(clamp(8px, 2.4dvh, 20px)); }
+.btn.dock { width: clamp(54px, 7.3dvh, 62px); height: clamp(46px, 6.6dvh, 56px); }
+.btn.dock.hint { width: clamp(62px, 9dvh, 76px); height: clamp(52px, 7.6dvh, 64px); }
+/* 게임 화면: 제목 줄과 계기판 사이, 보드 아래 여백도 같이 줄인다 */
+.screen.play .sky { padding-top: calc(clamp(6px, 1.2dvh, 10px) + env(safe-area-inset-top)); padding-bottom: clamp(10px, calc(6.3dvh - 19px), 34px); }
+.screen.play > .board-wrap { padding-bottom: clamp(6px, 2.1dvh, 18px); align-items: flex-start; padding-top: clamp(10px, calc(6.3dvh - 19px), 34px); } /* 보드는 계기판 바로 아래에 같은 간격으로 붙이고, 남는 공간은 맨 아래로 */
+.hr { margin-bottom: clamp(2px, 0.5dvh, 4px); } /* 제목 밑 선과 첫 카드 사이를 조금 더 띄운다 */
+
+/* ---------- 이어하기 버튼 (2026-11-12 확정, D2): 판 이름은 버튼 안 오른쪽 아래 알약 / 제목 밑 주황 선은 글자 왼쪽 끝과 맞춘다 ---------- */
+.go-tagged { position: relative; }
+.go-main { display: inline-flex; align-items: center; gap: 12px; }
+.go-tag { position: absolute; right: 12px; bottom: 6px; background: rgba(85, 48, 29, 0.28); border-radius: 999px; font-size: 0.78rem; font-weight: 800; color: rgba(255, 255, 255, 0.95); line-height: 1; }
+.logo::after { left: 2px; } /* 주황 선 왼쪽 끝을 N 글자 왼쪽 끝(글꼴 여백 약 2px)에 맞춘다 */
+
+/* 스위치 켜짐 색: 주황 버튼(.go)과 같은 위에서 아래로 진해지는 색 (2026-11-12) */
+.tg { background: linear-gradient(180deg, #edb454, #d88c2c); }
+.tg.off { background: #ddd5c8; }
+/* 이어하기 버튼의 판 이름 알약: 낮은 버튼에서도 테두리에 붙지 않게 */
+.go-tag { bottom: clamp(5px, 1.1dvh, 9px); padding: 3px 9px; }
+/* 이어하기 버튼과 아래 오늘의 도전 카드가 겹쳐 보이지 않게 간격을 더 둔다(버튼 아래 작은 글씨가 있던 자리) */
+.go-tagged { margin-bottom: clamp(6px, 1.3dvh, 12px); }
+/* 그림자가 있는 카드·버튼은 아래 그림자(4~5px)만큼 간격이 줄어 보이므로, 같은 크기만큼 아래를 더 띄운다 */
+.pad > .card, .pad > .stat3, .pad > .tier, .pad > .go:not(.go-tagged), .pad > .btn.wide { margin-bottom: clamp(3px, 0.6dvh, 5px); }
+
+/* ---------- 경계선이 두 겹으로 보이던 안쪽 흰 줄 제거 (2026-11-12): 버튼·카드는 진한 테두리 한 줄과 아래 그림자만 ---------- */
+
+/* 선택된 칸(현재 판): 주황 테두리가 아래까지 한 바퀴 이어지고, 진한 그림자는 그 바깥 아래에 깔린다 (2026-11-12) */
+.btn.dock.hinted { box-shadow: 0 0 0 4px var(--pt), 0 4px 0 4px var(--chunk); }
+
+/* 현재 판 표시 (2026-11-12 확정, 시안 A): 주황 바깥 테두리 없이 연한 주황 바탕 + 진한 테두리와 아래 그림자만 */
+/* 스위치에도 다른 버튼과 같은 아래 그림자로 입체감을 준다 */
+
+/* ---------- 버튼 입체감을 더 약하게 (2026-11-12 확정): 일반 버튼·칸 2px, 큰 주황 버튼·카드 3px, 스위치 1px ---------- */
+.btn, .lv { box-shadow: 0 2px 0 var(--chunk); }
+.screen.play .btn.sq, .btn.sq { box-shadow: 0 2px 0 var(--chunk); }
+.go, .mini-go { box-shadow: 0 3px 0 var(--chunk); }
+.card, .stat3 > div, .dash { box-shadow: 0 3px 0 var(--chunk-soft); }
+.tier, .tier.cur, .lv.cur { box-shadow: 0 2px 0 var(--chunk); }
+.lv.lock, .tier.lock, .lv:disabled, .tier:disabled { box-shadow: 0 2px 0 #dcc7a4; }
+.btn.dock:disabled { box-shadow: 0 2px 0 var(--chunk); }
+.tg { box-shadow: 0 1px 0 var(--chunk); }
+.tg::after { box-shadow: 0 1px 0 rgba(85, 48, 29, 0.28); }
+.result-card, .modal-card { box-shadow: 0 4px 0 var(--chunk-soft); }
+.edge-btn .btn-shadow { transform: translateY(-2px); }
+.btn:active:not(:disabled), .lv:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 1px 0 var(--chunk); }
+.go:active:not(:disabled), .mini-go:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--chunk); }
+/* 게임 화면 재시작·되돌리기 버튼 배경은 가장자리 화살표 버튼과 같은 색 */
+.btn.dock:not(.hint) { background: #f2ddb6; }
+.btn.dock:not(.hint):active:not(:disabled) { background: #e6c58f; }
+.btn.dock:disabled { opacity: 0.7; }
+
+/* 가장자리 화살표 버튼도 재시작·되돌리기·힌트 버튼과 같은 진한 갈색 테두리와 아이콘색, 그림자 (2026-11-12) */
+.btn-face { stroke: var(--chunk); }
+.btn-shadow { fill: var(--chunk); }
+.btn-arrow { stroke: #593d29; }
+.btns .edge-btn.locked .btn-face { stroke: #cdb893; }
+.btns .edge-btn.locked .btn-shadow { fill: #dcc7a4; }
+.btns .edge-btn.hinted .btn-face { stroke: var(--pt-d); }
+
+/* 오늘의 도전: 누를 수 있는 날짜는 옅은 테두리 동그라미, 아직 못 누르는 미래 날짜는 더 흐리게 (2026-11-12) */
+.cal-day.future b { opacity: 0.22; }
+.cal-day.miss b { border-color: #e1c59e; }
+
+/* ---------- 내 정보 화면 (2026-11-12 확정): 프로필 + 스테이지·오늘의 도전·성취, 설정은 오른쪽 위 톱니 ---------- */
+.mi-gear { width: 44px; height: 44px; padding: 0; border-radius: 14px; background: #f2ddb6; border: 2px solid var(--chunk); box-shadow: 0 2px 0 var(--chunk); display: grid; place-items: center; }
+.mi-gear:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--chunk); }
+.mi-gear svg.ic { width: 24px; height: 24px; stroke: #593d29; }
+.mi-profile { display: flex; align-items: center; gap: 14px; }
+.mi-ava { width: 64px; height: 64px; border-radius: 50%; background: #fff1d8; border: 2px solid var(--chunk); display: grid; place-items: center; flex: none; overflow: hidden; }
+.mi-ava img { width: 52px; height: 52px; object-fit: contain; }
+.mi-name b { display: block; font-size: 1.2rem; font-weight: 900; }
+.mi-name small { display: block; font-size: 0.8rem; color: var(--soft); }
+.mi-login { display: inline-flex; margin-top: 4px; padding: 3px 10px; border: 2px dashed #b99a72; border-radius: 999px; font-size: 0.78rem; font-weight: 800; color: #8a6a4a; }
+.mi-tabs { display: flex; gap: 22px; border-bottom: 2px solid #e1c59e; padding: 0 2px; }
+.mi-tab { border: 0; background: none; padding: 8px 0 9px; font-size: 1.05rem; font-weight: 900; color: #a58f73; position: relative; }
+.mi-tab.on { color: var(--ink); }
+.mi-tab.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 4px; border-radius: 4px; background: var(--pt); }
+.mi-body { display: contents; }
+.mi-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.mi-chip { flex: none; padding: 6px 14px; border-radius: 999px; background: #efe3cc; color: #8a6a4a; font-size: 0.9rem; font-weight: 900; border: 2px solid transparent; white-space: nowrap; }
+.mi-chip.on { background: #ffe1ad; color: var(--ink); border-color: var(--chunk); }
+.mi-chip.off { opacity: 0.5; border: 2px dashed #b99a72; background: transparent; }
+.mi-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+.mi-row .l { flex: 1; font-size: 1rem; font-weight: 900; color: var(--ink); }
+.mi-row .v { font-size: 1.6rem; font-weight: 900; color: var(--ink); line-height: 1; }
+.mi-row .v small { font-size: 0.85rem; color: #8a6a4a; font-weight: 800; margin-left: 2px; }
+.mi-sec { display: flex; justify-content: space-between; align-items: baseline; font-size: 1.15rem; font-weight: 900; margin-bottom: -6px; }
+.mi-sec span { font-size: 0.88rem; color: #8a6a4a; }
+.mi-list { display: flex; flex-direction: column; gap: 10px; }
+.mi-arow { display: flex; align-items: center; gap: 12px; padding: 8px 14px; }
+.mi-arow img { object-fit: contain; flex: none; }
+.mi-arow .t { flex: 1; min-width: 0; }
+.mi-arow .t b { font-size: 1rem; font-weight: 900; color: var(--ink); }
+.mi-arow .bar2 { height: 6px; border-radius: 9px; background: #e1c59e; overflow: hidden; }
+.mi-arow .bar2 i { display: block; height: 100%; background: var(--pt); }
+.mi-arow .v { font-size: 1.15rem; font-weight: 900; color: var(--ink); white-space: nowrap; }
+.mi-arow.lock img { filter: grayscale(1) opacity(0.45); }
+.mi-arow.lock .t b, .mi-arow.lock .v { color: #a58f73; }
+
+/* ---------- 가운데는 햄스터, 가지 끝은 도토리 (2026-11-12) ---------- */
+/* 가운데 햄스터: 평소엔 대기 얼굴, 모든 도토리를 찾으면(all-done) 웃는 얼굴로 통통 뛴다 */
+.tile.kind-source.lit .face-happy { opacity: 0; }
+.tile.kind-source.lit .face-idle { opacity: 1; }
+.board.all-done .tile.kind-source .face-happy { opacity: 1; }
+.board.all-done .tile.kind-source .face-idle { opacity: 0; }
+.board.all-done .tile.kind-source .face-photo { animation: src-cheer 520ms ease-in-out 2; transform-box: fill-box; transform-origin: 50% 90%; }
+@keyframes src-cheer { 0%, 100% { translate: 0 0; } 40% { translate: 0 -5px; } }
+@media (prefers-reduced-motion: reduce) { .board.all-done .tile.kind-source .face-photo { animation: none; } }
+/* 도토리: 길이 닿으면 반짝이며 살짝 커진다 */
+.tile.kind-goal .seed image { transform-box: fill-box; transform-origin: 50% 60%; transition: transform 160ms ease-out var(--flow-delay, 0ms), filter 160ms linear var(--flow-delay, 0ms); }
+.tile.kind-goal.lit .seed image { transform: scale(1.16); filter: drop-shadow(0 0 5px rgba(247, 169, 40, 0.95)); }
+/* 햄스터에서 도토리까지 이어진 길에는 점선이 놓인다 */
+.tile.lit .flow-seeds { opacity: 0.85; }
+
+/* 성취 그림은 둥근 크림 바탕 위에 올려 카드와 어울리게 한다 (2026-11-12) */
+.mi-arow img { box-sizing: border-box; width: 50px; height: 50px; padding: 5px; border-radius: 50%; background: #fff1d8; border: 2px solid var(--chunk); }
+.mi-arow.lock img { background: #efe3cc; border-color: #c9b08a; }
+
+/* 성취 줄: 이름과 "N / M"은 윗줄 양 끝, 진행 막대는 그 아래 줄 전체 폭 (모든 막대가 같은 길이) (2026-11-12) */
+.mi-arow .top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.mi-arow .top .v { font-size: 1rem; }
+.mi-arow .t b { display: inline; }
+.mi-arow .bar2 { margin-top: 6px; }
+
+/* ---------- 계기판 세 칸 (2026-11-12 확정, 16차 시안): 별 줄 | 게이지 | 최단 경로·도토리. 칸 폭을 같게 하고 남는 공간을 똑같이 나눈다 ---------- */
+.dash.hud { --ring: clamp(66px, 10.7dvh, 90px); display: grid; grid-template-columns: 96px var(--ring) 96px; justify-content: space-evenly; align-items: center; gap: 0; padding: clamp(8px, 1.4dvh, 12px) 0; }
+.hud-info { width: auto; min-width: 0; display: grid; grid-template-columns: 100%; gap: clamp(5px, 0.95dvh, 8px); }
+.hud-line { padding: clamp(3px, 0.6dvh, 5px) 8px; gap: 6px; font-size: 0.95rem; }
+.hud-line b { font-size: 0.98rem; white-space: nowrap; }
+.hud-line .star { width: 12px; height: 12px; }
+.ring { width: var(--ring); height: var(--ring); }
+.ring-num b { font-size: calc(var(--ring) * 0.37); }
+.ring-num small { margin-bottom: 0; align-self: center; transform: translateY(0.3em); }
+.hud-right { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; }
+.hud-short { display: flex; flex-direction: column; align-items: center; line-height: 1.15; }
+.hud-short span { font-size: 0.74rem; font-weight: 800; color: #8a6a4a; white-space: nowrap; }
+.hud-short b { font-size: 1.15rem; font-weight: 900; color: var(--ink); white-space: nowrap; }
+.hud-ham { justify-content: center; gap: 5px; }
+.hud-ham img { width: 24px; height: 24px; }
+.hud-ham span { font-size: 1rem; white-space: nowrap; }
+@media (max-width: 350px) {
+  .dash.hud { --ring: 70px; grid-template-columns: 88px var(--ring) 88px; padding: 10px 0; }
+  .hud-line { padding: 4px 6px; gap: 5px; font-size: 0.85rem; }
+  .hud-line b { font-size: 0.88rem; }
+  .hud-line .star { width: 11px; height: 11px; }
+  .hud-short span { font-size: 0.68rem; }
+  .hud-short b { font-size: 1rem; }
+  .hud-ham img { width: 20px; height: 20px; }
+  .hud-ham span { font-size: 0.88rem; }
+}
+
+/* 내 정보 스테이지·오늘의 도전 항목 그림 (2026-11-12) */
+.mi-pic { width: 44px; height: 44px; object-fit: contain; flex: none; }
+.mi-row { padding-top: 8px; padding-bottom: 8px; }
+
+.ring-num small { font-size: calc(var(--ring) * 0.15); }
+
+/* "번"은 작게, 숫자 옆 아래쪽에 붙인다. 별 줄·최단 경로·게이지 모두 같은 모양 (2026-11-12) */
+.hud-line b small, .hud-short b small { font-size: 0.6em; font-weight: 900; opacity: 0.75; margin-left: 1px; position: relative; top: 0.18em; }
+/* 최단 경로와 도토리 수 사이를 조금 더 띄운다 (2026-11-12) */
+.hud-right { gap: clamp(9px, 1.7dvh, 15px); }
+
+/* ---------- 광고 자리 (2026-11-11 확정, 시안 B) ----------
+   게임 화면 맨 아래, 재시작·힌트·되돌리기 버튼 밑에 띠 광고 크기(320×50) 그대로 둔다.
+   광고를 붙이기 전까지는 '준비 중' 점선으로 보여 준다. 판과 버튼은 띠만큼 위로 올라간다. */
+.screen.play > .ad-slot {
+  flex: none; align-self: center; width: 320px; max-width: 100%; height: 50px;
+  margin-top: clamp(10px, 2.6dvh, 22px);
+  display: grid; place-items: center; border-radius: 8px;
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.01em;
+}
+
+/* ---------- 결과 창·힌트 창 (2026-11-11 확정, 광고 자리 2차 시안 A) ---------- */
+/* ----- 결과 창: 화면 높이에 맞춰 줄어들고, 아래 광고 띠는 밝게 남긴다 ----- */
+.screen.play > .result-overlay {
+  padding: clamp(10px, 2.6dvh, 22px) 22px;
+  /* 아래는 광고 띠(50px)와 그 위아래 여백만큼 비워서 창이 띠를 가리지 않는다 */
+  padding-bottom: calc(14px + env(safe-area-inset-bottom) + 50px + clamp(10px, 2.6dvh, 22px));
+}
+/* 창이 떠도 광고 띠는 밝게 둔다. 광고 위에 어두운 막을 덮으면 광고 정책에 걸릴 수 있다. */
+.screen.play:has(> .result-overlay:not([hidden])) > .ad-slot { position: relative; z-index: 21; background: #fff9ee; }
+.result-card { padding: clamp(14px, 2.8dvh, 24px) 24px clamp(12px, 2.6dvh, 22px); }
+.result-card h2 { font-size: clamp(1.45rem, 3.9dvh, 2.05rem); margin-bottom: clamp(2px, 0.9dvh, 8px); }
+.result-stars { min-height: 0; margin-bottom: clamp(2px, 0.7dvh, 6px); }
+.result-stars svg { width: clamp(32px, 5.9dvh, 50px); height: clamp(32px, 5.9dvh, 50px); }
+.res-ham { width: min(36vw, clamp(84px, 17.8dvh, 150px)); margin-bottom: clamp(4px, 1.2dvh, 10px); } /* 햄스터 그림 자체에 아래 여백이 있어 간격을 조금만 둔다 */
+.result-card .pill { margin-bottom: clamp(3px, 0.7dvh, 6px); }
+.result-card .got-hint { margin-top: clamp(3px, 0.7dvh, 6px); }
+.result-card .go { height: clamp(42px, 5.9dvh, 50px); margin-top: clamp(8px, 2.1dvh, 18px); }
+.result-card .btn.wide { height: clamp(40px, 5.9dvh, 50px); }
+.result-card .two { margin-top: clamp(6px, 1.2dvh, 10px); }
+.result-card .link-btn { margin-top: clamp(4px, 1.2dvh, 10px); }
+
+/* ----- 힌트 창: 제목은 가운데, 남은 힌트 수는 작게 오른쪽 위 ----- */
+.modal-card.hint-sheet { position: relative; }
+.hint-sheet h2 { display: block; text-align: center; }
+.hint-sheet h2 b { position: absolute; top: 14px; right: 14px; font-size: 0.8rem; padding: 1px 9px 1px 6px; gap: 1px; }
+.hint-sheet h2 b svg.ic.bulb { width: 16px; height: 16px; }
+
+/* 창(결과·힌트·설정) 아래의 옅은 그림자 띠는 두지 않고, 뒤 화면을 더 어둡게 해서 뒤의 버튼이 비쳐 보이지 않게 한다 (2026-11-11 확정, 3차 시안 C) */
+.result-card, .modal-card { box-shadow: none; }
+.result-overlay, .modal-overlay { background: rgba(70, 52, 31, .78); }
+
+/* ---------- 최단 경로 깃발 (2026-11-11 확정) ----------
+   최단 경로로 성공한 판마다 깃발 하나. 별과 따로 모으며, 수를 적을 때는 깃발이 왼쪽·별이 오른쪽으로 한 줄에 둔다. */
+.flag-ic { flex: none; }
+.tier-marks { display: inline-flex; align-items: center; gap: 10px; }
+.tier .tier-flags, .head .tier-flags { display: inline-flex; align-items: center; gap: 3px; }
+.lv { position: relative; }
+.lv-flag { position: absolute; top: -7px; left: -3px; line-height: 0; filter: drop-shadow(0 1px 0 rgba(85, 48, 29, .35)); pointer-events: none; }
+.result-card h2.flag-title { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: clamp(1.3rem, 3.4dvh, 1.7rem); }
+/* 기록 깨기: 칸 안에 큰 글자 한 줄 + 작은 글자로 최단 경로 변화 */
+.result-card .pill.record { flex-direction: column; gap: 0; padding: 5px 22px 6px; border-radius: 20px; font-weight: 900; color: var(--ink); background: #ffe1ad; line-height: 1.25; }
+.result-card .pill.record small { font-size: 0.78rem; font-weight: 800; color: var(--soft); }
+
+/* ---------- 벽 보기 힌트 (2026-11-11 확정, 시안 B 나무 울타리) ----------
+   정답에서 길이 이어지지 않는 칸 사이에 세우는 벽. 진한 테두리 위에 밝은 나무색을 얹는다. */
+.walls line { stroke-linecap: round; }
+.walls .wall-edge { stroke: #5a3418; stroke-width: 14; }
+.walls .wall-face { stroke: #d9a765; stroke-width: 7; }
+.hint-sheet .choice small { line-height: 1.35; word-break: keep-all; }
+/* 계기판의 '최단 경로' 글자 왼쪽에 깃발 */
+.hud-short > span { display: inline-flex; align-items: center; justify-content: center; gap: 3px; white-space: nowrap; }
+
+/* ---------- 언어 (2026-11-11) ---------- */
+/* 설정의 언어 줄을 누르면 뜨는 창: 한국어 · English 두 버튼 */
+.lang-sheet { gap: 10px; }
+.lang-sheet .lang-choice { width: 100%; height: 54px; border-radius: 18px; font-size: 1.1rem; }
+/* 영어: 게이지 안에서는 숫자 아래 줄에 moves를 둔다(옆에 두면 두 자리 숫자가 동그라미를 넘는다) */
+html[lang="en"] .ring-num { flex-direction: column; gap: 1px; }
+html[lang="en"] .ring-num b { font-size: calc(var(--ring) * 0.34); }
+html[lang="en"] .ring-num small { transform: none; margin: 0; align-self: center; position: static; font-size: calc(var(--ring) * 0.13); letter-spacing: 0.02em; }
+html[lang="en"] .hud-short b small { font-size: 0.55em; top: 0; }
+/* 영어는 글자가 길다: 연속 표시는 한 줄로, 이어하기 글자는 왼쪽에 붙여 오른쪽 판 이름과 겹치지 않게 */
+.streak { white-space: nowrap; }
+html[lang="en"] .go.go-tagged { justify-content: flex-start; padding-left: 24px; }
+
+
+/* ---------- 상점과 구매 창 (2026-11-11) ----------
+   공통 모양을 따른다: 상품 줄은 카드, 가격은 주황 버튼, 창은 .modal-card. */
+.shop-body { display: flex; flex-direction: column; gap: clamp(8px, 1.4dvh, 12px); }
+.shop-body .head { margin-top: clamp(4px, 1dvh, 10px); }
+.prod-pic { position: relative; color: var(--ink); }
+.prod-pic.hints svg.ic { width: 28px; height: 28px; color: var(--pt-d); }
+.prod-pic i { position: absolute; right: -6px; bottom: -6px; min-width: 26px; padding: 1px 6px; border-radius: 999px; border: 2px solid var(--chunk); background: var(--pt); color: #fff; font-style: normal; font-size: 0.72rem; font-weight: 900; text-align: center; line-height: 1.3; }
+.go.price { width: auto; min-width: 86px; height: 42px; padding: 0 14px; font-size: 1rem; flex: none; margin: 0; }
+.prod .owned { font-size: 0.9rem; font-weight: 900; color: var(--pt-d); padding: 0 6px; white-space: nowrap; }
+.shop-restore { margin-top: 6px; }
+.shop-restore:disabled { opacity: 0.6; }
+.screen.play > .ad-slot.off { visibility: hidden; }
+
+.buy-sheet { gap: 10px; align-items: center; text-align: center; }
+.buy-sheet h2 { font-size: 1.5rem; font-weight: 900; }
+.buy-sheet .prod-pic { width: 68px; height: 68px; border-radius: 20px; border-color: var(--chunk); margin-bottom: 2px; }
+.buy-sheet .prod-pic svg.ic { width: 34px; height: 34px; }
+.buy-sheet .sheet-text { font-size: 1.05rem; font-weight: 700; line-height: 1.6; word-break: keep-all; }
+.buy-sheet .sheet-text b { font-weight: 900; color: var(--pt-d); }
+.buy-sheet .sheet-sub { font-size: 0.82rem; font-weight: 700; color: var(--soft); margin-top: -4px; }
+.buy-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+.buy-actions .btn, .buy-actions .go, .buy-ok { width: 100%; height: 50px; font-size: 1.05rem; font-weight: 900; border-radius: 18px; margin: 0; }
+.buy-ok { margin-top: 6px; }
+.buy-dots { gap: 6px; margin: 6px 0 4px; }
+.buy-dots b { width: 10px; height: 13px; animation: buy-dot 900ms ease-in-out infinite; }
+.buy-dots b:nth-child(2) { animation-delay: 150ms; }
+.buy-dots b:nth-child(3) { animation-delay: 300ms; }
+@keyframes buy-dot { 0%, 100% { opacity: 0.3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .buy-dots b { animation: none; } }
+.pack-choice { width: 100%; height: 54px; border-radius: 18px; padding: 0 16px; display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 900; margin: 0; }
+.pack-choice span { flex: 1; text-align: left; }
+.pack-choice em { font-style: normal; font-size: 0.95rem; }
+.pack-choice svg.ic.bulb { width: 22px; height: 22px; }
+.hint-sheet .buy-row { width: 100%; height: auto; cursor: pointer; }
+.hint-sheet .buy-row svg.ic { width: 14px; height: 14px; }
+
+/* ---------- 움직임 더하기 (2026-11-11) ----------
+   창·결과·버튼·화면 전환에 짧은 움직임을 준다. 모두 한 번 보이고 끝나거나 아주 약하게 되풀이한다.
+   '동작 줄이기' 설정에서는 위쪽의 공통 규칙이 전부 끈다. 등장 움직임은 backwards만 써서 끝난 뒤 누름 효과를 막지 않는다. */
+@keyframes rise-in { from { opacity: 0; transform: translateY(10px); } }
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes overlay-in { from { background-color: rgba(70, 52, 31, 0); } }
+@keyframes card-pop { 0% { opacity: 0; transform: translateY(18px) scale(0.9); } 70% { opacity: 1; transform: translateY(-3px) scale(1.02); } 100% { transform: none; } }
+
+/* 창: 뒤가 서서히 어두워지고 창이 통 하고 올라온다 */
+.result-overlay:not([hidden]), .modal-overlay:not([hidden]) { animation: overlay-in 200ms ease-out 1 backwards; }
+.result-card, .modal-card { animation: card-pop 320ms cubic-bezier(0.2, 0.9, 0.3, 1) 1 backwards; }
+.modal-card > * { animation: rise-in 260ms ease-out backwards; }
+.modal-card > :nth-child(1) { animation-delay: 60ms; }
+.modal-card > :nth-child(2) { animation-delay: 100ms; }
+.modal-card > :nth-child(3) { animation-delay: 140ms; }
+.modal-card > :nth-child(4) { animation-delay: 180ms; }
+.modal-card > :nth-child(n+5) { animation-delay: 220ms; }
+
+/* 결과 창: 제목 → 별 → 햄스터 → 횟수 → 버튼 순서로 올라온다 */
+.result-card { position: relative; }
+.result-card > * { animation: rise-in 300ms ease-out backwards; }
+.result-card > h2 { animation-delay: 80ms; }
+.result-card > .result-stars { animation-delay: 120ms; }
+.result-card > .res-ham { animation-delay: 160ms; }
+.result-card > .pill, .result-card > .got-hint { animation-delay: 420ms; }
+.result-card > .go { animation-delay: 620ms; }
+.result-card > .two { animation-delay: 700ms; }
+.result-card > .link-btn { animation-delay: 780ms; }
+/* 별: 돌면서 크게 튀어나온 뒤 살짝 떠 있다 */
+.result-stars .star.pop { animation: star-pop2 460ms cubic-bezier(0.2, 1.5, 0.4, 1) 1, star-bob 2s ease-in-out 700ms infinite; }
+.result-stars .star.pop:nth-child(2) { animation-delay: 0ms, 900ms; }
+.result-stars .star.pop:nth-child(3) { animation-delay: 0ms, 1100ms; }
+@keyframes star-pop2 { 0% { transform: scale(0.2) rotate(-50deg); } 55% { transform: scale(1.4) rotate(10deg); } 100% { transform: none; } }
+@keyframes star-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+/* 햄스터: 기뻐서 통통거리고 옆의 줄이 반짝인다 */
+.res-ham.cheer .hamster-frame.success img { transform-origin: 50% 90%; animation: ham-happy 1.2s ease-in-out 520ms infinite; }
+@keyframes ham-happy { 0%, 100% { transform: translateY(0) scale(1, 1); } 30% { transform: translateY(-6px) scale(0.98, 1.03); } 60% { transform: translateY(0) scale(1.03, 0.97); } }
+.res-ham.cheer i { animation: ray-blink 1.2s ease-in-out 520ms infinite; }
+@keyframes ray-blink { 0%, 100% { opacity: 1; scale: 1; } 50% { opacity: 0.45; scale: 0.8; } }
+/* 최단 경로 깃발이 펄럭인다 */
+.result-card h2.flag-title > :first-child { transform-origin: 20% 90%; animation: flag-wave 1s ease-in-out 300ms infinite; }
+@keyframes flag-wave { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(9deg); } }
+/* 색종이 */
+.confetti { position: absolute; left: 50%; top: 24%; width: 0; height: 0; pointer-events: none; z-index: 3; animation: none; }
+.confetti i { position: absolute; left: -4px; top: -6px; width: 9px; height: 13px; border-radius: 3px; background: var(--c); opacity: 0; }
+.confetti i:nth-child(3n) { width: 8px; height: 8px; border-radius: 50%; }
+.confetti.fly i { animation: confetti-fly 1300ms cubic-bezier(0.2, 0.7, 0.4, 1) var(--d) 1 both; }
+@keyframes confetti-fly {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0) scale(0.4); }
+  35% { opacity: 1; transform: translate(calc(var(--x) * 0.75), var(--up)) rotate(calc(var(--r) * 0.4)) scale(1); }
+  100% { opacity: 0; transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(0.9); }
+}
+/* 가장 중요한 버튼에 빛이 지나간다(결과 창의 다음 판, 홈의 시작하기) */
+.result-card .go, .screen.home .go { position: relative; overflow: hidden; }
+.result-card .go::after, .screen.home .go::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -40%; width: 30%; pointer-events: none;
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
+  transform: skewX(-18deg); animation: go-shine 3.2s ease-in-out 1.4s infinite;
+}
+@keyframes go-shine { 0% { left: -40%; } 28%, 100% { left: 120%; } }
+
+/* 화면 전환: 탭 화면은 살짝 올라오고, 게임 화면은 위치를 바꾸지 않고 서서히 나타난다(안내 구멍 위치를 재므로) */
+.screen:not(.play) > .pad { animation: rise-in 240ms ease-out backwards; }
+.screen.play > .dash, .screen.play > .board-wrap { animation: fade-in 260ms ease-out backwards; }
+.tabbar .on span { animation: tab-pop 300ms cubic-bezier(0.2, 1.5, 0.4, 1) backwards; }
+@keyframes tab-pop { from { transform: scale(0.7); opacity: 0.4; } }
+/* 판 목록: 지금 할 판이 은은하게 빛난다 */
+.lv.cur { animation: cur-glow 1.8s ease-in-out infinite; }
+@keyframes cur-glow { 0%, 100% { box-shadow: 0 2px 0 var(--chunk), 0 0 0 0 rgba(238, 150, 43, 0.5); } 50% { box-shadow: 0 2px 0 var(--chunk), 0 0 0 6px rgba(238, 150, 43, 0); } }
+/* 계기판: 밀 때마다 숫자가 통 튄다 */
+.ring-num .bump { animation: num-bump 240ms cubic-bezier(0.2, 1.5, 0.4, 1) 1; }
+@keyframes num-bump { 0% { transform: scale(1.35); } 100% { transform: scale(1); } }
+/* 상점: 상품 줄이 차례로 올라온다 */
+.shop-body > * { animation: rise-in 260ms ease-out backwards; }
+.shop-body > :nth-child(2) { animation-delay: 40ms; }
+.shop-body > :nth-child(3) { animation-delay: 80ms; }
+.shop-body > :nth-child(4) { animation-delay: 120ms; }
+.shop-body > :nth-child(5) { animation-delay: 160ms; }
+.shop-body > :nth-child(n+6) { animation-delay: 200ms; }
+
+/* ---------- 탭 화면 머리줄 통일 (2026-11-11) ----------
+   버튼이 있든 없든 머리줄 높이가 같고(뒤로 버튼 크기), 제목은 양옆 조각의 폭과 상관없이 정확히 가운데다.
+   그래서 제목 밑 구분선의 높이와 제목 크기가 홈을 뺀 모든 화면에서 같다. */
+.head-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr); align-items: center; min-height: clamp(42px, 5.5dvh, 46px); }
+.head-row > :first-child { justify-self: start; }
+.head-row > :last-child { justify-self: end; }
+.head-row > .screen-title { flex: none; line-height: 1.2; }
+.sq-space { width: clamp(42px, 5.5dvh, 46px); height: clamp(42px, 5.5dvh, 46px); }
+.mi-gear { width: clamp(42px, 5.5dvh, 46px); height: clamp(42px, 5.5dvh, 46px); border-radius: 16px; }
+/* 상점 머리줄 오른쪽의 남은 힌트 수 */
+.head-hints { display: inline-flex; align-items: center; gap: 3px; height: 32px; padding: 0 10px 0 7px; border-radius: 999px; border: 2px solid var(--chunk); background: var(--panel); font-size: 0.95rem; font-weight: 900; color: var(--ink); }
+.head-hints svg.ic.bulb { width: 18px; height: 18px; color: var(--pt-d); }
+
+/* 내 정보의 난이도 칩: 옆으로 넘겨야 보이던 것을 한 줄에 다 들어오게 한다(영어처럼 긴 이름은 두 줄로 넘어간다) */
+.mi-chips { gap: 6px; overflow: visible; flex-wrap: wrap; }
+.mi-chip { flex: 1 1 auto; padding: 6px 8px; text-align: center; }
+html[lang="en"] .mi-chip { font-size: 0.82rem; }

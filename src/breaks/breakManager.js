@@ -15,6 +15,7 @@ export function createAdManager({
   now = () => Date.now(),
   timers = { setTimeout: (f, ms) => setTimeout(f, ms), clearTimeout: (t) => clearTimeout(t) },
   onPause = () => {}, onResume = () => {},
+  noAds = () => false, // 광고 제거를 샀으면 true(광고 기회를 만들지 않는다)
 }) {
   let state = 'idle';
   let inflight = null;
@@ -23,7 +24,7 @@ export function createAdManager({
   const stats = { requests: 0, impressions: 0, failures: 0 };
 
   const ads = () => store.data.ads;
-  const enabled = () => !!config.enabled && !!provider;
+  const enabled = () => !!config.enabled && !!provider && !noAds();
 
   function eligible() {
     return enabled()

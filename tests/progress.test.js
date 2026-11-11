@@ -30,7 +30,7 @@ function memBackend(initial = {}) {
 }
 const res = (stars, bonusDone = false) => ({ canComplete: true, requiredDone: true, hasBonus: bonusDone, bonusDone, stars });
 function finishTutorial(store) {
-  for (const t of content.groups.tutorial) confirmCompletion(store, content, t, { canComplete: true, stars: 0, bonusDone: false }, 1);
+  for (const t of content.groups.tutorial.slice(0, 1)) confirmCompletion(store, content, t, { canComplete: true, stars: 0, bonusDone: false }, 1);
 }
 
 test('저장 → 다시 열기 왕복', () => {
@@ -104,17 +104,18 @@ test('저장 불가/저장 실패여도 메모리로 계속 플레이', () => {
   assert.equal(createStore({ key: KEY, backend: throwing }).persistent, false);
 });
 
-test('해금: 입문은 순서대로, 입문 뒤 세 난이도 첫 판이 모두 열린다', () => {
+test('해금: 처음에는 입문만, 입문 01을 끝내면 세 난이도 첫 판과 오늘의 도전이 한꺼번에 열린다', () => {
   const s = createStore({ key: KEY, backend: memBackend() });
   const [t1, t2, t3] = content.groups.tutorial;
   assert.equal(isUnlocked(s, content, t1), true);
   assert.equal(isUnlocked(s, content, t2), false);
-  assert.equal(isUnlocked(s, content, content.groups.beginner[0]), false);
+  for (const g of ['beginner', 'intermediate', 'advanced']) assert.equal(isUnlocked(s, content, content.groups[g][0]), false, `${g}: 입문 전에는 잠김`);
   assert.equal(isUnlocked(s, content, content.daily[0]), false);
   assert.equal(nextTutorial(s, content), t1);
   finishTutorial(s);
-  assert.equal(nextTutorial(s, content), null);
-  assert.equal(isUnlocked(s, content, t3), true);
+  assert.equal(nextTutorial(s, content), t2); // 입문 02·03은 남아 있어도 모두 열려 있다
+  assert.equal(isUnlocked(s, content, t2), true);
+  assert.equal(isUnlocked(s, content, t3), false);
   for (const g of ['beginner', 'intermediate', 'advanced']) {
     assert.equal(isUnlocked(s, content, content.groups[g][0]), true, g);
     assert.equal(isUnlocked(s, content, content.groups[g][1]), false, g);
@@ -261,8 +262,8 @@ test('잘못된 버전·ID·파라미터', () => {
 
 test('공유 문구에는 별·이동 수·보너스 여부가 들어가고 완료 배치는 없다', () => {
   const text = shareText({ gameName: 'G', title: '중급 2', stars: 2, moves: 7, hasBonus: true, bonusDone: false });
-  assert.equal(text, 'G · 중급 2\n★★☆ · 7수 · 보너스 미달성');
-  assert.equal(shareText({ gameName: 'G', title: '초급 1', stars: 3, moves: 2, hasBonus: false }), 'G · 초급 1\n★★★ · 2수');
+  assert.equal(text, 'G · 중급 2\n★★☆ · 7번 · 보너스 미달성');
+  assert.equal(shareText({ gameName: 'G', title: '초급 1', stars: 3, moves: 2, hasBonus: false }), 'G · 초급 1\n★★★ · 2번');
 });
 
 // ---------- 연속 기록 / 힌트 ----------
@@ -305,8 +306,8 @@ test('힌트: 힌트대로만 따라가면 판이 풀린다', () => {
 });
 
 test('힌트: 탐색 범위를 넘으면 해답 경로를 따르고, 벗어났으면 되돌리기를 권한다', () => {
-  const stage = content.byId.get('A01');
-  const solution = sols.A01.basic.moves;
+  const stage = content.byId.get('A48');
+  const solution = sols.A48.basic.moves;
   const tiny = { maxStates: 50 };
   const session = createSession(stage);
   assert.deepEqual(nextHint(stage, session.cells, [], solution, tiny), { type: 'move', move: moveFromCode(solution[0]) });
@@ -340,4 +341,10 @@ test('힌트: 플레이어가 마음대로 흐트러뜨린 배치에서도 지�
     }
     assert.equal(session.result.canComplete, true, `${id}: ${steps}번 안내 (되돌리기 ${undos}번)`);
   }
+});
+
+test('공유 문구: 최단 경로 성공과 기록 깨기를 덧붙인다', () => {
+  const base = { gameName: 'G', title: '고급 3', stars: 3, moves: 5, hasBonus: false };
+  assert.equal(shareText({ ...base, shortest: true }), 'G · 고급 3\n★★★ · 5번 · 🚩 최단 경로 성공!');
+  assert.equal(shareText({ ...base, shortest: true, record: true }), 'G · 고급 3\n★★★ · 5번 · 🚩 기록을 깼어요!');
 });

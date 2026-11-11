@@ -1,0 +1,141 @@
+/* Decorative scene only. UI colors, board geometry and input remain in styles.css. */
+:root {
+  --scene-sky: #dcebed;
+  --scene-grass: #a1b389;
+  --scene-soil: #dbc3a1;
+  --scene-deep: #c4a47f;
+  --scene-mark: #9c7754;
+}
+:root[data-scene="tonal"] {
+  --scene-sky: #f2e9d6;
+  --scene-grass: #cfbb91;
+  --scene-soil: #ddc5a4;
+  --scene-deep: #c5a780;
+  --scene-mark: #9f7b58;
+}
+:root {
+  --scene-ridge: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20480%20150%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M0%2057Q36%2031%2084%2051T183%2057Q243%2036%20299%2054T399%2049Q443%2025%20480%2043V72Q427%2055%20382%2068T286%2073Q228%2058%20176%2076T80%2072Q35%2060%200%2084Z%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M17%2054l-2-12m4%2010%205-8M57%2047l-3-10m4%2010%205-6M440%2039l-2-11m3%209%205-8M468%2040l4-9%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --scene-details: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20480%20150%22%20preserveAspectRatio%3D%22none%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20stroke-width%3D%222%22%20d%3D%22M0%2020q23%2013%2025%2037t20%2039M25%2056l15-13m-14%2021-12%208M480%209q-25%2012-28%2034t-25%2039m25-40-14-9m8%2028%2018%205%22%2F%3E%3Cpath%20stroke-width%3D%2213%22%20d%3D%22M-12%20119h38q17%200%2017-17V89m373%2061v-23q0-18%2019-18h56%22%2F%3E%3Cpath%20stroke-width%3D%222%22%20stroke-dasharray%3D%222%207%22%20d%3D%22M0%20137h60m345-1h75M0%2085h15m451%206h14%22%2F%3E%3Cpath%20stroke-width%3D%221.5%22%20d%3D%22M69%20113q8-13%2016%200q-8%207-16%200Zm312%208q9-12%2017-1q-9%207-17%201Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22white%22%3E%3Cellipse%20cx%3D%2220%22%20cy%3D%2296%22%20rx%3D%224%22%20ry%3D%222%22%20transform%3D%22rotate%28-30%2020%2096%29%22%2F%3E%3Cellipse%20cx%3D%22461%22%20cy%3D%2285%22%20rx%3D%224%22%20ry%3D%222%22%20transform%3D%22rotate%2835%20461%2085%29%22%2F%3E%3Cellipse%20cx%3D%22113%22%20cy%3D%22137%22%20rx%3D%225%22%20ry%3D%222.5%22%20transform%3D%22rotate%28-30%20113%20137%29%22%2F%3E%3Cellipse%20cx%3D%22355%22%20cy%3D%22143%22%20rx%3D%225%22%20ry%3D%222.5%22%20transform%3D%22rotate%2835%20355%20143%29%22%2F%3E%3Ccircle%20cx%3D%2255%22%20cy%3D%2276%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%22435%22%20cy%3D%2297%22%20r%3D%222%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+.screen {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(180deg, var(--scene-sky), transparent),
+    linear-gradient(0deg, var(--scene-soil), transparent);
+  background-size: 100% 125px, 100% 100px;
+  background-position: center top, center bottom;
+  background-repeat: no-repeat;
+  background-repeat: no-repeat;
+}
+.screen::before, .screen::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+.screen::before {
+  top: 0; height: 150px;
+  color: var(--scene-grass);
+  mask-image: var(--scene-ridge);
+  opacity: .7;
+}
+.screen::after {
+  bottom: calc(68px + env(safe-area-inset-bottom)); height: 130px;
+  color: var(--scene-mark);
+  mask-image: var(--scene-details);
+  opacity: .3;
+}
+/* The lower scene follows the viewport beside the fixed tabbar, including long lists. */
+.screen:not(.play) {
+  background-image: linear-gradient(180deg, var(--scene-sky), transparent);
+  background-size: 100% 125px;
+}
+.screen:not(.play)::after {
+  position: fixed; left: 50%; right: auto;
+  width: min(100%, 480px); transform: translateX(-50%);
+  background: var(--scene-mark);
+  /* Two masks: broad, faint earth layers plus the stones, roots and burrow traces. */
+  mask-image: var(--scene-details), linear-gradient(0deg, #0004, transparent 80%);
+}
+.screen.home::before { height: 190px; }
+.screen.home { background-size: 100% 160px; }
+/* Preserve the current play surface and every layout metric. The center stays plain. */
+.screen.play {
+  background-color: #f4ead9;
+  background-image:
+    linear-gradient(180deg, color-mix(in srgb, var(--scene-sky) 40%, #f4ead9), transparent),
+    linear-gradient(0deg, color-mix(in srgb, var(--scene-soil) 28%, #f4ead9), transparent);
+  background-size: 100% 105px, 100% 72px;
+  background-position: center top, center bottom;
+  background-repeat: no-repeat;
+}
+.screen.play::before { height: 105px; opacity: .22; }
+.screen.play::after { bottom: 0; height: 88px; opacity: .14; }
+.screen.play .sky { background: transparent; }
+
+/* Optional scenes: select with html[data-scene]; color and tonal stay unchanged. */
+:root:is([data-scene="wash"], [data-scene="pattern"], [data-scene="garden"]) {
+  --scene-pattern-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22180%22%20height%3D%22160%22%20viewBox%3D%220%200%20180%20160%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%239c7754%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20stroke-width%3D%225%22%20d%3D%22M22%2024h15v16M112%2038h22M64%20108h25m-12%200V94%22%2F%3E%3Cpath%20stroke-width%3D%222%22%20d%3D%22M147%20116h13m-5-5%205%205-5%205M22%20132V119m-5%205%205-5%205%205%22%2F%3E%3Cpath%20fill%3D%22%23a1b389%22%20stroke-width%3D%221.4%22%20d%3D%22M76%2031q-14%2013-4%2023%2014-6%204-23Zm65%2039q-16%206-11%2017%2015%201%2011-17ZM37%2076q-14%207-8%2018%2014-1%208-18Z%22%2F%3E%3Cpath%20stroke%3D%22%23fff9ee%22%20stroke-width%3D%221%22%20d%3D%22m75%2036-4%2013m68%2024-7%2010m-97-3-5%2010%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --scene-cloud-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20480%20100%22%3E%3Cg%20fill%3D%22%23fffdf5%22%3E%3Cpath%20d%3D%22M19%2047c-12%200-12-18%200-19-1-18%2025-23%2031-6%2015-8%2029%203%2025%2015%2016%203%2013%2018%200%2018H25q-9%200-6-8Z%22%2F%3E%3Cpath%20d%3D%22M365%2025c-9-15%2015-28%2026-14%2014-13%2034-1%2029%2014%2019-2%2024%2023%205%2025h-59c-18%200-19-24-1-25Z%22%2F%3E%3Cpath%20d%3D%22M223%2065c-10-1-10-17%200-18%203-13%2023-14%2028-2%2015-6%2027%2013%2014%2020Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --scene-garden-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20480%20110%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20fill%3D%22%23b6c69b%22%20d%3D%22M0%2092Q65%2080%20125%2091T250%2090T365%2091T480%2087V110H0Z%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%238fa779%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M35%20101V50m0%2028q-17-14-20-4%206%2013%2020%2012m0%200q16-19%2023-11-4%2012-23%2018M443%20101V33m0%2029q-16-13-21-4%203%2012%2021%2013m0%2012q13-19%2022-12-4%2013-22%2018M408%20103V67%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23edc776%22%3E%3Cg%20transform%3D%22translate%2835%2048%29%22%3E%3Cellipse%20rx%3D%227%22%20ry%3D%2218%22%2F%3E%3Cellipse%20rx%3D%227%22%20ry%3D%2218%22%20transform%3D%22rotate%2860%29%22%2F%3E%3Cellipse%20rx%3D%227%22%20ry%3D%2218%22%20transform%3D%22rotate%28120%29%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28443%2032%29%22%3E%3Cellipse%20rx%3D%228%22%20ry%3D%2221%22%2F%3E%3Cellipse%20rx%3D%228%22%20ry%3D%2221%22%20transform%3D%22rotate%2860%29%22%2F%3E%3Cellipse%20rx%3D%228%22%20ry%3D%2221%22%20transform%3D%22rotate%28120%29%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28408%2066%29%22%3E%3Cellipse%20rx%3D%225%22%20ry%3D%2213%22%2F%3E%3Cellipse%20rx%3D%225%22%20ry%3D%2213%22%20transform%3D%22rotate%2860%29%22%2F%3E%3Cellipse%20rx%3D%225%22%20ry%3D%2213%22%20transform%3D%22rotate%28120%29%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23a58059%22%3E%3Ccircle%20cx%3D%2235%22%20cy%3D%2248%22%20r%3D%228%22%2F%3E%3Ccircle%20cx%3D%22443%22%20cy%3D%2232%22%20r%3D%2210%22%2F%3E%3Ccircle%20cx%3D%22408%22%20cy%3D%2266%22%20r%3D%226%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%238fa779%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22m6%20105%202-9%204%207m67%202%203-11%203%208m288%203%202-8%204%206m90%202%203-9%203%208%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+:root:is([data-scene="wash"], [data-scene="pattern"], [data-scene="garden"]) .screen {
+  --scene-paper: var(--bg);
+  --scene-edge-strength: 76%;
+  --scene-art-opacity: .58;
+  background-color: var(--scene-paper);
+  background-image: linear-gradient(180deg,
+    color-mix(in srgb, #dcebed var(--scene-edge-strength), var(--scene-paper)) 0%,
+    var(--scene-paper) 34%, var(--scene-paper) 65%,
+    color-mix(in srgb, #efcfab var(--scene-edge-strength), var(--scene-paper)) 100%);
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+:root:is([data-scene="wash"], [data-scene="pattern"], [data-scene="garden"]) .screen::before, :root:is([data-scene="wash"], [data-scene="pattern"], [data-scene="garden"]) .screen::after {
+  mask: none;
+  background: none;
+  opacity: var(--scene-art-opacity);
+}
+:root:is([data-scene="wash"], [data-scene="pattern"], [data-scene="garden"]) .screen::before {
+  top: 0; bottom: auto; height: 120px;
+}
+:root:is([data-scene="wash"], [data-scene="pattern"], [data-scene="garden"]) .screen::after {
+  top: auto; bottom: calc(68px + env(safe-area-inset-bottom));
+  height: 130px;
+}
+:root:is([data-scene="wash"], [data-scene="pattern"], [data-scene="garden"]) .screen.play {
+  --scene-paper: #f4ead9;
+  --scene-edge-strength: 52%;
+  --scene-art-opacity: .38;
+}
+:root:is([data-scene="wash"], [data-scene="pattern"], [data-scene="garden"]) .screen.play::before { height: 100px; }
+:root:is([data-scene="wash"], [data-scene="pattern"], [data-scene="garden"]) .screen.play::after { bottom: 0; height: 105px; }
+:root[data-scene="wash"] .screen::before { background-image: radial-gradient(ellipse at 12% 0%, #bcdde6 0%, #bcdde600 70%); }
+:root[data-scene="wash"] .screen::after { background-image: radial-gradient(ellipse at 95% 100%, #e9bd94 0%, #e9bd9400 72%); }
+:root[data-scene="pattern"] .screen::before { background-image: var(--scene-pattern-art); }
+:root[data-scene="pattern"] .screen::after { background-image: var(--scene-pattern-art); }
+:root[data-scene="pattern"] .screen::before, :root[data-scene="pattern"] .screen::after {
+  background-size: 180px 160px;
+  background-repeat: repeat;
+  opacity: calc(var(--scene-art-opacity) * .48);
+}
+:root[data-scene="pattern"] .screen::before { mask-image: linear-gradient(#000b, transparent); }
+:root[data-scene="pattern"] .screen::after { mask-image: linear-gradient(transparent, #000); }
+:root[data-scene="garden"] .screen::before { background-image: var(--scene-cloud-art); }
+:root[data-scene="garden"] .screen::after { background-image: var(--scene-garden-art); }
+:root[data-scene="garden"] .screen::before, :root[data-scene="garden"] .screen::after {
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+:root[data-scene="garden"] .screen::before { height: 85px; }
+:root[data-scene="garden"] .screen::after { height: 110px; }
+:root[data-scene="garden"] .screen.play::before { height: 75px; }
+:root[data-scene="garden"] .screen.play::after { height: 90px; }

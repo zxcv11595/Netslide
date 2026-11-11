@@ -15,3 +15,8 @@ export function toast(message, ms = 2600) {
   clearTimeout(timer);
   timer = setTimeout(() => host.classList.remove('show'), ms);
 }
+
+export function hideToast() {
+  clearTimeout(timer);
+  if (host) host.classList.remove('show');
+}

@@ -1,6 +1,8 @@
 // 코드로 그리는 그림 조각(SVG)과 제공 이미지 표시. 이미지가 없으면 코드 그림으로 대체한다.
 import { CONFIG } from '../config.js';
 
+import { t } from '../i18n.js';
+
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 export function svg(tag, attrs = {}, children = []) {
@@ -56,16 +58,17 @@ export function hamsterFace() {
   return g;
 }
 
-// 코드로 그린 간식(이미지 누락 시 대체). 중심 (0,0), 크기 약 size.
+// 코드로 그린 도토리(이미지 누락 시 대체). 중심 (0,0), 크기 약 size.
 export function seedShape(size = 44) {
   const s = size / 44;
-  const g = svg('g', { transform: `rotate(35) scale(${s})` });
-  g.appendChild(svg('path', { d: 'M0 -21 C12 -12 13 10 0 21 C-13 10 -12 -12 0 -21 Z', fill: '#8a5a33', stroke: COLORS.ink, 'stroke-width': 3, 'stroke-linejoin': 'round' }));
-  g.appendChild(svg('path', { d: 'M-4 -13 C-7 -3 -7 6 -3 14 M4 -13 C7 -3 7 6 3 14', fill: 'none', stroke: '#ffe9bd', 'stroke-width': 3, 'stroke-linecap': 'round' }));
+  const g = svg('g', { transform: `scale(${s})` });
+  g.appendChild(svg('path', { d: 'M-17 0h34c0 12-7 20-17 24-10-4-17-12-17-24z', fill: '#e6a24f', stroke: COLORS.ink, 'stroke-width': 3, 'stroke-linejoin': 'round' }));
+  g.appendChild(svg('path', { d: 'M-20 0c0-10 9-16 20-16s20 6 20 16z', fill: '#a8723b', stroke: COLORS.ink, 'stroke-width': 3, 'stroke-linejoin': 'round' }));
+  g.appendChild(svg('path', { d: 'M0 -16c0-4 1-6 3-8', fill: 'none', stroke: COLORS.ink, 'stroke-width': 3, 'stroke-linecap': 'round' }));
   return g;
 }
 
-// 간식: 제공 이미지를 쓰고, 불러오지 못하면 코드 그림으로 바꾼다. 중심 (0,0).
+// 도토리: 제공 이미지를 쓰고, 불러오지 못하면 코드 그림으로 바꾼다. 중심 (0,0).
 export function seedSprite(size = 48) {
   const g = svg('g', { class: 'seed' });
   const img = svg('image', {
@@ -83,10 +86,17 @@ export function starIcon(filled, size = 24) {
     svg('path', { d: STAR_D, 'stroke-linejoin': 'round', 'stroke-width': 1.8 }),
   ]);
 }
+// 최단 경로 깃발
+export function flagIcon(size = 18) {
+  return svg('svg', { viewBox: '0 0 24 24', width: size, height: size, class: 'flag-ic', 'aria-hidden': 'true' }, [
+    svg('path', { d: 'M6 21.5V3', fill: 'none', stroke: '#55301d', 'stroke-width': 2.6, 'stroke-linecap': 'round' }),
+    svg('path', { d: 'M6.6 4.2c4.2-2.2 6.4 2.2 11.4 0v8.4c-5 2.2-7.2-2.2-11.4 0z', fill: '#ef6b45', stroke: '#55301d', 'stroke-width': 2, 'stroke-linejoin': 'round' }),
+  ]);
+}
 export function starPath(attrs = {}) { return svg('path', { d: STAR_D, ...attrs }); }
 
 export function starsRow(count, total = 3, size = 20) {
-  const row = el('span', { class: 'stars-row', role: 'img', 'aria-label': `별 ${count}개` });
+  const row = el('span', { class: 'stars-row', role: 'img', 'aria-label': t('별 {n}개', { n: count }) });
   for (let i = 0; i < total; i++) row.appendChild(starIcon(i < count, size));
   return row;
 }

@@ -1,5 +1,6 @@
 // 같은 판 공유 링크: ?v=<콘텐츠 버전>&s=<판 ID>[&d=<YYYY-MM-DD>]
 // 링크는 판 ID로 배치를 재현한다. 날짜는 일일 기록을 남길지 판단하는 데만 쓴다.
+import { t } from '../i18n.js';
 import { dailyStageFor, isValidDateString } from './daily.js';
 
 export function buildLink(baseUrl, { version, stageId, date = null }) {
@@ -36,8 +37,10 @@ export function parseLink(search, contents, todayStr) {
   return { type: 'stage', content, stage, date };
 }
 
-export function shareText({ gameName, title, stars, moves, hasBonus, bonusDone, tutorial }) {
-  const starLine = tutorial ? '완료' : `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}`;
-  const bonus = hasBonus ? ` · 보너스 ${bonusDone ? '달성' : '미달성'}` : '';
-  return `${gameName} · ${title}\n${starLine} · ${moves}수${bonus}`;
+// shortest: 최단 경로로 성공, record: 표시된 최단 경로보다 짧게 성공(기록 깨기)
+export function shareText({ gameName, title, stars, moves, hasBonus, bonusDone, tutorial, shortest = false, record = false }) {
+  const starLine = tutorial ? t('완료') : `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}`;
+  const bonus = hasBonus ? (bonusDone ? t(' · 보너스 달성') : t(' · 보너스 미달성')) : '';
+  const flag = record ? t(' · 🚩 기록을 깼어요!') : shortest ? t(' · 🚩 최단 경로 성공!') : '';
+  return `${gameName} · ${title}\n${starLine} · ${t('{moves}번', { moves })}${bonus}${flag}`;
 }

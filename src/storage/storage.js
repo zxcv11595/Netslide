@@ -16,7 +16,9 @@ export function emptyData() {
     content: {}, // 콘텐츠 버전별 기록. 버전이 다른 판 기록은 섞지 않는다.
     ads: { playMs: 0, doneIds: [], lastShownAt: 0, impressions: 0 },
     hints: START_HINTS, // 남은 힌트 수
-    settings: { vibrate: true },
+    hintDay: null, // 날마다 주는 힌트를 마지막으로 확인한 날짜(한국 시간 YYYY-MM-DD)
+    starHints: 0, // 별 모으기로 이미 받은 힌트 횟수
+    settings: { vibrate: true, sound: true, music: true, tap: true }, // sound = 효과음, music = 배경음, tap = 버튼음
   };
 }
 
@@ -59,7 +61,12 @@ export function sanitize(raw) {
     }
   }
   if (Number.isInteger(raw.hints) && raw.hints >= 0) data.hints = Math.min(raw.hints, 999);
+  if (typeof raw.hintDay === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw.hintDay)) data.hintDay = raw.hintDay;
+  if (Number.isInteger(raw.starHints) && raw.starHints >= 0) data.starHints = Math.min(raw.starHints, 999);
   if (isObj(raw.settings) && typeof raw.settings.vibrate === 'boolean') data.settings.vibrate = raw.settings.vibrate;
+  if (isObj(raw.settings) && typeof raw.settings.sound === 'boolean') data.settings.sound = raw.settings.sound;
+  if (isObj(raw.settings) && typeof raw.settings.music === 'boolean') data.settings.music = raw.settings.music;
+  if (isObj(raw.settings) && typeof raw.settings.tap === 'boolean') data.settings.tap = raw.settings.tap;
   if (isObj(raw.ads)) {
     data.ads.playMs = posInt(Math.floor(Number(raw.ads.playMs))) ?? 0;
     data.ads.doneIds = Array.isArray(raw.ads.doneIds) ? raw.ads.doneIds.filter((x) => typeof x === 'string') : [];

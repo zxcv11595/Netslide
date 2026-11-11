@@ -1,7 +1,7 @@
 // 광고 어댑터와 입력 잠금
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createAdManager } from '../src/ads/adManager.js';
+import { createAdManager } from '../src/breaks/breakManager.js';
 import { createStore } from '../src/storage/storage.js';
 import { createTransitionLock } from '../src/ui/transitionLock.js';
 import { CONFIG } from '../src/config.js';
