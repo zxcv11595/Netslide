@@ -16,6 +16,7 @@ import {
 } from './ui/screens.js';
 import { createShopScreen } from './ui/shop.js';
 import { installBackNav, openExitDialog } from './ui/backNav.js';
+import { initAnalytics, track } from './analytics.js';
 import { createPurchases } from './shop/purchases.js';
 import { getLang } from './i18n.js';
 import { createPlayScreen } from './ui/play.js';
@@ -160,6 +161,7 @@ async function boot() {
     }
     // 다른 판을 새로 시작하면 이전에 하던 판의 저장은 지운다(이어하기는 history를 넘겨받는다).
     if (!opts.history) clearCurrent(store, content);
+    track(`play/${stage.id}`);
     mount(createPlayScreen({ ...ctx, afterTutorial }, { stage, ...opts }));
   }
 
@@ -196,6 +198,12 @@ async function boot() {
   // 날마다 처음 들어오면 힌트 1개(보유 수가 적을 때만)
   const dailyHint = grantDailyHint(store, kstDateString());
   if (dailyHint > 0 && link.type === 'none') toast(t('오늘의 힌트 {n}개를 받았어요', { n: dailyHint }), 3200);
+
+  initAnalytics();
+  // 오프라인 실행: 배포한 웹에서만 서비스 워커를 켠다(개발 서버와 앱으로 감싼 경우는 제외)
+  if (!import.meta.env.DEV && !window.Capacitor && 'serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => { /* 지원하지 않거나 막힌 환경: 그냥 온라인으로만 동작 */ });
+  }
 
   if (store.issue && store.issue !== 'corrupt' && store.issue !== 'newer') {
     toast(t('저장할 수 없는 환경이라 기록이 유지되지 않아요'), 4000);

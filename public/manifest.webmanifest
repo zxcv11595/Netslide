@@ -1,0 +1,18 @@
+{
+  "name": "Nutslide: 햄스터 슬라이드 퍼즐",
+  "short_name": "Nutslide",
+  "description": "줄을 밀어 나무 길을 잇고, 햄스터가 도토리를 찾아가게 하는 슬라이드 퍼즐",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff9ee",
+  "theme_color": "#faf6ed",
+  "categories": ["games", "puzzle"],
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

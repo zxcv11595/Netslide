@@ -8,16 +8,14 @@
 - 난이도 체감: 별 기준(최단의 2배·3배)과 힌트 지급(접속 1 · 오늘의 도전 1 · 최단 경로 1)이 적당한지 무한 힌트를 끄고 해 보기
 
 ## 출시 전
-- 테스트용 모의 결제 끄기(`src/config.js`의 `shop.simulatePay`). 켜 둔 채 내면 누구나 공짜로 힌트·광고 제거를 받는다
 - 상점 가격 정하기(`src/shop/catalog.js`, 지금은 임시 값)
-- 문의 받을 이메일 정하기(`src/config.js`의 contactEmail). 정하면 설정에 '문의하기'가 나타난다
-- public/privacy.html 을 올린 공개 주소를 스토어 등록 정보에 적기
-- 공유 미리보기 태그
-- 앱 아이콘·스토어 이미지
+- 스토어 이미지(소개 그림, 스크린샷). 앱 아이콘은 햄스터 그림으로 만들어 두었다(전용 그림이 생기면 `tools/make-icons.py`의 원본만 바꾼다)
+- 스토어 등록 정보에 개인정보 처리방침 주소 적기: https://zxcv11595.github.io/Netslide/privacy.html
+- 앱 만들기: Android Studio와 JDK 21 설치 → `npm run app:sync` → `npm run app:open` → 실제 폰에서 확인. 앱 아이디(`capacitor.config.json`) 확정
+- 방문 통계 켜기: GoatCounter 사이트 만들기 → `src/config.js`의 `analytics.goatcounter` → 개인정보 처리방침 먼저 고치기
 - README.md를 새 이름과 현재 규칙에 맞게 고치기
 - Codex용 로딩 그림 요청서 새로 쓰기(예전 것은 지웠고 git 기록에 있다)
 
-- 개인정보 처리방침 공개용 파일이 `docs/privacy.html`에 있다. CLAUDE.md에는 `public/privacy.html`로 적혀 있어 어긋난다. 어디에 올릴지 정한 뒤 한쪽으로 맞추기
 - `docs/THEME_AND_CONTROLS.md`는 예전 배치 기록이라 지워도 되는지 확인(커밋된 적이 없어 지우면 되살릴 수 없다)
 - 성취 '별 모두 모으기'·'깃발 모두 모으기'와 내 정보 '성공한 판' 그림을 다른 그림과 같은 화풍으로 만들기
 
@@ -25,7 +23,6 @@
 - 영어 문구 검수(원어민 확인), 스토어 등록 문구·개인정보 처리방침 공개 파일의 영어판
 - 광고 SDK
 - 인앱 결제 실제 연결(화면과 구매 흐름은 있다. `src/shop/purchases.js`의 provider만 구현하면 된다). 붙이면 개인정보 처리방침의 "결제 기능을 사용하지 않습니다"부터 고치기
-- 앱으로 감쌀 때 종료 호출 연결(`src/ui/backNav.js`의 `exit()`, Capacitor용은 들어 있다)
 - 어려운 판 대책: 난이도 앞쪽 판에 벽을 기본으로 보여 주기, 판 곡선 완만하게 다시 생성(둘 다 얘기만 하고 아직 안 함)
 - 익스트림 난이도
 

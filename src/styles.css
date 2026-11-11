@@ -296,7 +296,8 @@ svg.ic.lk { width: 15px; height: 15px; stroke-width: 3; }
   align-self: center; padding: 4px 20px; border-radius: 999px; background: var(--panel);
   font-size: 0.95rem; color: var(--soft); display: flex; align-items: center; gap: 6px;
 }
-.pill b { font-size: 1.25rem; color: var(--ink); font-weight: 900; }
+.pill-time { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pill-time b { color: var(--ink); font-weight: 900; }
 .new { background: var(--pt); color: #fff; border-radius: 999px; padding: 1px 10px; font-size: 0.75rem; font-weight: 900; }
 .new.plain { background: var(--tile); color: var(--ink); }
 .got-hint { font-size: 0.88rem; display: flex; align-items: center; justify-content: center; gap: 4px; }
@@ -661,8 +662,8 @@ svg.ic.gear { stroke-width: 2; }
 .ring[data-stars="2"] .ring-fill { stroke: #f0b25c; }
 .ring[data-stars="1"] .ring-fill { stroke: #d9b98a; }
 .ring-num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--ink); line-height: 1; white-space: nowrap; }
-.ring-num b { font-weight: 900; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-.ring-num small { font-weight: 900; opacity: 0.7; }
+.ring-value { font-weight: 900; font-variant-numeric: tabular-nums; }
+.ring-num b { display: inline-block; font-weight: inherit; }
 .hud-ham { display: flex; align-items: center; }
 .hud-ham img { object-fit: contain; flex: none; }
 .hud-ham span { font-weight: 900; color: var(--ink); }
@@ -680,9 +681,6 @@ svg.ic.gear { stroke-width: 2; }
 
 /* ---------- 계기판 최종 (2026-11-12, 12차 시안 확정): 별은 왼쪽·숫자는 오른쪽 정렬, 별은 항상 3칸(못 받는 별은 빈 별), 여백 같게 ---------- */
 .dash.hud { padding: 12px 14px; }
-.ring-num { gap: 1px; }
-.ring-num b { line-height: 1; }
-.ring-num small { margin: 0; }
 .hud-line { justify-content: space-between; padding: 4px 12px; }
 
 /* ---------- 계기판은 화면 높이에 맞춰 부드럽게 줄고 늘어난다 (2026-11-12): 낮은 폰일수록 보드에 자리를 내준다 ---------- */
@@ -801,8 +799,7 @@ svg.ic.gear { stroke-width: 2; }
 .mi-chip.off { opacity: 0.5; border: 2px dashed #b99a72; background: transparent; }
 .mi-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
 .mi-row .l { flex: 1; font-size: 1rem; font-weight: 900; color: var(--ink); }
-.mi-row .v { font-size: 1.6rem; font-weight: 900; color: var(--ink); line-height: 1; }
-.mi-row .v small { font-size: 0.85rem; color: #8a6a4a; font-weight: 800; margin-left: 2px; }
+.mi-row .v { font-size: 1.35rem; font-weight: 900; color: var(--ink); line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .mi-sec { display: flex; justify-content: space-between; align-items: baseline; font-size: 1.15rem; font-weight: 900; margin-bottom: -6px; }
 .mi-sec span { font-size: 0.88rem; color: #8a6a4a; }
 .mi-list { display: flex; flex-direction: column; gap: 10px; }
@@ -848,8 +845,7 @@ svg.ic.gear { stroke-width: 2; }
 .hud-line b { font-size: 0.98rem; white-space: nowrap; }
 .hud-line .star { width: 12px; height: 12px; }
 .ring { width: var(--ring); height: var(--ring); }
-.ring-num b { font-size: calc(var(--ring) * 0.37); }
-.ring-num small { margin-bottom: 0; align-self: center; transform: translateY(0.3em); }
+.ring-value { font-size: min(calc(var(--ring) * 0.28), calc(var(--ring) * 1.15 / (var(--move-digits, 1) + 1))); }
 .hud-right { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; }
 .hud-short { display: flex; flex-direction: column; align-items: center; line-height: 1.15; }
 .hud-short span { font-size: 0.74rem; font-weight: 800; color: #8a6a4a; white-space: nowrap; }
@@ -872,10 +868,6 @@ svg.ic.gear { stroke-width: 2; }
 .mi-pic { width: 44px; height: 44px; object-fit: contain; flex: none; }
 .mi-row { padding-top: 8px; padding-bottom: 8px; }
 
-.ring-num small { font-size: calc(var(--ring) * 0.15); }
-
-/* "번"은 작게, 숫자 옆 아래쪽에 붙인다. 별 줄·최단 경로·게이지 모두 같은 모양 (2026-11-12) */
-.hud-line b small, .hud-short b small { font-size: 0.6em; font-weight: 900; opacity: 0.75; margin-left: 1px; position: relative; top: 0.18em; }
 /* 최단 경로와 도토리 수 사이를 조금 더 띄운다 (2026-11-12) */
 .hud-right { gap: clamp(9px, 1.7dvh, 15px); }
 
@@ -946,10 +938,9 @@ svg.ic.gear { stroke-width: 2; }
 .lang-sheet { gap: 10px; }
 .lang-sheet .lang-choice { width: 100%; height: 54px; border-radius: 18px; font-size: 1.1rem; }
 /* 영어: 게이지 안에서는 숫자 아래 줄에 moves를 둔다(옆에 두면 두 자리 숫자가 동그라미를 넘는다) */
-html[lang="en"] .ring-num { flex-direction: column; gap: 1px; }
-html[lang="en"] .ring-num b { font-size: calc(var(--ring) * 0.34); }
-html[lang="en"] .ring-num small { transform: none; margin: 0; align-self: center; position: static; font-size: calc(var(--ring) * 0.13); letter-spacing: 0.02em; }
-html[lang="en"] .hud-short b small { font-size: 0.55em; top: 0; }
+html[lang="en"] .ring-value { display: grid; justify-items: center; gap: 1px; }
+html[lang="en"] .ring-unit { font-size: calc(var(--ring) * 0.13); }
+html[lang="en"] .hud-short b { font-size: 0.88rem; }
 /* 영어는 글자가 길다: 연속 표시는 한 줄로, 이어하기 글자는 왼쪽에 붙여 오른쪽 판 이름과 겹치지 않게 */
 .streak { white-space: nowrap; }
 html[lang="en"] .go.go-tagged { justify-content: flex-start; padding-left: 24px; }
@@ -1064,12 +1055,12 @@ html[lang="en"] .go.go-tagged { justify-content: flex-start; padding-left: 24px;
 .ring-num .bump { animation: num-bump 240ms cubic-bezier(0.2, 1.5, 0.4, 1) 1; }
 @keyframes num-bump { 0% { transform: scale(1.35); } 100% { transform: scale(1); } }
 /* 상점: 상품 줄이 차례로 올라온다 */
-.shop-body > * { animation: rise-in 260ms ease-out backwards; }
-.shop-body > :nth-child(2) { animation-delay: 40ms; }
-.shop-body > :nth-child(3) { animation-delay: 80ms; }
-.shop-body > :nth-child(4) { animation-delay: 120ms; }
-.shop-body > :nth-child(5) { animation-delay: 160ms; }
-.shop-body > :nth-child(n+6) { animation-delay: 200ms; }
+.shop-body.intro > * { animation: rise-in 260ms ease-out backwards; }
+.shop-body.intro > :nth-child(2) { animation-delay: 40ms; }
+.shop-body.intro > :nth-child(3) { animation-delay: 80ms; }
+.shop-body.intro > :nth-child(4) { animation-delay: 120ms; }
+.shop-body.intro > :nth-child(5) { animation-delay: 160ms; }
+.shop-body.intro > :nth-child(n+6) { animation-delay: 200ms; }
 
 /* ---------- 탭 화면 머리줄 통일 (2026-11-11) ----------
    버튼이 있든 없든 머리줄 높이가 같고(뒤로 버튼 크기), 제목은 양옆 조각의 폭과 상관없이 정확히 가운데다.
@@ -1088,3 +1079,8 @@ html[lang="en"] .go.go-tagged { justify-content: flex-start; padding-left: 24px;
 .mi-chips { gap: 6px; overflow: visible; flex-wrap: wrap; }
 .mi-chip { flex: 1 1 auto; padding: 6px 8px; text-align: center; }
 html[lang="en"] .mi-chip { font-size: 0.82rem; }
+
+/* 성취 묶음 제목과 개수: 화면 끝이 아니라 카드 안쪽(그림 동그라미의 왼쪽 끝, 줄 개수의 오른쪽 끝)에 맞춘다 */
+.mi-sec { padding: 0 16px; }
+/* 성취 묶음 사이를 띄운다(앞 묶음의 마지막 카드와 다음 묶음 제목 사이) */
+.mi-list + .mi-sec { margin-top: clamp(12px, 2.2dvh, 20px); }

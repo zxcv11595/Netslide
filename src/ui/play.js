@@ -8,6 +8,7 @@ import {
 } from '../game/progress.js';
 import { clearRewardHints } from '../game/hintWallet.js';
 import { openHintPacks } from './shop.js';
+import { track } from '../analytics.js';
 import { buildLink, shareText } from '../game/links.js';
 import { nextHint, guideCount } from '../game/hint.js';
 import { requestPlan, warmPlan } from '../game/hintClient.js';
@@ -101,7 +102,9 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   ringFill.setAttribute('stroke-dasharray', `${RING_C} ${RING_C}`);
   ringSvg.append(ringCircle('ring-track'), ringFill);
   const movesEl = el('b', { text: '0' });
-  const moveCount = el('div', { class: 'ring-num' }, [movesEl, el('small', { text: t('번@ring') })]);
+  const moveCount = el('div', { class: 'ring-num' }, [
+    el('span', { class: 'ring-value' }, [movesEl, el('span', { class: 'ring-unit', text: t('번@ring') })]),
+  ]);
   const ring = el('div', { class: 'ring', role: 'img' }, [ringSvg, moveCount]);
   const hamImg = el('img', { src: CONFIG.assets.snackSeed, alt: '', draggable: 'false' });
   const litEl = el('b', { text: '0' });
@@ -115,7 +118,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   const shortAtStart = shownShortest(stage, getRecord(store, content, stage.id));
   // 이 판을 시작할 때 깃발이 하나도 없었으면, 첫 깃발을 받을 때 한 줄로 설명한다
   const noFlagYet = ![...content.byId.values()].some((s) => hasFlag(s, getRecord(store, content, s.id)));
-  const shortEl = el('div', { class: 'hud-short' }, [el('span', {}, [flagIcon(13), t('최단 경로')]), el('b', {}, [String(shortAtStart), el('small', { text: t('번@short') })])]);
+  const shortEl = el('div', { class: 'hud-short' }, [el('span', {}, [flagIcon(13), t('최단 경로')]), el('b', { text: t('{moves}번', { moves: shortAtStart }) })]);
   const dash = el('div', { class: 'dash hud' }, [
     el('div', { class: 'hud-right' }, [shortEl, hamBox]),
     ring,
@@ -197,13 +200,15 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   // ----- 상태 표시 -----
   function refreshHud() {
     const { conn } = session;
-    if (movesEl.textContent !== String(session.moves)) {
+    const count = String(session.moves);
+    if (movesEl.textContent !== count) {
       // 횟수가 바뀌면 숫자가 한 번 통 튄다
+      moveCount.style.setProperty('--move-digits', String(count.length));
       movesEl.classList.remove('bump');
       void movesEl.offsetWidth;
       movesEl.classList.add('bump');
     }
-    movesEl.textContent = String(session.moves);
+    movesEl.textContent = count;
     const full = conn.requiredTotal > 0 && conn.requiredConnected >= conn.requiredTotal;
     litEl.textContent = String(conn.requiredConnected);
     hamBox.classList.toggle('full', full);
@@ -408,6 +413,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     if (!walls.length) { toast(t('이 판은 벽 보기를 쓸 수 없어요.')); return; }
     setHints(store.data.hints - H.wallCost);
     wallsOn = true;
+    track('hint/walls');
     ctx.state.wallsFor = wallKey;
     board.setWalls(walls);
     sound.hint();
@@ -479,6 +485,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   function startGuide(plan) {
     if (destroyed || completing || store.data.hints < H.guideCost) return;
     setHints(store.data.hints - H.guideCost);
+    track('hint/guide');
     const n = guideCount(plan, H.minGuide);
     guideQ = plan.moves.slice(0, n);
     showGuide();
@@ -510,6 +517,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     }
     skipped = true;
     setHints(store.data.hints - H.clearCost);
+    track('hint/clear');
     complete();
   }
 
@@ -517,6 +525,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   function complete() {
     if (destroyed || completing || !session.result.canComplete) return;
     completing = true;
+    track(`clear/${stage.id}/${skipped ? 'skip' : session.result.stars}`);
     const result = skipped ? { ...session.result, stars: 1 } : session.result;
     const moves = session.moves;
     const firstDaily = !!date && !store.content(content.version).daily[date];
@@ -599,11 +608,12 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     };
 
     const primary = el('button', { class: 'go', type: 'button', onclick: once(primaryAction) }, [primaryLabel, icon('play')]);
+    const resultCount = el('b', { text: t('{moves}번', { moves }) });
     const card = el('div', { class: 'result-card', role: 'dialog', 'aria-modal': 'true', 'aria-label': t('성공') }, [
       isShortest ? el('h2', { class: 'flag-title' }, [flagIcon(28), t('최단 경로 성공!')]) : el('h2', { text: t('성공@title') }),
       stars,
       ham,
-      skipped ? null : brokeRecord ? el('div', { class: 'pill record' }, [el('span', { text: t('기록을 깼어요!') }), el('small', { text: t('최단 경로 {a} → {b}', { a: shortAtStart, b: moves }) })]) : el('div', { class: 'pill' }, [el('b', { text: String(moves) }), t('번 만에 성공'), badge]),
+      skipped ? null : brokeRecord ? el('div', { class: 'pill record' }, [el('span', { text: t('기록을 깼어요!') }), el('small', { text: t('최단 경로 {a} → {b}', { a: shortAtStart, b: moves }) })]) : el('div', { class: 'pill' }, [el('span', { class: 'pill-time' }, [resultCount, t(' 만에 성공')]), badge]),
       isShortest && noFlagYet ? el('p', { class: 'got-hint flag-tip' }, [flagIcon(18), t(' 최단 경로로 성공한 판마다 깃발을 모아요')]) : null,
       gotHint ? el('p', { class: 'got-hint' }, [icon('bulb', 'bulb'), t(' 힌트 {n}개를 받았어요', { n: gotHint })]) : null,
       primary,
@@ -649,10 +659,12 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
         later(() => fx.remove(), starsDone + 1700);
       }
       // 민 횟수는 0에서부터 빠르게 올라간다
-      const num = card.querySelector('.pill > b');
-      if (num && moves > 1) {
+      if (!skipped && !brokeRecord && moves > 1) {
         const steps = Math.min(moves, 12);
-        for (let k = 0; k <= steps; k++) later(() => { num.textContent = String(Math.round((moves * k) / steps)); }, 260 + k * 35);
+        for (let k = 0; k <= steps; k++) {
+          const count = Math.round((moves * k) / steps);
+          later(() => { resultCount.textContent = t('{moves}번', { moves: count }); }, 260 + k * 35);
+        }
       }
     }
     const swap = () => { frame.classList.add('success'); ham.classList.add('cheer'); if (!reduce) frame.classList.add('jump'); };

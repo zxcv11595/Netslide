@@ -8,7 +8,7 @@ export const CONFIG = {
   fullName: t('Nutslide: 햄스터 슬라이드 퍼즐'), // 브라우저 탭과 공유 제목(지금은 한국어만)
   logoLines: ['Nutslide'], // 홈 제목의 줄바꿈. 로딩 제목은 index.html에서 맞춘다.
   version: '1.0.0',
-  contactEmail: '', // 문의 받을 주소. 채우면 설정에 '문의하기'가 나타난다
+  contactEmail: 'zxcv11595@gmail.com', // 문의 받을 주소. 채우면 설정에 '문의하기'가 나타난다
   storageKey: 'hamster-snack-delivery',
 
   // public/ 아래 경로(배포 하위 경로에서도 동작하도록 상대 경로)
@@ -49,7 +49,14 @@ export const CONFIG = {
 
   // 상점. 실제 결제 사업자는 아직 없다.
   shop: {
-    simulatePay: true, // 테스트용: 결제가 된 것처럼 구매 과정을 끝까지 보여 주고 상품도 준다(돈은 나가지 않는다). 출시 전에 false로
+    // 모의 결제: 결제가 된 것처럼 구매 과정을 끝까지 보여 주고 상품도 준다(돈은 나가지 않는다).
+    // 개발 서버에서만 켜진다. 배포한 게임에서는 꺼져서 구매 창이 "아직 구매할 수 없어요"로 끝난다.
+    simulatePay: !!(import.meta.env && import.meta.env.DEV),
+  },
+
+  // 방문·진행 통계(src/analytics.js). 주소가 비어 있으면 아무것도 보내지 않는다. 켜기 전에 개인정보 처리방침부터 고친다.
+  analytics: {
+    goatcounter: '', // 예: 'https://nutslide.goatcounter.com/count'
   },
 
   // 광고: 사업자 미정이므로 기본 비활성. provider가 없으면 항상 즉시 통과한다.

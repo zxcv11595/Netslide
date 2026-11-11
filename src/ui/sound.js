@@ -47,7 +47,14 @@ function tone(ac, out, { f, f2 = f, t = 0.09, vol = 0.12, type = 'sine', at = 0,
   osc.stop(t0 + t + 0.03);
 }
 
-const emit = (notes) => { const ac = audio(); if (ac) for (const n of notes) tone(ac, sfxOut, n); };
+// 버튼음("뽁")은 아주 잠깐 미뤘다가 낸다. 같은 누름에서 다른 소리(창 열림, 성공 등)가 나면 버튼음은 내지 않는다
+// — 두 소리가 같은 순간에 겹쳐 지저분하게 들리던 것을 막는다.
+let tapPending = null;
+const emit = (notes) => {
+  if (tapPending) { clearTimeout(tapPending); tapPending = null; }
+  const ac = audio();
+  if (ac) for (const n of notes) tone(ac, sfxOut, n);
+};
 const play = (notes) => { if (sfxOn) emit(notes); };
 const playTap = (notes) => { if (tapOn) emit(notes); };
 
@@ -55,7 +62,10 @@ const playTap = (notes) => { if (tapOn) emit(notes); };
 // 통통 튀는 "뽀옹/뾰롱" 느낌: 높은 사인파에 음높이가 빠르게 올라가거나 내려가는 짧은 소리.
 export const sound = {
   // 화면의 보통 버튼(탭, 목록, 창의 버튼): 작은 "뽁"
-  tap: () => playTap([{ f: 640, f2: 960, t: 0.055, vol: 0.08 }]),
+  tap: () => {
+    if (!tapOn || tapPending) return;
+    tapPending = setTimeout(() => { tapPending = null; emit([{ f: 640, f2: 960, t: 0.055, vol: 0.08 }]); }, 30);
+  },
   // 창이 열릴 때: 통통 두 번 올라가는 음
   open: () => playTap([{ f: 520, f2: 700, t: 0.06, vol: 0.07 }, { f: 700, f2: 940, t: 0.08, vol: 0.07, at: 0.06 }]),
   // 줄을 밀 때: 말랑한 "뽀옹"
@@ -97,6 +107,8 @@ function schedule() {
   const ac = audio();
   if (!ac || !musicOn) return;
   // 0.6초 앞까지 미리 예약해 둔다(탭이 잠깐 바빠도 끊기지 않게)
+  // 예약이 한참 밀렸으면(탭이 멈췄다 깨어남, 전화 등) 밀린 음을 한꺼번에 울리지 않고 지금부터 다시 잇는다
+  if (nextAt < ac.currentTime) nextAt = ac.currentTime + 0.05;
   while (nextAt < ac.currentTime + 0.6) {
     const bar = BARS[Math.floor(step / 8) % BARS.length];
     const f = bar[step % 8];

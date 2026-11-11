@@ -1,0 +1,5 @@
+pretendard-500/700/800/900.woff2
+
+Pretendard (https://github.com/orioncactus/pretendard) by Kil Hyung-jin.
+Licensed under the SIL Open Font License 1.1. See the license text in the repository above.
+These files are subsets containing only the characters used in this game (made with tools/make-fonts.py).

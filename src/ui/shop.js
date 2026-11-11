@@ -6,6 +6,7 @@ import { el } from './art.js';
 import { icon, tabbar, headRow } from './common.js';
 import { toast } from './toast.js';
 import { sound } from './sound.js';
+import { track } from '../analytics.js';
 
 export function productName(p) {
   return p.kind === 'hints' ? t('힌트 {n}개', { n: p.amount }) : t('광고 제거');
@@ -66,6 +67,7 @@ export function openBuyDialog(ctx, product, onDone = () => {}) {
     }
     const { status } = await purchases.buy(product);
     busy = false;
+    track(`buy/${product.id}/${status}`);
     if (!overlay.isConnected) return;
     result(status);
   }
@@ -134,7 +136,7 @@ export function openHintPacks(ctx, onDone = () => {}) {
 // ----- 상점 화면 -----
 export function createShopScreen(ctx) {
   const { store, purchases } = ctx;
-  const body = el('div', { class: 'shop-body' });
+  const body = el('div', { class: 'shop-body intro' }); // intro: 처음 들어올 때만 상품 줄이 차례로 올라온다
   // 머리줄 오른쪽 위: 전구와 남은 힌트 수만 작게 보여 준다
   const walletNum = el('b');
   const wallet = el('div', { class: 'head-hints', role: 'img' }, [icon('bulb', 'bulb'), walletNum]);
@@ -181,6 +183,7 @@ export function createShopScreen(ctx) {
     ].filter(Boolean));
   }
   render();
+  setTimeout(() => body.classList.remove('intro'), 600); // 구매 창을 닫고 다시 그릴 때는 깜빡이지 않게
 
   const pad = el('div', { class: 'pad' }, [headRow(t('상점'), null, wallet), el('div', { class: 'hr' }), body]);
   const root = el('section', { class: 'screen' }, [pad, tabbar(ctx, 'shop')]);

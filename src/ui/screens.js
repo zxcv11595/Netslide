@@ -115,7 +115,7 @@ function statIcon(name) {
 }
 const statRow = (iconName, label, value, unit = '') => el('div', { class: 'card mi-row' }, [
   statIcon(iconName), el('span', { class: 'l', text: label }),
-  el('span', { class: 'v' }, [String(value), unit ? el('small', { text: unit }) : null]),
+  el('span', { class: 'v', text: `${value}${unit}` }),
 ]);
 // 성취 그림: public/assets/ach/<성취 id>.webp. 없으면 햄스터 그림으로 대신한다.
 function achIcon(it) {

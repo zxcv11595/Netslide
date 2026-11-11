@@ -6,7 +6,22 @@
     <meta name="theme-color" content="#faf6ed" />
     <meta name="description" content="줄을 밀어 나무 길을 잇고, 햄스터가 도토리를 찾아가게 하는 슬라이드 퍼즐" />
     <title>Nutslide: 햄스터 슬라이드 퍼즐</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='16' cy='16' r='9' fill='%23f9b45c' stroke='%235a3418' stroke-width='3'/%3E%3Ccircle cx='48' cy='16' r='9' fill='%23f9b45c' stroke='%235a3418' stroke-width='3'/%3E%3Cellipse cx='32' cy='36' rx='26' ry='23' fill='%23f9b45c' stroke='%235a3418' stroke-width='3'/%3E%3Cellipse cx='32' cy='43' rx='17' ry='12' fill='%23fff1da'/%3E%3Ccircle cx='23' cy='33' r='3.4' fill='%235a3418'/%3E%3Ccircle cx='41' cy='33' r='3.4' fill='%235a3418'/%3E%3C/svg%3E" />
+    <link rel="icon" type="image/png" sizes="48x48" href="assets/icons/favicon-48.png" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-180.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Nutslide" />
+    <!-- 링크를 공유했을 때 보이는 제목·설명·그림. 그림과 주소는 전체 주소로 적어야 한다(배포 주소가 바뀌면 여기도 고친다). -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nutslide" />
+    <meta property="og:title" content="Nutslide: 햄스터 슬라이드 퍼즐" />
+    <meta property="og:description" content="줄을 밀어 나무 길을 잇고, 햄스터가 도토리를 찾아가게 하는 슬라이드 퍼즐" />
+    <meta property="og:url" content="https://zxcv11595.github.io/Netslide/" />
+    <meta property="og:image" content="https://zxcv11595.github.io/Netslide/assets/icons/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="preload" as="image" href="assets/hamster-idle.webp" />
     <style>
       /* Inline so the complete loading scene appears before the module starts. */
@@ -131,6 +146,12 @@
       /* 타이틀: 글꼴(주아, 필요한 글자만 담은 파일), 다 불러오면 게이지가 가득 차고 "화면을 눌러 시작"이 나온다 */
       .loading .ver { position: absolute; right: 14px; bottom: calc(10px + env(safe-area-inset-bottom)); font-size: 12px; font-weight: 700; letter-spacing: .02em; color: #8c7555; opacity: .85; }
       @font-face { font-family: "Jua"; src: url("assets/fonts/jua-subset.woff2") format("woff2"); font-display: swap; }
+      /* 본문 글꼴: 기기에 Pretendard가 없으면 기기마다 다른 글꼴로 보여서(숫자와 한글 모양이 따로 놂) 게임에 함께 싣는다.
+         게임에 나오는 글자만 담았다. 새 글자를 쓰면 python tools/make-fonts.py 로 다시 만든다. */
+      @font-face { font-family: "Pretendard"; font-weight: 500; src: url("assets/fonts/pretendard-500.woff2") format("woff2"); font-display: swap; }
+      @font-face { font-family: "Pretendard"; font-weight: 700; src: url("assets/fonts/pretendard-700.woff2") format("woff2"); font-display: swap; }
+      @font-face { font-family: "Pretendard"; font-weight: 800; src: url("assets/fonts/pretendard-800.woff2") format("woff2"); font-display: swap; }
+      @font-face { font-family: "Pretendard"; font-weight: 900; src: url("assets/fonts/pretendard-900.woff2") format("woff2"); font-display: swap; }
       .loading h1, .loading .subtitle, .loading .tap-cta { font-family: "Jua", "Pretendard", "Malgun Gothic", system-ui, sans-serif; font-weight: 400; }
       .loading h1 { letter-spacing: .01em; }
       .loading .subtitle { font-size: 15px; letter-spacing: .06em; }
