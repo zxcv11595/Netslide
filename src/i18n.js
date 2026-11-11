@@ -54,9 +54,6 @@ const EN = {
   '오늘의 도전': 'Daily Challenge',
   '오늘의 도전@tab': 'Daily',
   // ----- 입문 설명 -----
-  '깜빡이는 화살표를 누르면 줄이 한 칸 밀려요.': 'Tap the blinking arrow to slide the row one step.',
-  '자물쇠가 없는 줄만 밀 수 있어요.': 'Only rows without a lock can slide.',
-  '햄스터에서 모든 도토리까지 길이 이어지면 성공이에요.': 'Connect the path from the hamster to every acorn to win.',
   // ----- 시작·알림 -----
   '이 링크는 지금 버전에서 열 수 없는 판이에요.': 'This link is for a puzzle that this version cannot open.',
   '링크의 판을 찾지 못했어요.': 'The puzzle in this link was not found.',

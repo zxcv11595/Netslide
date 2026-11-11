@@ -69,10 +69,3 @@ export const GROUP_LABEL = {
   advanced: t('고급'),
   daily: t('오늘의 도전'),
 };
-
-// 입문 판에서 판 위에 보여 주는 한 줄 설명
-export const TUTORIAL_TEXT = {
-  T1: t('깜빡이는 화살표를 누르면 줄이 한 칸 밀려요.'),
-  T2: t('자물쇠가 없는 줄만 밀 수 있어요.'),
-  T3: t('햄스터에서 모든 도토리까지 길이 이어지면 성공이에요.'),
-};

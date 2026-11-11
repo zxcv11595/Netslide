@@ -52,7 +52,6 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   let undoLeft = 0; // 길이 너무 멀 때: 이만큼 되돌리면 힌트를 쓸 수 있다고 안내하는 중
   let guideQ = null; // 힌트 하나로 이어서 안내할 수(표기 배열). 맨 앞이 다음에 밀 줄
   let lastFed = Infinity; // 배달 수가 늘 때만 소리를 내기 위한 직전 값(처음 그릴 때는 내지 않는다)
-  let autoPlaying = false; // 바로 클리어 재생 중
   // 벽 보기 힌트를 켠 판. 같은 판을 재도전하거나 다시 들어와도 남고, 다른 판을 시작하면 사라진다(ctx.state.wallsFor에 기억).
   const wallKey = `${stage.id}|${date || ''}`;
   if (ctx.state.wallsFor !== wallKey) ctx.state.wallsFor = null;
@@ -220,8 +219,8 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     });
     ring.dataset.stars = String(now);
     ring.setAttribute('aria-label', t('{moves}번 밀었어요. 지금 끝내면 별 {now}개. 별 셋은 {s3}번, 별 둘은 {s2}번까지', { moves: session.moves, now, s3: stage.star3, s2: stage.star2 }));
-    undoBtn.disabled = !session.canUndo || autoPlaying;
-    restartBtn.disabled = !session.canUndo || autoPlaying;
+    undoBtn.disabled = !session.canUndo;
+    restartBtn.disabled = !session.canUndo;
   }
 
   function persist() {
@@ -249,7 +248,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   }
 
   function handleMove(move) {
-    if (destroyed || completing || board.busy || hintBusy || autoPlaying) return;
+    if (destroyed || completing || board.busy || hintBusy) return;
     // 입문 1의 안내 중에는 밝혀 준 화살표만 눌린다
     if (coach && coach.active) {
       const want = nextHint(stage, session.cells, session.historyCodes(), null);
@@ -268,7 +267,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     }
     clearHint();
     buzz(8);
-    if (!autoPlaying) sound.slide();
+    sound.slide();
     refreshHud();
     persist();
     board.animateShift(res.prevCells, res.applied, session.cells, session.conn, () => { afterShift(); afterGuideStep(wrong); });
@@ -282,7 +281,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   }
 
   function handleUndo() {
-    if (destroyed || completing || board.busy || hintBusy || autoPlaying) return;
+    if (destroyed || completing || board.busy || hintBusy) return;
     const codes = session.historyCodes();
     const res = session.undo();
     if (!res.ok) return;
@@ -300,7 +299,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   }
 
   function handleRestart() {
-    if (destroyed || completing || board.busy || hintBusy || autoPlaying) return;
+    if (destroyed || completing || board.busy || hintBusy) return;
     const codes = session.historyCodes();
     for (let i = codes.length - 1; i >= 0; i--) guideAfterUndo(codes[i]);
     undoLeft = 0;
@@ -363,7 +362,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
 
   // 오른쪽 위 톱니: 소리·진동 스위치와 나가기
   function openSettingsSheet() {
-    if (destroyed || completing || autoPlaying || hintBusy) return;
+    if (destroyed || completing || hintBusy) return;
     openSheet(t('설정'), [
       el('h2', { text: t('설정') }),
       el('div', { class: 'card set' }, soundSwitches(store)),
@@ -374,7 +373,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
 
   // 전구 버튼: 벽 보기(1) / 경로 안내(2) / 즉시 성공(3)을 고르는 창. 힌트가 모자라면 얻는 법을 함께 보여 준다.
   function openHintSheet() {
-    if (destroyed || completing || board.busy || hintBusy || autoPlaying) return;
+    if (destroyed || completing || board.busy || hintBusy) return;
     if (guideQ && guideQ.length) { showGuide(); note(t('안내 중이에요'), t('화살표를 따라 밀어 보세요')); return; }
     const have = store.data.hints;
     openSheet(t('힌트'), [
@@ -404,7 +403,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   // 벽 보기: 보관한 정답에서 길이 이어지지 않는 칸 사이에 벽을 세운다. 재시작해도 남고, 판을 나가면 사라진다.
   function useWalls() {
     closeSheet();
-    if (destroyed || completing || board.busy || hintBusy || autoPlaying || wallsOn || store.data.hints < H.wallCost) return;
+    if (destroyed || completing || board.busy || hintBusy || wallsOn || store.data.hints < H.wallCost) return;
     const walls = solutionWalls(stage, loadSolution(content, stage.id));
     if (!walls.length) { toast(t('이 판은 벽 보기를 쓸 수 없어요.')); return; }
     setHints(store.data.hints - H.wallCost);
@@ -421,7 +420,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   // 버튼을 누른 순간부터 searchMs 안에 반드시 답한다. 그동안 판 위에 "길을 찾는 중" 표시가 뜬다.
   async function useHint() {
     closeSheet();
-    if (destroyed || completing || board.busy || hintBusy || autoPlaying || store.data.hints < H.guideCost) return;
+    if (destroyed || completing || board.busy || hintBusy || store.data.hints < H.guideCost) return;
     hintBusy = true;
     undoLeft = 0;
     clearHint();
@@ -464,7 +463,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
 
   // 여러 수를 한 번에 되돌린다(힌트의 "너무 멀어요" 창에서)
   function undoMany(n) {
-    if (destroyed || completing || board.busy || hintBusy || autoPlaying) return;
+    if (destroyed || completing || board.busy || hintBusy) return;
     let done = 0;
     while (done < n && session.canUndo && session.undo().ok) done++;
     if (!done) return;
@@ -478,7 +477,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   }
 
   function startGuide(plan) {
-    if (destroyed || completing || autoPlaying || store.data.hints < H.guideCost) return;
+    if (destroyed || completing || store.data.hints < H.guideCost) return;
     setHints(store.data.hints - H.guideCost);
     const n = guideCount(plan, H.minGuide);
     guideQ = plan.moves.slice(0, n);
@@ -493,7 +492,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   // (재생을 보고 외워 재도전하는 것을 막으려고 2026-11-11에 재생을 뺐다.) 힌트는 끝났을 때 차감한다.
   function useClear() {
     closeSheet();
-    if (destroyed || completing || board.busy || hintBusy || autoPlaying || store.data.hints < H.clearCost) return;
+    if (destroyed || completing || board.busy || hintBusy || store.data.hints < H.clearCost) return;
     const solution = loadSolution(content, stage.id);
     if (!solution || !solution.length) { toast(t('이 판은 즉시 성공을 쓸 수 없어요.')); return; }
     guideQ = null;

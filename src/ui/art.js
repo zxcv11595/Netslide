@@ -93,7 +93,6 @@ export function flagIcon(size = 18) {
     svg('path', { d: 'M6.6 4.2c4.2-2.2 6.4 2.2 11.4 0v8.4c-5 2.2-7.2-2.2-11.4 0z', fill: '#ef6b45', stroke: '#55301d', 'stroke-width': 2, 'stroke-linejoin': 'round' }),
   ]);
 }
-export function starPath(attrs = {}) { return svg('path', { d: STAR_D, ...attrs }); }
 
 export function starsRow(count, total = 3, size = 20) {
   const row = el('span', { class: 'stars-row', role: 'img', 'aria-label': t('별 {n}개', { n: count }) });

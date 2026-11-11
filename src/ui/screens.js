@@ -3,10 +3,10 @@ import { t, getLang, saveLang, LANGS } from '../i18n.js';
 import { CONFIG, GROUP_LABEL } from '../config.js';
 import { getRecord, isUnlocked, isTutorialDone, hasFlag } from '../game/progress.js';
 import { dailyStageFor, kstDateString, dailyStreak } from '../game/daily.js';
-import { el, svg, starIcon, starsRow, flagIcon } from './art.js';
+import { el, starIcon, starsRow, flagIcon } from './art.js';
 import { groupStats, dailyStats, achievementSections } from '../game/stats.js';
 import { icon, tabbar, headRow, pad2 } from './common.js';
-import { TIERS, totals } from './home.js';
+import { TIERS } from './home.js';
 import { toast } from './toast.js';
 import { soundSwitches } from './settingRows.js';
 
@@ -110,19 +110,8 @@ export function createDailyScreen(ctx, { ym = null } = {}) {
 // 상점 화면은 src/ui/shop.js에 있다.
 
 // ----- 내 정보: 프로필 + 스테이지·오늘의 도전·성취 기록 (설정은 오른쪽 위 톱니) -----
-const STAR_D = 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z';
-const SHAPES = {
-  grid: ['<rect x="3" y="3" width="18" height="18" rx="3"/>', '<path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>'],
-  star: [`<path d="${STAR_D}"/>`],
-  starfill: [`<path class="solid" d="${STAR_D}"/>`],
-  stars: [`<path class="pile" transform="translate(0 12) scale(.62)" d="${STAR_D}"/>`, `<path class="pile" transform="translate(18 12) scale(.62)" d="${STAR_D}"/>`, `<path class="pile" transform="translate(9 1) scale(.72)" d="${STAR_D}"/>`],
-  flag: ['<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>'],
-  cal: ['<rect x="3" y="5" width="18" height="16" rx="3"/>', '<path d="M3 10h18M8 3v4M16 3v4"/>'],
-  chain: ['<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3A4 4 0 0 0 11 18.7l1-1"/>'],
-  trophy: ['<path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 21h8"/>'],
-};
 function statIcon(name) {
-  return el('img', { class: 'mi-pic', src: `assets/stat/${name}.webp`, alt: '', draggable: 'false' });
+  return el('img', { class: 'mi-pic', src: `assets/stat/${name}.webp`, alt: '', draggable: 'false', decoding: 'async' });
 }
 const statRow = (iconName, label, value, unit = '') => el('div', { class: 'card mi-row' }, [
   statIcon(iconName), el('span', { class: 'l', text: label }),
@@ -131,7 +120,7 @@ const statRow = (iconName, label, value, unit = '') => el('div', { class: 'card 
 // 성취 그림: public/assets/ach/<성취 id>.webp. 없으면 햄스터 그림으로 대신한다.
 function achIcon(it) {
   const fallback = it.done ? CONFIG.assets.hamsterSuccess : CONFIG.assets.hamsterIdle;
-  const img = el('img', { src: `assets/ach/${it.icon || it.id}.webp`, alt: '', draggable: 'false' });
+  const img = el('img', { src: `assets/ach/${it.icon || it.id}.webp`, alt: '', draggable: 'false', loading: 'lazy', decoding: 'async' });
   img.addEventListener('error', () => { img.src = fallback; }, { once: true });
   return img;
 }

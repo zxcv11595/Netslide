@@ -6,7 +6,7 @@ import { CONTENT, CONTENTS } from './data/content.js';
 import { createStore } from './storage/storage.js';
 // 광고 관리 코드. 폴더·파일 이름에 'ads'를 쓰지 않는다: 광고 차단 프로그램이 주소의 /ads/ 를 막아 게임이 로딩 화면에서 멈춘다.
 import { createAdManager } from './breaks/breakManager.js';
-import { isTutorialDone, nextTutorial, getCurrent, clearCurrent, migrateTutorialStars, migrateStarThresholds } from './game/progress.js';
+import { isTutorialDone, nextTutorial, clearCurrent, migrateTutorialStars, migrateStarThresholds } from './game/progress.js';
 import { parseLink } from './game/links.js';
 import { kstDateString } from './game/daily.js';
 import { grantDailyHint } from './game/hintWallet.js';
@@ -18,7 +18,7 @@ import { createShopScreen } from './ui/shop.js';
 import { installBackNav, openExitDialog } from './ui/backNav.js';
 import { createPurchases } from './shop/purchases.js';
 import { getLang } from './i18n.js';
-import { createPlayScreen, stageTitle } from './ui/play.js';
+import { createPlayScreen } from './ui/play.js';
 import { toast } from './ui/toast.js';
 import { initSound, sound } from './ui/sound.js';
 

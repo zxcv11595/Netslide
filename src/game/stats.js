@@ -54,8 +54,7 @@ export function dailyStats(dailyMap, todayStr) {
 
 // 성취 목록: [{ title, done, items: [{ id, title, now, max, done, icon }] }]
 // icon: public/assets/ach/<icon>.webp 파일 이름(없으면 id를 쓴다)
-export function achievementSections(store, content, todayStr) {
-  const tut = groupStats(store, content, 'tutorial');
+export function achievementSections(store, content, todayStr) {
   const reg = regularStats(store, content);
   const dailyMap = store.content(content.version).daily;
   const d = dailyStats(dailyMap, todayStr);
