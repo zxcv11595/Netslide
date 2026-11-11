@@ -1,10 +1,12 @@
-# 햄스터 간식 배달 (가칭)
+# Nutslide: 햄스터 슬라이드 퍼즐
+
+영어 이름: Nutslide: Hamster Slide Puzzle
 
 줄을 밀어 터널을 잇고 햄스터에게 간식을 보내는 모바일 세로형 웹 퍼즐입니다.
 설치·가입 없이 브라우저에서 바로 플레이하며, 정적 호스팅으로 배포합니다.
 
 - 기술: Vite + Vanilla JavaScript + HTML/CSS, 보드는 SVG (TypeScript·프레임워크·엔진 없음)
-- 요구 사항 원문: [docs/CLAUDE_CODE_HANDOFF.md](docs/CLAUDE_CODE_HANDOFF.md)
+- 요구 사항 원문: [docs/archive/CLAUDE_CODE_HANDOFF.md](docs/archive/CLAUDE_CODE_HANDOFF.md) (예전 문서, 지금은 CLAUDE.md가 기준)
 - 판 목록/검증 보고서: [docs/STAGE_REPORT.md](docs/STAGE_REPORT.md)
 
 ## 명령
@@ -33,7 +35,7 @@ src/game/      현재 판·이력(session), 해금·기록(progress), 일일(dai
 src/ui/        화면·입력·애니메이션 (board, play, home, art, share, toast, transitionLock)
 src/data/      검증된 판 데이터(stages.json)와 로더
 src/storage/   버전이 있는 localStorage 저장
-src/ads/       작은 광고 어댑터(기본 비활성)와 개발용 모의 provider
+src/breaks/    작은 광고 어댑터(기본 비활성)와 개발용 모의 provider
 tools/         판 생성(generate.js)·검증(verify.js), tools/out/ 은 개발용 해답 자료
 tests/         node:test 자동 테스트
 public/assets/ 게임 표시용 이미지(파생본)
@@ -105,7 +107,7 @@ art-src/       제공받은 원본 이미지와 시안(게임에 직접 쓰지 �
 
 - 게임 이름, 이미지 경로, 애니메이션 시간, 광고 실험값: `src/config.js`
   (브라우저 탭 제목의 초기값과 설명은 `index.html`에도 있습니다)
-- 광고 연결: `src/ads/adManager.js` 머리말의 provider 인터페이스 참고. 사업자가 정해지면 그 SDK를 감싼 provider를 `src/main.js`에서 넘기고 `CONFIG.ads.enabled`를 켭니다.
+- 광고 연결: `src/breaks/breakManager.js` 머리말의 provider 인터페이스 참고. 사업자가 정해지면 그 SDK를 감싼 provider를 `src/main.js`에서 넘기고 `CONFIG.ads.enabled`를 켭니다.
 - 개발 서버에서만 `?mockAd=fill|nofill|error|slow|notready` 와 `&adNow=1`(조건 무시)로 광고 흐름을 시험할 수 있습니다.
   운영 빌드에는 모의 광고 코드가 들어가지 않습니다.
 

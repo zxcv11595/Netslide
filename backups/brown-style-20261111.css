@@ -1,0 +1,118 @@
+/* 단일 운영 팔레트: 월넛 바탕, 중간 밝기 목재 표면, 황갈색 강조.
+   넓은 흰색 면/레몬색/검정 테두리를 피하고 한 계열의 명도 차이로 구분한다. */
+:root {
+  --bg: #67503d; --panel: #cfb99a; --tile: #b89a73;
+  --ink: #38291d; --soft: #594631; --line: #ae8d66; --edge: #735336;
+  --pt: #d69b4c; --pt-d: #8d5e2d;
+  --wood-text-on-dark: #eee0c7;
+  --wood-text-secondary: #dfccb0;
+  --wood-shadow: #493322;
+  --wood-control: #d1ba96;
+  --wood-control-pressed: #bda17a;
+  --wood-frame: #493526;
+  --wood-tile-base: #76583f;
+  --wood-route: #d8b883;
+  --wood-route-active: #e5ad57;
+}
+body { color: var(--wood-text-on-dark); }
+.btn, .card, .lv, .stat3 > div { color: var(--ink); }
+.btn, .lv { box-shadow: 0 3px 0 #8b6944; }
+.btn:active:not(:disabled) { box-shadow: 0 1px 0 #8b6944; }
+.btn:not(.ghost), .card:not(.meter), .lv {
+  background-image: linear-gradient(180deg, rgba(255,238,203,.08), rgba(78,52,30,.035));
+}
+.go, .mini-go {
+  background: linear-gradient(180deg, #dda356, #cd8f40); color: #382719;
+  border-color: #8d5e2d; box-shadow: 0 4px 0 #79512c;
+}
+.go:active, .mini-go:active { box-shadow: 0 2px 0 #79512c; }
+.logo::after { background: #d69b4c; }
+.tier.cur { background-color: #dbc197; box-shadow: 0 0 0 2px #d69b4c, 0 3px 0 #8b6944; }
+.tier.lock { background: #ac9475; color: #68543c; }
+.lv.done { background-color: #d6c09f; }
+.lv.cur { background-color: #ddbd8a; border-color: #d69b4c; }
+.lv.lock { color: #705c42; }
+.tabbar { background: #bea481; border-color: #8d6b47; }
+.tabbar button { color: #634c33; }
+.tabbar .on { color: #38291d; }
+.tabbar .on span { color: #382719; }
+.notice, .hint-text, .go-sub, .pad > .head span { color: var(--wood-text-secondary); }
+.notice.warn { color: var(--ink); background: #dfc299; }
+.ghost { color: #dbc7aa; border-color: #a98b65; box-shadow: none; }
+.ghost .prod-txt small, .ghost .soon, .tier-soon span { color: #dbc7aa; }
+.day i, .cal-day, .prod-pic { background: #decaab; }
+.day.done i { background: #d69b4c; color: #382719; }
+.day.today i { border-color: #ad7130; }
+.streak { background: #e1c79d; color: #7b4827; }
+.cal-day.miss { background: #c4ac88; }
+.cal-day.done { background: #d7b682; }
+.cal-day.today { background: #d69b4c; color: #382719; }
+.cal-day.today small { color: #49311e; }
+.cal-day.future { background: transparent; color: #7b6548; }
+.result-overlay, .modal-overlay { background: rgba(42,31,22,.62); }
+.result-card, .modal-card {
+  background: #d7c2a0; color: var(--ink); border-color: #735336; outline-color: #b2946e;
+}
+.pill { background: #c8ac84; color: #594631; }
+.new { color: #382719; }
+.star path { fill: #dba04c; stroke: #8e5e2e; }
+.star.off path, .result-stars .star.pending path { fill: #b69c76; stroke: #8b714e; }
+.tg { background: #c18a43; }
+.tg::after { background: #ead8b8; }
+svg.ic.bulb { fill: #e1ad58; stroke: #624329; }
+.screen.play { background: var(--bg); color: var(--wood-text-on-dark); }
+/* 같은 바탕을 이어 HUD와 보드를 나누던 밝은 가로 띠를 없앤다. 위치/간격은 유지한다. */
+.screen.play .sky { background: var(--bg); color: var(--wood-text-on-dark); }
+.screen.play .sky::after { background: var(--bg); border-top-color: transparent; border-radius: 0; }
+.screen.play .btn.sq, .screen.play .btn.soft {
+  background: var(--wood-control); border-color: #735336; box-shadow: 0 4px 0 #8b6944; color: var(--ink);
+}
+.screen.play .btn.soft:disabled { color: #826c4f; background: #bda888; }
+.screen.play .btn.soft:active:not(:disabled), .screen.play .btn.sq:active { background: var(--wood-control-pressed); box-shadow: 0 2px 0 #8b6944; }
+.screen.play .btn.hinted { box-shadow: 0 0 0 3px #dfa64e, 0 4px 0 #8b6944; }
+.screen.play .chip { background: #cfb99a; border-color: #ae8d66; box-shadow: 0 3px 0 #81603e; color: #594631; }
+.screen.play .chip b { color: var(--ink); }
+.screen.play .meter { background: #c7ae8b; border-color: #9b7951; box-shadow: 0 4px 0 #81603e; }
+.screen.play .track { background: #aa8a60; }
+.screen.play .track .mark { color: #513a25; }
+.screen.play .track .mark i { background: #795736; }
+.screen.play .tip { background: #cfb99a; border-color: #ae8d66; color: var(--ink); }
+.screen.play .ad-slot { border-color: #a58a65; color: #cfb99a; background: rgba(42,31,22,.08); }
+.board-frame { fill: var(--wood-frame); stroke: #38271b; }
+.tile-bg { fill: var(--wood-tile-base); stroke: #65472f; }
+.wood-grain { stroke: #bb9361; opacity: .13; }
+.walk-shadow { stroke: #302216; opacity: .5; }
+.tunnel-edge { stroke: #49301d; }
+.tunnel-edge-dot { fill: #49301d; }
+.tunnel { stroke: var(--wood-route); }
+.tunnel-dot { fill: var(--wood-route); }
+.tunnel-dot.chamber { fill: #dfc393; }
+.kind-source .tunnel-dot.chamber { fill: #e6bd70; }
+.walk-surface-grain { stroke: #956c37; opacity: .25; }
+.flow-tunnel { stroke: var(--wood-route-active); }
+.flow-dot { fill: var(--wood-route-active); }
+.kind-goal .flow-dot { fill: #e7c58c; }
+.kind-source .flow-dot { fill: #e8bc69; }
+.ok-badge circle { fill: #87905b; stroke: #e8d5b0; }
+.btn-shadow { fill: #8b6944; }
+.btn-face { fill: var(--wood-control); stroke: #735336; }
+.btn-arrow { stroke: #513823; }
+.btns .edge-btn:active .btn-face { fill: var(--wood-control-pressed); }
+.btns .edge-btn.locked .btn-face { fill: #9e927d; stroke: #665846; }
+.btn-lock { fill: #655744; stroke: #655744; }
+.btns .edge-btn.hinted .btn-face { fill: #e3b566; stroke: #8d5e2d; }
+
+/* ---------- 힌트 창(힌트 보기 / 바로 클리어 / 돌아가는 길 확인) ---------- */
+.hint-sheet { gap: 10px; }
+.hint-sheet h2 { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.hint-sheet h2 b { display: inline-flex; align-items: center; gap: 2px; font-size: 1.05rem; padding: 2px 12px; border-radius: 999px; background: #c8ac84; }
+.hint-sheet .choice { width: 100%; height: auto; min-height: 62px; padding: 9px 16px; border-radius: 18px; flex-direction: column; gap: 2px; font-size: 1.1rem; }
+.hint-sheet .choice .ch-main { display: flex; align-items: center; gap: 10px; }
+.hint-sheet .choice em { font-style: normal; display: inline-flex; align-items: center; font-size: 0.95rem; }
+.hint-sheet .choice em svg.ic.bulb { width: 20px; height: 20px; }
+.hint-sheet .choice small { font-size: 0.76rem; font-weight: 500; opacity: 0.85; }
+.hint-sheet .choice:disabled { opacity: 0.45; cursor: default; transform: none; }
+.hint-sheet .notice { color: var(--soft); font-size: 0.82rem; }
+.hint-sheet .soon-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; font-size: 0.88rem; font-weight: 700; color: #6b563d; border-color: #9a7d58; }
+.hint-sheet .soon-row .soon { color: #6b563d; }
+.btn.sq.hint.busy { animation: hint-pulse 900ms ease-in-out infinite; opacity: 0.7; }

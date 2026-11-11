@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./src/data/stages.json)",
+      "Read(./tools/out/solutions.json)",
+      "Read(./package-lock.json)",
+      "Read(./dist/**)",
+      "Read(./node_modules/**)"
+    ]
+  }
+}
