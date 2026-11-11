@@ -2,9 +2,11 @@
 //   node --max-old-space-size=8192 tools/generate.js [--seed 20261111] [--quick]
 //
 // 판 구성은 Netslide 방식이다.
-//   - 정답 배치는 공급원에서 뻗는 하나의 나무(spanning tree)이고 모든 칸이 그 나무에 속한다.
-//     정답과 무관한 수로나 빈 칸은 없다(입문 제외).
-//   - 가지 끝(막다른 칸)마다 햄스터가 있고, 모든 햄스터에게 길이 닿으면 완료다. 보너스는 없다.
+//   - 정답 배치는 가운데(햄스터)에서 뻗는 하나의 나무이고, 도토리는 가지 끝에 있다.
+//   - 모든 도토리에 길이 닿으면 성공이다. 정답은 여러 개여도 된다(최단 경로는 풀이 탐색으로 다시 잰다).
+//   - 빈 블록: 길이 없는 칸. 난이도 안에서 뒤로 갈수록 2개 → 1개 → 0개로 줄어든다.
+//   - 가짜 길(2026-11-11 추가): 정답에 쓰이지 않는 길. 뒤쪽 판에만 섞는다. 세 종류가 있다.
+//       떨어진 조각(stray) 나무 밖 칸에 놓인 길 조각 / 곁가지(spur) 진짜 길에 붙은 끊긴 가지 / 빈 끝(stub) 도토리가 없는 가지 끝
 //   - 난이도는 정답에서 섞은 깊이로 조절하고, 풀이 BFS로 최단 수를 확인한다.
 // 순서: 정답 배치 → 합법 이동 셔플 → 역순 해답 보관 → 공통 규칙으로 재생 확인 → 풀이 BFS
 //       → 중복/과도한 쉬움 제거 → 난이도·별 기준 지정
@@ -20,6 +22,8 @@ import {
   inverseMove, moveToCode, moveFromCode, evaluateConnections, evaluateResult, validateStage,
 } from '../src/core/rules.js';
 import { solve, replay } from '../src/core/solver.js';
+import { star3For, star2For, TUTORIAL_STAR2_EXTRA } from '../src/core/stars.js';
+import { planHint } from '../src/game/hint.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -56,24 +60,48 @@ const TUTORIALS = [
 // min: 최단 이동 수 허용 범위. shuffle: 정답에서 섞는 횟수(기본 = min 상한).
 // deep: 제한 안에서 해답을 못 찾아도, 확인한 깊이가 min 하한 이상이면 "미증명" 판으로 채택한다.
 // 난이도는 판 크기로 나눈다: 초급 3×3, 중급 4×4, 고급 5×5. (익스트림은 나중에 추가)
+// windy: 굴이 구불구불한 정도의 범위(1에 가까울수록 가지가 적다). 햄스터가 적은 단계에 쓴다.
+// ham: 햄스터 수 허용 범위. 중급과 고급도 1마리부터 시작한다. 단계가 올라갈수록 이동 수와 햄스터 수가 함께 늘도록 단계마다 범위를 준다.
+// 판 수(2026-11-11): 초급 20, 중급 40, 고급 68. 도토리는 초급 1~5, 중급 1~7, 고급 2~9개(고급에는 1개짜리 판을 두지 않는다).
+// 판은 단계 순서대로 놓이므로 뒤로 갈수록 어려워진다.
 const PLAN = [
-  { group: 'beginner', size: 3, min: [2, 3], count: 4 },
-  { group: 'beginner', size: 3, min: [4, 5], shuffle: 7, count: 4 },
-  { group: 'beginner', size: 3, min: [6, 7], shuffle: 10, count: 4 },
-  { group: 'intermediate', size: 4, min: [3, 4], count: 4 },
-  { group: 'intermediate', size: 4, min: [5, 6], count: 6 },
-  { group: 'intermediate', size: 4, min: [7, 8], shuffle: 8, deep: true, count: 2 },
-  { group: 'advanced', size: 5, min: [4, 5], count: 4 },
-  { group: 'advanced', size: 5, min: [6, 99], shuffle: 9, deep: true, count: 4 },
-  { group: 'advanced', size: 5, min: [6, 99], shuffle: 12, deep: true, count: 4 },
+  // 최단 수가 한 수씩 올라간다(초급 2~7, 중급 3~9, 고급 4~14). 햄스터 수는 단계마다 범위를 주어 대체로 함께 늘어난다.
+  // blanks: 길이 없는 빈 블록(p0) 개수 범위. 난이도 안에서 뒤로 갈수록 줄어든다(2 → 1 → 0).
+  // 2026-11-11 결정: 원작 Netslide처럼 가짜 길은 쓰지 않는다. 그래서 decoys는 모두 [0, 0]이다(만드는 코드는 남겨 두었다).
+  // decoys: 가짜 길 개수 범위. sneaky: 진짜 길에 붙은 곁가지·빈 끝을 더 많이 섞는다(고급 뒤쪽).
+  // 빈 블록과 떨어진 조각을 합쳐 판의 4분의 1을 넘지 않는다.
+  { group: 'beginner', size: 3, min: [2, 2], ham: [1, 2], blanks: [1, 2], decoys: [0, 0], count: 3 },
+  { group: 'beginner', size: 3, min: [3, 3], ham: [1, 3], blanks: [1, 2], decoys: [0, 0], count: 3 },
+  { group: 'beginner', size: 3, min: [4, 4], ham: [2, 3], blanks: [0, 1], decoys: [0, 0], count: 4 },
+  { group: 'beginner', size: 3, min: [5, 5], ham: [2, 4], blanks: [0, 1], decoys: [0, 0], count: 4 },
+  { group: 'beginner', size: 3, min: [6, 6], ham: [3, 5], blanks: [0, 0], decoys: [0, 0], count: 3 },
+  { group: 'beginner', size: 3, min: [7, 7], ham: [3, 5], blanks: [0, 0], decoys: [0, 0], count: 3 },
+  { group: 'intermediate', size: 4, min: [3, 3], ham: [1, 2], windy: [0.9, 1], blanks: [1, 2], decoys: [0, 0], count: 3 },
+  { group: 'intermediate', size: 4, min: [4, 4], ham: [2, 3], blanks: [1, 2], decoys: [0, 0], count: 5 },
+  { group: 'intermediate', size: 4, min: [5, 5], ham: [2, 4], blanks: [0, 1], decoys: [0, 0], count: 6 },
+  { group: 'intermediate', size: 4, min: [6, 6], ham: [3, 5], blanks: [0, 1], decoys: [0, 0], count: 6 },
+  { group: 'intermediate', size: 4, min: [6, 7], shuffle: 7, deep: true, ham: [4, 6], blanks: [0, 0], decoys: [0, 0], count: 6 },
+  { group: 'intermediate', size: 4, min: [7, 8], shuffle: 8, deep: true, ham: [5, 7], blanks: [0, 0], decoys: [0, 0], count: 7 },
+  { group: 'intermediate', size: 4, min: [8, 9], shuffle: 9, deep: true, ham: [5, 7], blanks: [0, 0], decoys: [0, 0], count: 7 },
+  { group: 'advanced', size: 5, min: [4, 4], ham: [2, 3], windy: [0.8, 1], blanks: [1, 2], decoys: [0, 0], count: 4 },
+  { group: 'advanced', size: 5, min: [5, 5], ham: [2, 4], blanks: [1, 2], decoys: [0, 0], count: 4 },
+  { group: 'advanced', size: 5, min: [6, 6], ham: [3, 4], blanks: [1, 2], decoys: [0, 0], count: 5 },
+  { group: 'advanced', size: 5, min: [6, 7], shuffle: 7, deep: true, ham: [3, 5], blanks: [0, 1], decoys: [0, 0], count: 5 },
+  { group: 'advanced', size: 5, min: [7, 8], shuffle: 8, deep: true, ham: [4, 6], blanks: [0, 1], decoys: [0, 0], count: 6 },
+  { group: 'advanced', size: 5, min: [8, 9], shuffle: 9, deep: true, ham: [4, 6], blanks: [0, 1], decoys: [0, 0], count: 6 },
+  { group: 'advanced', size: 5, min: [9, 10], shuffle: 10, deep: true, ham: [5, 7], blanks: [0, 1], decoys: [0, 0], count: 6 },
+  { group: 'advanced', size: 5, min: [10, 11], shuffle: 11, deep: true, ham: [5, 7], blanks: [0, 0], decoys: [0, 0], count: 6 },
+  { group: 'advanced', size: 5, min: [11, 12], shuffle: 12, deep: true, ham: [6, 8], blanks: [0, 0], decoys: [0, 0], count: 8 },
+  { group: 'advanced', size: 5, min: [12, 13], shuffle: 13, deep: true, ham: [7, 9], blanks: [0, 0], decoys: [0, 0], count: 9 },
+  { group: 'advanced', size: 5, min: [13, 14], shuffle: 14, deep: true, ham: [7, 9], blanks: [0, 0], decoys: [0, 0], count: 9 },
 ];
 const DAILY_PLAN = [
-  { group: 'daily', size: 4, min: [5, 6], count: 21 },
-  { group: 'daily', size: 5, min: [4, 5], count: 7 },
+  { group: 'daily', size: 4, min: [5, 6], blanks: [0, 1], decoys: [0, 0], count: 21 },
+  { group: 'daily', size: 5, min: [4, 5], blanks: [0, 1], decoys: [0, 0], count: 7 },
 ];
 const MAX_STATES = { 3: 200000, 4: 3000000, 5: 2000000 };
-const STAR2_EXTRA = 3; // 2별 기준 = 3별 기준 + 3
-const MAX_HAMSTERS = 7; // 한 판의 햄스터(가지 끝) 수 상한
+// 별 기준은 src/core/stars.js 한곳에서 정한다(3별 = 최단 + 최단/4 올림, 2별 = 3별 + 3)
+const MAX_HAMSTERS = 9; // 한 판의 도토리(가지 끝) 수 상한. 4×4는 계획표에서 7까지만 쓴다
 
 // ---------- 정답 배치: 모든 칸을 잇는 무작위 나무 ----------
 function buildSolved(r, spec) {
@@ -84,10 +112,25 @@ function buildSolved(r, spec) {
   const inTree = new Array(total).fill(false);
   inTree[src] = true;
   // 가장 최근 칸에서 이어 갈 확률이 높을수록 길고 구불구불한 굴(가지 적음), 낮을수록 가지 많은 굴
-  const windy = 0.35 + r() * 0.55;
+  // 햄스터가 적은 단계는 가지가 거의 없는 굴이 필요하므로 계획표에서 범위를 따로 준다
+  const [w0, w1] = spec.windy || [0.35, 0.9];
+  const windy = w0 + r() * (w1 - w0);
   const active = [src];
+  const between = ([a, b]) => a + Math.floor(r() * (b - a + 1));
+  const blanks = spec.blanks ? between(spec.blanks) : 0;
+  // 가짜 길을 종류별로 나눈다. 떨어진 조각은 칸을 차지하므로 빈 블록과 합쳐 판의 4분의 1까지만 둔다.
+  const want = spec.decoys ? between(spec.decoys) : 0;
+  const kinds = { stray: 0, spur: 0, stub: 0 };
+  const strayRoom = Math.max(0, Math.floor(total / 4) - blanks);
+  for (let i = 0; i < want; i++) {
+    const x = r();
+    let kind = spec.sneaky ? (x < 0.3 ? 'stray' : x < 0.7 ? 'spur' : 'stub') : (x < 0.6 ? 'stray' : 'spur');
+    if (kind === 'stray' && kinds.stray >= strayRoom) kind = 'spur';
+    kinds[kind]++;
+  }
+  const target = total - blanks - kinds.stray;
   let count = 1;
-  while (count < total) {
+  while (count < target) {
     const i = r() < windy ? active.length - 1 : Math.floor(r() * active.length);
     const u = active[i];
     const options = [];
@@ -106,12 +149,33 @@ function buildSolved(r, spec) {
     active.push(v);
     count++;
   }
+  // ----- 가짜 길 -----
+  let decoys = 0;
+  const shuffled = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  // 빈 끝: 가지 끝 몇 곳은 도토리 없이 길만 둔다(도토리 수가 단계 하한 아래로 내려가지 않게)
+  const leaves = shuffled([...ports.keys()].filter((p) => p !== src && DIRS.includes(ports[p])));
+  const minGoals = Math.max(1, spec.ham ? spec.ham[0] : 1);
+  const stubs = new Set(leaves.slice(0, Math.max(0, Math.min(kinds.stub, leaves.length - minGoals))));
+  decoys += stubs.size;
+  // 곁가지: 진짜 길(가운데·가지 끝 제외)에 어디에도 이어지지 않는 가지를 하나 더 낸다
+  const spurCells = shuffled([...ports.keys()].filter((p) => p !== src && inTree[p] && !DIRS.includes(ports[p]) && ports[p] !== 15));
+  for (const p of spurCells.slice(0, kinds.spur + (kinds.stub - stubs.size))) {
+    const free = DIRS.filter((d) => !(ports[p] & d));
+    ports[p] |= pick(r, free);
+    decoys++;
+  }
+  // 떨어진 조각: 나무 밖 칸에 길 조각(곧은 길·꺾인 길·세 갈래)을 놓는다
+  const PIECES = [N | S, E | W, N | E, E | S, S | W, W | N, N | E | S, E | S | W, S | W | N, W | N | E];
+  for (const p of shuffled([...ports.keys()].filter((q) => !inTree[q])).slice(0, kinds.stray)) {
+    ports[p] = pick(r, PIECES);
+    decoys++;
+  }
   const tiles = ports.map((mask, p) => {
     if (p === src) return { kind: 'source', ports: mask };
-    if (DIRS.includes(mask)) return { kind: 'goal', ports: mask, bonus: false }; // 가지 끝 = 햄스터
+    if (inTree[p] && DIRS.includes(mask) && !stubs.has(p)) return { kind: 'goal', ports: mask, bonus: false }; // 가지 끝 = 도토리
     return { kind: 'pipe', ports: mask };
   });
-  return { tiles, src };
+  return { tiles, src, decoys };
 }
 
 // ---------- 회전/반사 중복 판정 ----------
@@ -146,7 +210,9 @@ function canonical(size, tiles) {
 // ---------- 후보 하나 만들기 ----------
 function tryCandidate(r, spec, seenForms) {
   const solved = buildSolved(r, spec);
-  if (solved.tiles.filter((t) => t.kind === 'goal').length > MAX_HAMSTERS) return { reject: 'too-many-hamsters' };
+  const hamCount = solved.tiles.filter((t) => t.kind === 'goal').length;
+  if (hamCount > MAX_HAMSTERS) return { reject: 'too-many-hamsters' };
+  if (spec.ham && (hamCount < spec.ham[0] || hamCount > spec.ham[1])) return { reject: 'hamster-range' };
   const n = spec.size;
   const probe = { size: n, tiles: solved.tiles };
   const moves = legalMoves(probe);
@@ -191,15 +257,28 @@ function tryCandidate(r, spec, seenForms) {
     proven = true;
   } else {
     // 제한 안에서 못 찾음: "해답 없음"이 아니라 미증명이다. 알고 있는 해답(역순 셔플)을 목표로 쓴다.
-    if (!spec.deep || sol.checkedDepth + 1 < spec.min[0]) return { reject: 'unproven' };
+    if (!spec.deep || sol.checkedDepth + 1 < Math.min(spec.min[0], 6)) return { reject: 'unproven' }; // 탐색이 닿은 깊이가 6 미만이면 너무 쉬운 판일 수 있어 버린다
     best = { length: known.length, moves: known };
     proven = false;
+    // 섞은 순서를 거꾸로 한 해답은 길 때가 많다. 양쪽 탐색으로 더 짧은 해답을 한 번 더 찾아 별 기준을 조인다.
+    const cells0 = Array.from({ length: n * n }, (_, i) => i);
+    const shorter = planHint(stage, cells0, [], known, { maxStates: QUICK ? 60000 : 600000, backDepth: n >= 5 ? 5 : 6 });
+    if (shorter.type === 'path' && shorter.moves.length < best.length) {
+      const again = replay(stage, shorter.moves, moveFromCode);
+      if (again.ok && evaluateResult(stage, evaluateConnections(stage, again.cells), shorter.moves.length).requiredDone) {
+        best = { length: shorter.moves.length, moves: shorter.moves };
+      }
+    }
   }
-  stage.star3 = best.length;
-  stage.star2 = best.length + STAR2_EXTRA;
+  if (best.length < spec.min[0] || best.length > spec.min[1]) return { reject: 'length-range' };
+  stage.shortest = best.length;
+  stage.star3 = star3For(best.length);
+  stage.star2 = star2For(best.length);
   return {
     stage, form,
     hamsters: stage.tiles.filter((t) => t.kind === 'goal').length,
+    blanks: stage.tiles.filter((t) => t.kind === 'pipe' && t.ports === 0).length,
+    decoys: solved.decoys,
     solution: {
       basic: best, basicProven: proven, full: best, fullProven: proven,
       lowerBound: proven ? best.length : sol.checkedDepth + 1,
@@ -215,8 +294,10 @@ function generateGroup(plan, seedBase, seenForms, log) {
     const rejects = {};
     let made = 0;
     let attempts = 0;
-    const maxAttempts = 4000;
-    while (made < spec.count && attempts < maxAttempts) {
+    const budgetMs = 240000; // 단계마다 최대 4분. 넘으면 만든 만큼만 두고 다음 단계로 간다
+    const stepStart = Date.now();
+    const maxAttempts = 30000; // 햄스터 범위 밖 후보는 값싸게 걸러지므로 넉넉히 둔다
+    while (made < spec.count && attempts < maxAttempts && Date.now() - stepStart < budgetMs) {
       attempts++;
       const c = tryCandidate(r, spec, seenForms);
       if (c.reject) { rejects[c.reject] = (rejects[c.reject] || 0) + 1; continue; }
@@ -241,14 +322,17 @@ const reportRows = [];
 const rowsOf = (size, tiles) => Array.from({ length: size }, (_, rr) => tiles.slice(rr * size, rr * size + size).map(tileCode).join(' '));
 
 TUTORIALS.forEach((t, i) => {
-  const stage = { size: t.size, tiles: t.tiles.flatMap((row) => row.split(' ')).map(parseTile), tutorial: true };
+  const stage = { size: t.size, tiles: t.tiles.flatMap((row) => row.split(' ')).map(parseTile), tutorial: true, star3: 1, star2: 4 };
   const errs = validateStage(stage);
   if (errs.length) throw new Error(`${t.id}: ${errs.join(', ')}`);
   const sol = solve(stage, { maxStates: 200000 });
   if (!sol.basic || sol.basic.length < 1) throw new Error(`${t.id}: 입문 판 풀이 실패`);
-  stagesOut.push({ id: t.id, group: 'tutorial', order: i + 1, size: t.size, tiles: t.tiles });
+  stage.shortest = sol.basic.length;
+  stage.star3 = sol.basic.length; // 입문은 여유 없이 최단 그대로
+  stage.star2 = stage.star3 + TUTORIAL_STAR2_EXTRA;
+  stagesOut.push({ id: t.id, group: 'tutorial', order: i + 1, size: t.size, tiles: t.tiles, shortest: stage.shortest, star3: stage.star3, star2: stage.star2 });
   solutions[t.id] = { basic: sol.basic, basicProven: true, full: sol.basic, fullProven: true, lowerBound: sol.basic.length, states: sol.states, limitHit: false };
-  reportRows.push({ id: t.id, group: 'tutorial', order: i + 1, size: t.size, hamsters: stage.tiles.filter((x) => x.kind === 'goal').length, sol: solutions[t.id], star2: null, star3: null });
+  reportRows.push({ id: t.id, group: 'tutorial', order: i + 1, size: t.size, hamsters: stage.tiles.filter((x) => x.kind === 'goal').length, sol: solutions[t.id], star2: stage.star2, star3: stage.star3 });
   seenForms.add(canonical(t.size, stage.tiles));
 });
 
@@ -256,16 +340,16 @@ console.log('정규 판 생성...');
 const regular = generateGroup(PLAN, BASE_SEED, seenForms, log);
 const prefix = { beginner: 'B', intermediate: 'M', advanced: 'A', daily: 'D' };
 for (const group of ['beginner', 'intermediate', 'advanced']) {
-  // 표시 순서: 최단 수(미증명은 하한) → 판 크기 → 햄스터 수
-  const list = regular.filter((x) => x.spec.group === group).sort((a, b) => a.solution.lowerBound - b.solution.lowerBound
-    || a.stage.size - b.stage.size || a.solution.basic.length - b.solution.basic.length || a.hamsters - b.hamsters);
+  // 표시 순서: 별 3개 기준 이동 수 → 햄스터 수 → 단계. 이동 수는 뒤로 갈수록 줄어들지 않는다.
+  const list = regular.filter((x) => x.spec.group === group).sort((a, b) => a.solution.basic.length - b.solution.basic.length
+    || a.hamsters - b.hamsters || PLAN.indexOf(a.spec) - PLAN.indexOf(b.spec));
   list.forEach((x, i) => {
     const id = `${prefix[group]}${String(i + 1).padStart(2, '0')}`;
     const errs = validateStage({ ...x.stage });
     if (errs.length) throw new Error(`${id}: ${errs.join(', ')}`);
-    stagesOut.push({ id, group, order: i + 1, size: x.stage.size, tiles: rowsOf(x.stage.size, x.stage.tiles), star2: x.stage.star2, star3: x.stage.star3 });
+    stagesOut.push({ id, group, order: i + 1, size: x.stage.size, tiles: rowsOf(x.stage.size, x.stage.tiles), shortest: x.stage.shortest, star2: x.stage.star2, star3: x.stage.star3 });
     solutions[id] = x.solution;
-    reportRows.push({ id, group, order: i + 1, size: x.stage.size, hamsters: x.hamsters, sol: x.solution, star2: x.stage.star2, star3: x.stage.star3 });
+    reportRows.push({ id, group, order: i + 1, size: x.stage.size, hamsters: x.hamsters, blanks: x.blanks, decoys: x.decoys, sol: x.solution, star2: x.stage.star2, star3: x.stage.star3 });
   });
 }
 
@@ -282,8 +366,8 @@ while (d4.length || d5.length) {
 const dailyOut = dailyOrdered.map((x, i) => {
   const id = `D${String(i + 1).padStart(2, '0')}`;
   solutions[id] = x.solution;
-  reportRows.push({ id, group: 'daily', order: i + 1, size: x.stage.size, hamsters: x.hamsters, sol: x.solution, star2: x.stage.star2, star3: x.stage.star3 });
-  return { id, group: 'daily', order: i + 1, size: x.stage.size, tiles: rowsOf(x.stage.size, x.stage.tiles), star2: x.stage.star2, star3: x.stage.star3 };
+  reportRows.push({ id, group: 'daily', order: i + 1, size: x.stage.size, hamsters: x.hamsters, blanks: x.blanks, decoys: x.decoys, sol: x.solution, star2: x.stage.star2, star3: x.stage.star3 });
+  return { id, group: 'daily', order: i + 1, size: x.stage.size, tiles: rowsOf(x.stage.size, x.stage.tiles), shortest: x.stage.shortest, star2: x.stage.star2, star3: x.stage.star3 };
 });
 
 mkdirSync(resolve(ROOT, 'src/data'), { recursive: true });
@@ -309,20 +393,20 @@ lines.push('# 출시 판 목록 / 검증 보고서', '');
 lines.push(`- 생성 도구: \`node --max-old-space-size=8192 tools/generate.js --seed ${BASE_SEED}\`${QUICK ? ' --quick' : ''}`);
 lines.push(`- 콘텐츠 버전: ${CONTENT_VERSION}`);
 lines.push(`- 정규 판 ${stagesOut.length}개(입문 ${TUTORIALS.length} 포함), 오늘의 도전 ${dailyOut.length}개`);
-lines.push('- 판 구성: 모든 칸이 하나의 굴(나무 구조)에 속하고, 가지 끝마다 햄스터가 있다. 모든 햄스터에게 길이 닿으면 완료. 보너스 없음.');
+lines.push('- 판 구성: 가운데 햄스터에서 뻗는 나무 길의 가지 끝에 도토리가 있다. 모든 도토리에 길이 닿으면 성공. 빈 블록은 뒤로 갈수록 줄고(2 → 0), 가짜 길(정답에 안 쓰이는 길)은 뒤쪽 판에만 있다.');
 lines.push('- "증명"은 판 상태 공간 BFS가 그 깊이 이전 단계를 모두 펼친 뒤 처음 찾은 해답이라는 뜻이다.');
 lines.push('- 미증명 판은 탐색 제한 안에서 해답을 찾지 못한 판이다. "최단 N수 이상"까지만 확인했고, 별 기준은 생성할 때 알고 있던 해답 길이다.');
-lines.push(`- 3별 기준 = 최단 수(미증명은 발견한 해답 길이), 2별 기준 = 3별 기준 + ${STAR2_EXTRA}. 게임에서는 모든 수를 "목표"로 표시한다.`, '');
-lines.push('| ID | 난이도 | 순서 | 크기 | 햄스터 | 최단 수 | 증명 | 3별 기준 | 2별 기준 | 탐색 상태 수 |');
-lines.push('|---|---|---|---|---|---|---|---|---|---|');
+lines.push(`- 3별 기준 = 최단 수(미증명은 발견한 해답 길이) + 최단 수의 4분의 1(올림), 2별 기준 = 3별 기준 + ${STAR2_EXTRA}. 입문은 3별 = 최단 수 그대로. 입문도 같은 별 기준을 사용하며 게임에서는 별 아이콘과 감소형 게이지로 표시한다.`, '');
+lines.push('| ID | 난이도 | 순서 | 크기 | 도토리 | 빈 블록 | 가짜 길 | 최단 수 | 증명 | 3별 기준 | 2별 기준 | 탐색 상태 수 |');
+lines.push('|---|---|---|---|---|---|---|---|---|---|---|---|');
 for (const row of reportRows) {
   const s = row.sol;
-  lines.push(`| ${row.id} | ${groupName[row.group]} | ${row.order} | ${row.size}×${row.size} | ${row.hamsters} | ${s.basicProven ? s.basic.length : `${s.lowerBound} 이상 (발견 ${s.basic.length})`} | ${s.basicProven ? '예' : '아니오'} | ${row.star3 ?? '-'} | ${row.star2 ?? '-'} | ${s.states} |`);
+  lines.push(`| ${row.id} | ${groupName[row.group]} | ${row.order} | ${row.size}×${row.size} | ${row.hamsters} | ${row.blanks ?? 0} | ${row.decoys ?? 0} | ${s.basicProven ? s.basic.length : `${s.lowerBound} 이상 (발견 ${s.basic.length})`} | ${s.basicProven ? '예' : '아니오'} | ${row.star3 ?? '-'} | ${row.star2 ?? '-'} | ${s.states} |`);
 }
 lines.push('', '## 생성 통계와 제외 이유', '');
 lines.push('| 계획 | 채택 | 시도 | 제외 이유(횟수) |', '|---|---|---|---|');
 const rejectName = {
-  replay: '역순 해답 재생 실패', 'too-many-hamsters': '햄스터 8마리 이상', duplicate: '회전/반사 중복', 'too-easy': '너무 쉬움', 'too-hard': '범위보다 김',
+  replay: '역순 해답 재생 실패', 'too-many-hamsters': '도토리 10개 이상', 'hamster-range': '햄스터 수가 단계 범위 밖', duplicate: '회전/반사 중복', 'too-easy': '너무 쉬움', 'too-hard': '범위보다 김',
   unproven: '제한 안에서 해답 미발견', 'single-line': '한 줄 반복 풀이', 'single-axis': '한 방향 축만 쓰는 풀이',
 };
 for (const l of log) {

@@ -1,8 +1,10 @@
-// 판 상태 공간의 풀이 탐색(BFS). 개발용 생성·검증 도구에서만 쓰며 런타임에서는 호출하지 않는다.
+// 판 상태 공간의 풀이 탐색(BFS). 생성·검증 도구와 힌트(시간 제한을 걸어서)가 함께 쓴다.
 // 현재 배치의 연결 판정(rules.evaluateConnections의 BFS)과는 별개의 탐색이다.
 import {
   evaluateConnections, evaluateResult, initialCells, legalMoves, shiftBoard, tileCode, moveToCode,
 } from './rules.js';
+
+const now = () => (globalThis.performance?.now ? globalThis.performance.now() : Date.now());
 
 // 같은 종류의 타일은 구분하지 않는 배치 서명
 export function makeSigner(stage) {
@@ -26,7 +28,8 @@ export function makeSigner(stage) {
 //   states : 방문한 서로 다른 배치 수
 //   limitHit : 상태 수 제한으로 중단되었는가. true여도 "해답 없음"이 아니라 "미해결/미증명"이다.
 //   exhausted : 도달 가능한 모든 배치를 다 본 경우 true (이때 null은 실제로 해답 없음)
-export function solve(stage, { maxStates = 500000, maxDepth = 40 } = {}) {
+// deadline: now() 기준 시각(ms). 넘기면 제한에 걸린 것으로 보고 멈춘다(0이면 시간 제한 없음).
+export function solve(stage, { maxStates = 500000, maxDepth = 40, deadline = 0 } = {}) {
   const moves = legalMoves(stage);
   const sign = makeSigner(stage);
   const start = initialCells(stage);
@@ -52,6 +55,7 @@ export function solve(stage, { maxStates = 500000, maxDepth = 40 } = {}) {
   let depth = 0;
   let limitHit = false;
   let exhausted = false;
+  let ticks = 0;
 
   search: while (fullAt < 0 || basicAt < 0) {
     if (frontier.length === 0) { exhausted = true; break; }
@@ -72,6 +76,7 @@ export function solve(stage, { maxStates = 500000, maxDepth = 40 } = {}) {
         next.push({ cells, idx, last: m });
       }
       if (index.size >= maxStates) { limitHit = true; break; }
+      if (deadline && (++ticks & 127) === 0 && now() > deadline) { limitHit = true; break; }
     }
     if (limitHit) break;
     frontier = next;
@@ -117,7 +122,7 @@ export function replay(stage, moveCodes, parse) {
 // BFS로는 닿지 못하는 깊은 배치에서도 해답을 찾는다.
 // 반환: { moves: ["r0+", ...] } 또는 null(제한 안에서 못 찾음)
 // target: 풀린 배치를 알고 있으면(타일 종류 배열) 그 배치와 다른 칸 수를 기준으로 삼는다. 훨씬 잘 찾는다.
-export function findPath(stage, { maxStates = 60000, weight = 3, target = null } = {}) {
+export function findPath(stage, { maxStates = 60000, weight = 3, target = null, deadline = 0 } = {}) {
   const moves = legalMoves(stage);
   const sign = makeSigner(stage);
   const total = stage.size * stage.size;
@@ -143,7 +148,9 @@ export function findPath(stage, { maxStates = 60000, weight = 3, target = null }
   const push = (f, idx) => { (buckets[f] || (buckets[f] = [])).push(idx); };
   push(weight * h0, 0);
   let low = weight * h0;
+  let ticks = 0;
   while (seen.size < maxStates) {
+    if (deadline && (++ticks & 127) === 0 && now() > deadline) return null;
     while (low < buckets.length && !(buckets[low] && buckets[low].length)) low++;
     if (low >= buckets.length) return null;
     const idx = buckets[low].pop();

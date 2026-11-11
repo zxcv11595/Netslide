@@ -10,7 +10,10 @@
       "tiles": [
         "s2 p0",
         "p0 g8"
-      ]
+      ],
+      "shortest": 1,
+      "star3": 1,
+      "star2": 4
     },
     {
       "id": "T2",
@@ -20,7 +23,10 @@
       "tiles": [
         "s4 p0",
         "p0 g1"
-      ]
+      ],
+      "shortest": 1,
+      "star3": 1,
+      "star2": 4
     },
     {
       "id": "T3",
@@ -30,7 +36,10 @@
       "tiles": [
         "s6 g1",
         "p0 g8"
-      ]
+      ],
+      "shortest": 2,
+      "star3": 2,
+      "star2": 5
     },
     {
       "id": "B01",
@@ -38,12 +47,13 @@
       "order": 1,
       "size": 3,
       "tiles": [
-        "g1 p10 p5",
-        "p6 s4 p9",
-        "p5 p3 p12"
+        "p5 p0 p9",
+        "p3 s2 p0",
+        "g4 p10 p12"
       ],
-      "star2": 5,
-      "star3": 2
+      "shortest": 2,
+      "star2": 6,
+      "star3": 4
     },
     {
       "id": "B02",
@@ -51,12 +61,13 @@
       "order": 2,
       "size": 3,
       "tiles": [
-        "p9 g2 p10",
-        "p6 s10 p10",
-        "g8 p3 p12"
+        "p5 p12 p0",
+        "p3 s1 p0",
+        "p10 g8 p6"
       ],
+      "shortest": 2,
       "star2": 6,
-      "star3": 3
+      "star3": 4
     },
     {
       "id": "B03",
@@ -64,12 +75,13 @@
       "order": 3,
       "size": 3,
       "tiles": [
-        "p6 g8 p7",
-        "p10 s9 g4",
-        "g4 p9 p3"
+        "p10 p12 p0",
+        "p7 s8 p6",
+        "g1 p0 g1"
       ],
+      "shortest": 2,
       "star2": 6,
-      "star3": 3
+      "star3": 4
     },
     {
       "id": "B04",
@@ -77,12 +89,13 @@
       "order": 4,
       "size": 3,
       "tiles": [
-        "p10 g4 p6",
-        "p12 s9 g1",
-        "p7 g8 p3"
+        "g8 p0 g4",
+        "p5 s4 p11",
+        "p9 p3 p6"
       ],
-      "star2": 6,
-      "star3": 3
+      "shortest": 3,
+      "star2": 9,
+      "star3": 6
     },
     {
       "id": "B05",
@@ -90,12 +103,13 @@
       "order": 5,
       "size": 3,
       "tiles": [
-        "g4 p11 p3",
-        "g2 s4 p5",
-        "p12 p9 p5"
+        "p7 p10 g8",
+        "p10 s8 p0",
+        "p3 p6 g8"
       ],
-      "star2": 7,
-      "star3": 4
+      "shortest": 3,
+      "star2": 9,
+      "star3": 6
     },
     {
       "id": "B06",
@@ -103,12 +117,13 @@
       "order": 6,
       "size": 3,
       "tiles": [
-        "p3 p14 g8",
-        "g8 s11 g8",
-        "g2 p10 p6"
+        "p3 p6 p14",
+        "g8 s3 g8",
+        "g8 p0 p5"
       ],
-      "star2": 7,
-      "star3": 4
+      "shortest": 3,
+      "star2": 9,
+      "star3": 6
     },
     {
       "id": "B07",
@@ -116,12 +131,13 @@
       "order": 7,
       "size": 3,
       "tiles": [
-        "g2 p9 p3",
-        "g4 s5 p5",
-        "g4 p11 p12"
+        "g8 g4 p3",
+        "p9 s2 p13",
+        "p5 p6 p10"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "B08",
@@ -129,12 +145,13 @@
       "order": 8,
       "size": 3,
       "tiles": [
-        "p13 p9 p12",
-        "p10 s14 g2",
-        "g2 g1 g2"
+        "p12 p12 p0",
+        "p6 s11 g2",
+        "p9 g1 g2"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "B09",
@@ -142,12 +159,13 @@
       "order": 9,
       "size": 3,
       "tiles": [
-        "p5 p6 g1",
-        "p12 s2 g8",
-        "p3 p10 p13"
+        "g4 p3 p6",
+        "g8 s13 g4",
+        "p9 p0 p3"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "B10",
@@ -155,12 +173,13 @@
       "order": 10,
       "size": 3,
       "tiles": [
-        "p7 p3 p6",
-        "g1 s12 p9",
-        "g4 p10 g8"
+        "p0 g1 g1",
+        "p6 s5 g8",
+        "p12 p3 p14"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "B11",
@@ -168,12 +187,13 @@
       "order": 11,
       "size": 3,
       "tiles": [
-        "g2 p6 p9",
-        "g8 s6 p11",
-        "p12 p10 g1"
+        "p10 g4 g4",
+        "p3 s3 g4",
+        "p13 p0 p9"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "B12",
@@ -181,12 +201,125 @@
       "order": 12,
       "size": 3,
       "tiles": [
-        "g8 p7 p10",
-        "g4 s11 p3",
-        "p9 g4 g4"
+        "p3 p10 g8",
+        "p6 s6 g8",
+        "p5 g8 p11"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
+    },
+    {
+      "id": "B13",
+      "group": "beginner",
+      "order": 13,
+      "size": 3,
+      "tiles": [
+        "g1 p7 p6",
+        "g8 s9 p12",
+        "p3 g4 p5"
+      ],
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
+    },
+    {
+      "id": "B14",
+      "group": "beginner",
+      "order": 14,
+      "size": 3,
+      "tiles": [
+        "g2 g4 p0",
+        "g4 s13 g2",
+        "p11 p5 p9"
+      ],
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
+    },
+    {
+      "id": "B15",
+      "group": "beginner",
+      "order": 15,
+      "size": 3,
+      "tiles": [
+        "g2 g4 p14",
+        "p9 s3 p12",
+        "p10 p3 g8"
+      ],
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
+    },
+    {
+      "id": "B16",
+      "group": "beginner",
+      "order": 16,
+      "size": 3,
+      "tiles": [
+        "g8 p3 g8",
+        "p6 s14 g4",
+        "p9 g2 p11"
+      ],
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
+    },
+    {
+      "id": "B17",
+      "group": "beginner",
+      "order": 17,
+      "size": 3,
+      "tiles": [
+        "g2 p11 g1",
+        "g8 s5 p14",
+        "g4 p3 p12"
+      ],
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
+    },
+    {
+      "id": "B18",
+      "group": "beginner",
+      "order": 18,
+      "size": 3,
+      "tiles": [
+        "p5 p3 g4",
+        "g8 s3 p6",
+        "p13 g1 p12"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "B19",
+      "group": "beginner",
+      "order": 19,
+      "size": 3,
+      "tiles": [
+        "g1 p5 p13",
+        "g8 s6 g4",
+        "p9 p3 p6"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "B20",
+      "group": "beginner",
+      "order": 20,
+      "size": 3,
+      "tiles": [
+        "p12 g2 g2",
+        "p5 s13 p9",
+        "g1 p14 g2"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
     },
     {
       "id": "M01",
@@ -194,13 +327,14 @@
       "order": 1,
       "size": 4,
       "tiles": [
-        "p12 g2 p3 p10",
-        "p12 p10 p9 p6",
-        "p5 s1 p10 p12",
-        "p3 p10 p6 p9"
+        "p10 p10 p12 g1",
+        "p6 p0 s4 p5",
+        "p5 p6 p9 p5",
+        "p3 p10 p9 p5"
       ],
-      "star2": 6,
-      "star3": 3
+      "shortest": 3,
+      "star2": 9,
+      "star3": 6
     },
     {
       "id": "M02",
@@ -208,13 +342,14 @@
       "order": 2,
       "size": 4,
       "tiles": [
-        "p7 g8 p10 g4",
-        "p3 s10 g4 p5",
-        "p13 p10 p10 p9",
-        "p6 p10 p9 g2"
+        "p3 p6 p10 g8",
+        "p0 p13 s4 p0",
+        "p5 g1 p3 p6",
+        "p12 p10 p10 p9"
       ],
-      "star2": 7,
-      "star3": 4
+      "shortest": 3,
+      "star2": 9,
+      "star3": 6
     },
     {
       "id": "M03",
@@ -222,13 +357,14 @@
       "order": 3,
       "size": 4,
       "tiles": [
-        "p7 p10 p10 g1",
-        "p3 p5 g2 p12",
-        "p6 p10 s13 p12",
-        "p5 g8 g1 p5"
+        "p0 p12 p12 g4",
+        "p6 p3 s1 p5",
+        "p3 p11 p12 p5",
+        "g2 p10 p9 p0"
       ],
-      "star2": 7,
-      "star3": 4
+      "shortest": 3,
+      "star2": 9,
+      "star3": 6
     },
     {
       "id": "M04",
@@ -236,13 +372,14 @@
       "order": 4,
       "size": 4,
       "tiles": [
-        "p12 g4 g2 p10",
-        "p7 p6 s2 p13",
-        "p9 p6 p9 g1",
-        "g8 g4 p11 p11"
+        "p10 p3 g8 p12",
+        "p5 p10 p6 p5",
+        "p7 p0 s1 p10",
+        "p9 g8 p10 p6"
       ],
-      "star2": 7,
-      "star3": 4
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "M05",
@@ -250,13 +387,14 @@
       "order": 5,
       "size": 4,
       "tiles": [
-        "p3 p10 p9 p12",
-        "g2 s14 p11 g4",
-        "p5 g2 p10 p5",
-        "p6 p10 g8 p9"
+        "p0 p10 p14 p12",
+        "p3 s8 p5 p5",
+        "p6 p9 g1 g2",
+        "p6 p5 p9 p0"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "M06",
@@ -264,13 +402,14 @@
       "order": 6,
       "size": 4,
       "tiles": [
-        "p10 p9 p13 p6",
-        "p7 p10 s2 p6",
-        "p9 g8 g4 p3",
-        "p12 p5 p3 g8"
+        "p0 g2 p0 p10",
+        "p12 p14 s2 p13",
+        "p6 p9 p10 p12",
+        "g1 p3 p3 g8"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "M07",
@@ -278,13 +417,14 @@
       "order": 7,
       "size": 4,
       "tiles": [
-        "p10 g4 p6 p10",
-        "p7 p12 g8 p5",
-        "p7 p11 s2 p9",
-        "p12 g8 g1 p3"
+        "p5 p3 p6 p12",
+        "g4 p5 s5 p9",
+        "p5 p5 g1 p0",
+        "p5 p11 p10 g4"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "M08",
@@ -292,13 +432,14 @@
       "order": 8,
       "size": 4,
       "tiles": [
-        "p14 p12 p5 g1",
-        "p5 p5 s1 p12",
-        "g1 p3 p3 p14",
-        "p14 p6 g8 g1"
+        "g2 p14 p12 p3",
+        "p0 p6 p5 p5",
+        "g4 p13 s1 p5",
+        "p0 p9 g2 p9"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "M09",
@@ -306,13 +447,14 @@
       "order": 9,
       "size": 4,
       "tiles": [
-        "p10 p6 p12 p10",
-        "g8 p6 p11 p12",
-        "g1 p3 s12 p5",
-        "g2 p11 p9 g2"
+        "p3 p14 p10 p12",
+        "g2 s3 p10 p5",
+        "g1 g8 p12 p5",
+        "p6 p5 p9 p5"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "M10",
@@ -320,13 +462,14 @@
       "order": 10,
       "size": 4,
       "tiles": [
-        "p12 p6 p6 g1",
-        "p5 p13 s11 p13",
-        "g1 p10 p6 g1",
-        "g2 p10 p9 g4"
+        "p10 p5 g2 p10",
+        "p7 s8 p6 p13",
+        "p3 p12 g4 p9",
+        "p12 p0 g1 p3"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "M11",
@@ -334,13 +477,14 @@
       "order": 11,
       "size": 4,
       "tiles": [
-        "p6 p12 g4 p9",
-        "g4 s1 p5 p13",
-        "p3 p5 p12 p6",
-        "p3 p5 p3 p9"
+        "p10 g2 g1 p5",
+        "p5 s4 p10 p12",
+        "p9 p3 p7 g4",
+        "p6 p9 p11 p12"
       ],
-      "star2": 10,
-      "star3": 7
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "M12",
@@ -348,13 +492,434 @@
       "order": 12,
       "size": 4,
       "tiles": [
-        "p5 g1 p9 p6",
-        "p3 p10 s1 g4",
-        "p14 p12 p5 p10",
-        "p10 p10 p13 g2"
+        "p6 p12 g4 g4",
+        "p7 s9 p5 p7",
+        "p5 g1 p12 p5",
+        "g1 p3 p9 p5"
       ],
-      "star2": 11,
-      "star3": 8
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
+    },
+    {
+      "id": "M13",
+      "group": "intermediate",
+      "order": 13,
+      "size": 4,
+      "tiles": [
+        "p3 p6 p9 p5",
+        "p0 p13 g2 g8",
+        "g4 s3 g8 p12",
+        "p7 p10 p10 p5"
+      ],
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
+    },
+    {
+      "id": "M14",
+      "group": "intermediate",
+      "order": 14,
+      "size": 4,
+      "tiles": [
+        "g2 p13 p7 g4",
+        "p3 s5 p6 p5",
+        "g4 p9 p5 g1",
+        "p5 p10 p9 p12"
+      ],
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
+    },
+    {
+      "id": "M15",
+      "group": "intermediate",
+      "order": 15,
+      "size": 4,
+      "tiles": [
+        "p5 p5 p10 g2",
+        "g4 p5 p14 p7",
+        "p12 p9 s1 p5",
+        "p6 p3 g8 p9"
+      ],
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
+    },
+    {
+      "id": "M16",
+      "group": "intermediate",
+      "order": 16,
+      "size": 4,
+      "tiles": [
+        "p6 p11 p10 g2",
+        "p6 p10 s8 p12",
+        "p7 p10 g8 p5",
+        "p9 p10 p3 g8"
+      ],
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
+    },
+    {
+      "id": "M17",
+      "group": "intermediate",
+      "order": 17,
+      "size": 4,
+      "tiles": [
+        "p6 p0 p12 g4",
+        "p5 s7 p5 p3",
+        "p9 p10 p10 p5",
+        "g2 p10 g8 p9"
+      ],
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
+    },
+    {
+      "id": "M18",
+      "group": "intermediate",
+      "order": 18,
+      "size": 4,
+      "tiles": [
+        "p5 p10 p10 p6",
+        "p12 p13 g1 p10",
+        "g2 p7 s8 g1",
+        "p11 p10 g8 p6"
+      ],
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
+    },
+    {
+      "id": "M19",
+      "group": "intermediate",
+      "order": 19,
+      "size": 4,
+      "tiles": [
+        "g1 p7 p10 p5",
+        "g1 s10 p10 p3",
+        "p6 p12 p12 g8",
+        "p7 g1 p5 p12"
+      ],
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
+    },
+    {
+      "id": "M20",
+      "group": "intermediate",
+      "order": 20,
+      "size": 4,
+      "tiles": [
+        "p3 g1 p0 g4",
+        "p6 s15 g8 p13",
+        "p10 p9 p6 p5",
+        "g4 g8 p10 p3"
+      ],
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
+    },
+    {
+      "id": "M21",
+      "group": "intermediate",
+      "order": 21,
+      "size": 4,
+      "tiles": [
+        "p5 p5 p14 g8",
+        "g2 g1 p6 p13",
+        "p6 p3 s13 p5",
+        "g4 p9 g1 p0"
+      ],
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
+    },
+    {
+      "id": "M22",
+      "group": "intermediate",
+      "order": 22,
+      "size": 4,
+      "tiles": [
+        "p6 g2 p12 p9",
+        "p5 g1 s7 p12",
+        "p10 p11 p5 p9",
+        "g4 p3 g4 p10"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "M23",
+      "group": "intermediate",
+      "order": 23,
+      "size": 4,
+      "tiles": [
+        "p3 p11 p12 g8",
+        "g4 p13 g4 p5",
+        "p6 p7 s1 p5",
+        "p10 g1 p5 p5"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "M24",
+      "group": "intermediate",
+      "order": 24,
+      "size": 4,
+      "tiles": [
+        "g8 g4 p5 g2",
+        "p14 p3 s12 p13",
+        "p12 p3 p9 p5",
+        "g2 p6 p3 p9"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "M25",
+      "group": "intermediate",
+      "order": 25,
+      "size": 4,
+      "tiles": [
+        "p3 p12 p9 p12",
+        "p10 p5 g2 p13",
+        "g4 s5 g2 g1",
+        "g4 p11 p7 p10"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "M26",
+      "group": "intermediate",
+      "order": 26,
+      "size": 4,
+      "tiles": [
+        "p13 p14 p10 g1",
+        "p6 g2 g1 g2",
+        "p5 s6 p14 p12",
+        "p9 g1 p9 p5"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "M27",
+      "group": "intermediate",
+      "order": 27,
+      "size": 4,
+      "tiles": [
+        "p11 p13 g4 g8",
+        "g4 p3 g4 p5",
+        "p7 p10 s7 p5",
+        "p3 g4 g8 p9"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "M28",
+      "group": "intermediate",
+      "order": 28,
+      "size": 4,
+      "tiles": [
+        "g4 g8 g2 p12",
+        "p5 p7 s3 p3",
+        "p9 p9 p14 g8",
+        "p14 p3 p10 g4"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "M29",
+      "group": "intermediate",
+      "order": 29,
+      "size": 4,
+      "tiles": [
+        "p7 p10 p5 p7",
+        "g8 s9 g4 p3",
+        "g8 g1 p6 p9",
+        "g4 p10 p5 p14"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "M30",
+      "group": "intermediate",
+      "order": 30,
+      "size": 4,
+      "tiles": [
+        "g2 p10 p12 g2",
+        "g2 g8 p5 p9",
+        "p13 p3 s11 g4",
+        "p5 p6 p14 p9"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "M31",
+      "group": "intermediate",
+      "order": 31,
+      "size": 4,
+      "tiles": [
+        "p9 p14 g8 g4",
+        "g4 p6 s5 p11",
+        "p3 p9 g4 p13",
+        "g2 p9 p3 p6"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "M32",
+      "group": "intermediate",
+      "order": 32,
+      "size": 4,
+      "tiles": [
+        "p7 p6 g8 g8",
+        "p10 p10 s14 p12",
+        "p3 g2 p3 g8",
+        "p12 p11 g2 p9"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "M33",
+      "group": "intermediate",
+      "order": 33,
+      "size": 4,
+      "tiles": [
+        "g4 g4 g1 p12",
+        "p3 g1 p7 p6",
+        "g2 p5 s5 p13",
+        "p5 p11 p12 p9"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "M34",
+      "group": "intermediate",
+      "order": 34,
+      "size": 4,
+      "tiles": [
+        "p6 p9 p12 p5",
+        "g1 p13 s5 p14",
+        "p5 p5 p3 g1",
+        "p7 g4 g1 g4"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "M35",
+      "group": "intermediate",
+      "order": 35,
+      "size": 4,
+      "tiles": [
+        "g8 g2 p5 p6",
+        "p3 p12 s15 p3",
+        "p5 g8 g1 p12",
+        "p6 p11 p12 g1"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "M36",
+      "group": "intermediate",
+      "order": 36,
+      "size": 4,
+      "tiles": [
+        "p5 p3 g4 p6",
+        "g1 s13 p9 g4",
+        "p12 p7 p6 p3",
+        "p13 g8 p5 g1"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "M37",
+      "group": "intermediate",
+      "order": 37,
+      "size": 4,
+      "tiles": [
+        "p12 g8 p10 p9",
+        "p6 g4 p5 p5",
+        "p11 p6 s13 g1",
+        "p14 g1 p3 g2"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "M38",
+      "group": "intermediate",
+      "order": 38,
+      "size": 4,
+      "tiles": [
+        "p15 g1 p12 p10",
+        "g2 p10 p13 p3",
+        "p12 s10 p5 g4",
+        "p6 g1 p3 g8"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "M39",
+      "group": "intermediate",
+      "order": 39,
+      "size": 4,
+      "tiles": [
+        "p3 g8 p9 p13",
+        "g1 g8 p6 g4",
+        "p15 s1 g4 p10",
+        "p5 p10 p6 p7"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "M40",
+      "group": "intermediate",
+      "order": 40,
+      "size": 4,
+      "tiles": [
+        "g2 g1 p9 p11",
+        "p6 g8 p14 p10",
+        "g2 s11 g8 g4",
+        "p10 p12 p11 p6"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
     },
     {
       "id": "A01",
@@ -362,14 +927,15 @@
       "order": 1,
       "size": 5,
       "tiles": [
-        "p3 p11 g8 g2 g8",
-        "p5 p10 p10 p14 p9",
-        "p3 p6 s9 p6 p12",
-        "p9 p6 p10 g2 p11",
-        "p5 g4 p10 p10 p12"
+        "p5 p6 p12 p0 g2",
+        "p3 p10 p10 p13 p5",
+        "p5 p0 s2 p12 p5",
+        "p5 p6 p10 p9 p10",
+        "p9 p3 p9 g2 p12"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "A02",
@@ -377,14 +943,15 @@
       "order": 2,
       "size": 5,
       "tiles": [
-        "g8 g2 p6 p12 p12",
-        "p3 g4 p5 p3 p13",
-        "p6 p9 s15 p10 p3",
-        "p10 p5 p6 p13 g1",
-        "g1 g8 p10 p9 p6"
+        "p3 p10 p12 p10 p12",
+        "p6 p3 p9 p6 p5",
+        "g4 p9 s2 p5 g1",
+        "p6 p14 p12 p0 p7",
+        "p5 p9 p3 p9 g8"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "A03",
@@ -392,14 +959,15 @@
       "order": 3,
       "size": 5,
       "tiles": [
-        "p15 p10 p10 p12 g4",
-        "p6 p10 g4 g1 p3",
-        "p13 p12 s5 p3 p12",
-        "p3 p13 g1 g1 p6",
-        "p6 p5 p10 p9 g1"
+        "p5 p10 p12 p0 p9",
+        "p5 p6 p11 p10 p12",
+        "p5 g1 s4 p6 p9",
+        "p13 p6 p9 p3 g4",
+        "p6 p3 p9 g2 p10"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "A04",
@@ -407,14 +975,15 @@
       "order": 4,
       "size": 5,
       "tiles": [
-        "p3 p6 p10 p12 p6",
-        "g2 p11 p14 p9 p5",
-        "p5 g4 s14 p12 g1",
-        "g4 g1 p11 p3 p11",
-        "g2 p12 p10 g8 p9"
+        "g4 g2 p5 p10 p12",
+        "p9 p0 p9 g2 p11",
+        "p6 p0 s2 p10 p12",
+        "p5 p5 p10 p6 p12",
+        "p3 p14 p9 p3 p9"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "A05",
@@ -422,14 +991,15 @@
       "order": 5,
       "size": 5,
       "tiles": [
-        "p10 g8 p9 p12 p5",
-        "p5 p6 p10 p10 g8",
-        "p3 p6 s10 p12 p5",
-        "p11 p10 p11 p9 g4",
-        "p10 p10 p6 g2 p3"
+        "p6 p6 p10 p12 p3",
+        "g4 p10 p10 p9 p5",
+        "p5 p9 s1 p6 g8",
+        "p7 p6 p12 p5 p0",
+        "p5 p9 p3 p9 p0"
       ],
-      "star2": 12,
-      "star3": 9
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "A06",
@@ -437,14 +1007,15 @@
       "order": 6,
       "size": 5,
       "tiles": [
-        "p14 p3 p10 p6 p10",
-        "p6 p9 p12 p3 g8",
-        "g1 p12 s3 g8 p12",
-        "p10 p11 p6 p9 p5",
-        "p10 g8 g2 p6 p11"
+        "p5 p12 p6 p10 p5",
+        "p5 p3 p13 g4 p5",
+        "g1 p0 s1 p5 p9",
+        "p11 g8 p0 p6 p10",
+        "p12 p6 p3 p10 p10"
       ],
-      "star2": 12,
-      "star3": 9
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "A07",
@@ -452,14 +1023,15 @@
       "order": 7,
       "size": 5,
       "tiles": [
-        "p7 p11 p10 p9 p12",
-        "p6 p10 g2 g4 p5",
-        "p6 g4 s9 p5 g4",
-        "p9 p9 p10 p7 p3",
-        "g4 p10 p10 p10 p9"
+        "p0 p10 p12 p3 p12",
+        "p6 p5 g4 p5 p0",
+        "p5 p11 s8 p10 p5",
+        "p7 p10 g8 p6 p3",
+        "p10 g2 p10 p9 p9"
       ],
-      "star2": 12,
-      "star3": 9
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "A08",
@@ -467,14 +1039,15 @@
       "order": 8,
       "size": 5,
       "tiles": [
-        "g4 p11 g8 p12 p12",
-        "g8 p6 p11 p15 g8",
-        "p5 p6 s10 p3 g4",
-        "p5 p5 p6 g1 p9",
-        "p3 p9 p11 p6 g2"
+        "p7 p12 p6 p0 p5",
+        "p5 p12 p3 p12 g1",
+        "p3 p3 s10 p9 p0",
+        "p10 p10 p12 p12 g2",
+        "p10 p9 g1 p5 p6"
       ],
-      "star2": 12,
-      "star3": 9
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "A09",
@@ -482,13 +1055,14 @@
       "order": 9,
       "size": 5,
       "tiles": [
-        "p6 p10 p10 g8 p5",
-        "p10 g2 g8 p9 p7",
-        "p12 p12 s15 p10 p5",
-        "p11 g2 p10 g8 p3",
-        "p12 g1 p5 p3 p6"
+        "p14 p10 p10 p0 p6",
+        "p5 g4 p10 p12 p5",
+        "p5 p5 s5 p6 p9",
+        "p3 p9 g4 p3 p5",
+        "p0 p3 p10 g8 p9"
       ],
-      "star2": 15,
+      "shortest": 6,
+      "star2": 18,
       "star3": 12
     },
     {
@@ -497,13 +1071,14 @@
       "order": 10,
       "size": 5,
       "tiles": [
-        "g4 p6 g8 p6 g8",
-        "g8 p12 p12 g2 p15",
-        "p9 p5 s6 p15 p7",
-        "p6 p10 p3 p9 g1",
-        "p5 p3 p3 p9 g8"
+        "g2 p12 g2 p12 p9",
+        "p0 p3 p10 p5 p12",
+        "p6 p10 s8 p13 p5",
+        "g8 p3 p10 p5 p5",
+        "p14 p3 p10 p10 p3"
       ],
-      "star2": 15,
+      "shortest": 6,
+      "star2": 18,
       "star3": 12
     },
     {
@@ -512,13 +1087,14 @@
       "order": 11,
       "size": 5,
       "tiles": [
-        "p9 p11 p10 p9 p12",
-        "p3 p14 p3 g4 g2",
-        "p12 g4 s11 p13 p5",
-        "p14 g2 g2 p12 g1",
-        "p6 p10 p10 g8 p3"
+        "p14 p10 p12 p9 p10",
+        "p3 p12 p5 p3 p6",
+        "g4 p3 s12 p5 g1",
+        "p0 p0 p3 p9 p5",
+        "g4 p10 p10 p10 p5"
       ],
-      "star2": 15,
+      "shortest": 6,
+      "star2": 18,
       "star3": 12
     },
     {
@@ -527,14 +1103,911 @@
       "order": 12,
       "size": 5,
       "tiles": [
-        "p6 p3 p10 g1 g4",
-        "p10 p12 g8 p15 p14",
-        "p5 p10 s3 p12 p7",
-        "g1 p5 p12 g1 p5",
-        "p9 p7 g8 p5 g2"
+        "p5 g2 p12 p10 p5",
+        "p5 g2 p10 p10 p13",
+        "p3 g4 s2 p10 p13",
+        "p10 p7 g8 p0 p5",
+        "p10 p9 p0 p6 p9"
       ],
-      "star2": 15,
+      "shortest": 6,
+      "star2": 18,
       "star3": 12
+    },
+    {
+      "id": "A13",
+      "group": "advanced",
+      "order": 13,
+      "size": 5,
+      "tiles": [
+        "p9 p10 p10 p9 p0",
+        "p12 p6 p10 p6 g8",
+        "p3 g8 s13 p6 g1",
+        "p10 p5 p3 g8 p6",
+        "p12 p3 p6 p11 p10"
+      ],
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
+    },
+    {
+      "id": "A14",
+      "group": "advanced",
+      "order": 14,
+      "size": 5,
+      "tiles": [
+        "p12 p10 g8 p6 p9",
+        "p9 p3 p12 p7 p10",
+        "p6 p13 s3 p10 g8",
+        "p3 p10 g2 p5 g4",
+        "p3 p10 p10 p12 p5"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "A15",
+      "group": "advanced",
+      "order": 15,
+      "size": 5,
+      "tiles": [
+        "p6 p5 p10 p10 p12",
+        "p5 p9 g2 p15 p5",
+        "p5 p10 s4 g1 p5",
+        "g4 p3 p3 p12 p7",
+        "p0 p10 p9 g1 p12"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "A16",
+      "group": "advanced",
+      "order": 16,
+      "size": 5,
+      "tiles": [
+        "p6 p3 p0 g8 p12",
+        "g1 p10 p5 p14 g4",
+        "p6 p6 s9 g1 p5",
+        "p5 p11 p10 p6 p9",
+        "p10 p10 p11 p12 g1"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "A17",
+      "group": "advanced",
+      "order": 17,
+      "size": 5,
+      "tiles": [
+        "p6 p10 p14 p15 p12",
+        "p12 g1 g1 g4 p5",
+        "p6 p9 s6 g1 p12",
+        "p6 p9 p5 p10 p5",
+        "g2 p9 p3 p3 p9"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "A18",
+      "group": "advanced",
+      "order": 18,
+      "size": 5,
+      "tiles": [
+        "p6 p10 p11 p3 p5",
+        "p5 g4 p7 g8 g4",
+        "p5 p9 s2 p12 p5",
+        "p7 p0 g4 p5 p5",
+        "p9 p5 g8 p13 p3"
+      ],
+      "shortest": 7,
+      "star2": 21,
+      "star3": 14
+    },
+    {
+      "id": "A19",
+      "group": "advanced",
+      "order": 19,
+      "size": 5,
+      "tiles": [
+        "g2 p10 p14 p10 p5",
+        "p5 p0 p6 p10 p5",
+        "p6 p11 s8 g4 p5",
+        "p10 g8 p9 p11 p3",
+        "p12 p9 g2 p5 p10"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "A20",
+      "group": "advanced",
+      "order": 20,
+      "size": 5,
+      "tiles": [
+        "p10 p10 p9 p9 p6",
+        "p9 p3 p14 g8 p14",
+        "p6 p9 s2 g1 g4",
+        "p13 p3 p12 g2 p10",
+        "p11 p10 p12 p6 g2"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "A21",
+      "group": "advanced",
+      "order": 21,
+      "size": 5,
+      "tiles": [
+        "g1 p5 p10 p10 p9",
+        "p14 p12 p10 p12 p3",
+        "p6 p3 s3 p0 p13",
+        "g1 g4 p10 p10 g1",
+        "p12 g4 p3 p10 p14"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "A22",
+      "group": "advanced",
+      "order": 22,
+      "size": 5,
+      "tiles": [
+        "p6 p12 p9 g8 p5",
+        "p3 g2 p10 g2 g4",
+        "p3 p12 s4 p12 p13",
+        "p6 p11 p11 p3 p5",
+        "p3 p10 g8 p14 p9"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "A23",
+      "group": "advanced",
+      "order": 23,
+      "size": 5,
+      "tiles": [
+        "p5 g1 g2 p11 p12",
+        "p7 p3 p5 p14 p6",
+        "p3 p14 s10 p5 p5",
+        "g4 p10 g8 p12 p5",
+        "g8 p0 p5 p9 g1"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "A24",
+      "group": "advanced",
+      "order": 24,
+      "size": 5,
+      "tiles": [
+        "p10 p6 g8 p0 p5",
+        "g4 p5 p7 g8 p9",
+        "p3 p10 s14 p13 p3",
+        "p9 p6 p10 p5 p6",
+        "p3 g8 p11 g8 g4"
+      ],
+      "shortest": 8,
+      "star2": 24,
+      "star3": 16
+    },
+    {
+      "id": "A25",
+      "group": "advanced",
+      "order": 25,
+      "size": 5,
+      "tiles": [
+        "p10 p9 g2 p12 p12",
+        "p12 g4 p5 p6 g8",
+        "p5 p5 s13 p3 p10",
+        "p6 p5 p3 p6 p11",
+        "p5 p5 g1 p3 p9"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "A26",
+      "group": "advanced",
+      "order": 26,
+      "size": 5,
+      "tiles": [
+        "g1 p3 g8 p10 p12",
+        "p0 p6 p10 g2 p9",
+        "p6 p10 s12 p5 p13",
+        "g1 p3 p3 p12 p5",
+        "p10 p12 p10 p11 p6"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "A27",
+      "group": "advanced",
+      "order": 27,
+      "size": 5,
+      "tiles": [
+        "p12 p10 p6 p3 p10",
+        "p3 p12 p6 p9 p5",
+        "g4 p5 s1 g2 p13",
+        "p13 p13 p10 g1 p6",
+        "p6 p10 p9 g2 p9"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "A28",
+      "group": "advanced",
+      "order": 28,
+      "size": 5,
+      "tiles": [
+        "p12 p5 p10 p14 p12",
+        "p5 p6 p11 p11 g1",
+        "p10 p5 s6 p3 p12",
+        "p6 p5 g1 g2 g8",
+        "p5 p9 g1 p10 p10"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "A29",
+      "group": "advanced",
+      "order": 29,
+      "size": 5,
+      "tiles": [
+        "g2 p14 p12 p11 p9",
+        "g4 p5 p5 p10 p12",
+        "p5 g1 s3 p10 p13",
+        "p3 p14 p10 g2 p9",
+        "g2 p12 g2 p6 p9"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "A30",
+      "group": "advanced",
+      "order": 30,
+      "size": 5,
+      "tiles": [
+        "p3 p9 p10 g8 p6",
+        "g4 p6 p10 p10 p13",
+        "p3 p10 s4 p7 g8",
+        "p6 g8 p11 p15 p0",
+        "p10 g2 p10 p9 g8"
+      ],
+      "shortest": 9,
+      "star2": 27,
+      "star3": 18
+    },
+    {
+      "id": "A31",
+      "group": "advanced",
+      "order": 31,
+      "size": 5,
+      "tiles": [
+        "g1 g8 p6 p10 g2",
+        "g4 p5 p6 p6 p5",
+        "p5 p3 s13 p9 p12",
+        "p13 p5 p6 p9 p12",
+        "p13 g1 p3 p10 p3"
+      ],
+      "shortest": 10,
+      "star2": 30,
+      "star3": 20
+    },
+    {
+      "id": "A32",
+      "group": "advanced",
+      "order": 32,
+      "size": 5,
+      "tiles": [
+        "g1 p12 p12 g2 p3",
+        "p5 g4 p12 p3 p12",
+        "p3 p5 s8 p10 p13",
+        "p10 p7 p10 g8 g2",
+        "p6 p11 p15 p10 g1"
+      ],
+      "shortest": 10,
+      "star2": 30,
+      "star3": 20
+    },
+    {
+      "id": "A33",
+      "group": "advanced",
+      "order": 33,
+      "size": 5,
+      "tiles": [
+        "g4 p5 p3 g2 g4",
+        "p5 g1 p5 p12 p14",
+        "p5 p5 s2 p5 p9",
+        "p5 p3 p14 p15 p12",
+        "g8 g1 p11 p9 p6"
+      ],
+      "shortest": 10,
+      "star2": 30,
+      "star3": 20
+    },
+    {
+      "id": "A34",
+      "group": "advanced",
+      "order": 34,
+      "size": 5,
+      "tiles": [
+        "p5 p10 p12 p9 p6",
+        "p5 g2 p11 p13 p12",
+        "g1 g4 s6 p0 p5",
+        "p5 g2 p7 p9 g8",
+        "p10 p9 g2 p6 p11"
+      ],
+      "shortest": 10,
+      "star2": 30,
+      "star3": 20
+    },
+    {
+      "id": "A35",
+      "group": "advanced",
+      "order": 35,
+      "size": 5,
+      "tiles": [
+        "p13 p9 p10 p13 p9",
+        "g2 p10 p12 p11 p3",
+        "p6 p12 s3 p13 p9",
+        "g2 g4 p14 p3 p5",
+        "g2 g2 g4 g4 p5"
+      ],
+      "shortest": 10,
+      "star2": 30,
+      "star3": 20
+    },
+    {
+      "id": "A36",
+      "group": "advanced",
+      "order": 36,
+      "size": 5,
+      "tiles": [
+        "p5 p6 g1 g4 p11",
+        "p12 p13 p12 p14 p11",
+        "p10 g2 s11 g1 g1",
+        "g2 p10 p10 g2 p12",
+        "p6 p9 p10 p0 p10"
+      ],
+      "shortest": 10,
+      "star2": 30,
+      "star3": 20
+    },
+    {
+      "id": "A37",
+      "group": "advanced",
+      "order": 37,
+      "size": 5,
+      "tiles": [
+        "g8 p10 p12 g2 p3",
+        "p7 p5 p3 p12 g8",
+        "p15 g4 s4 p12 p10",
+        "p3 p10 g8 p11 p5",
+        "p6 p3 p10 p5 p9"
+      ],
+      "shortest": 11,
+      "star2": 33,
+      "star3": 22
+    },
+    {
+      "id": "A38",
+      "group": "advanced",
+      "order": 38,
+      "size": 5,
+      "tiles": [
+        "g1 p10 p10 g2 p9",
+        "g1 p9 p6 p10 p14",
+        "p6 g2 s13 p12 p9",
+        "g1 p13 p6 p10 p12",
+        "p3 p3 p12 p5 p6"
+      ],
+      "shortest": 11,
+      "star2": 33,
+      "star3": 22
+    },
+    {
+      "id": "A39",
+      "group": "advanced",
+      "order": 39,
+      "size": 5,
+      "tiles": [
+        "p11 g8 p5 p12 p3",
+        "g4 p5 p5 p6 g1",
+        "p14 g1 s5 p7 p5",
+        "p5 p9 g1 p5 p5",
+        "g4 p5 p11 p6 p12"
+      ],
+      "shortest": 11,
+      "star2": 33,
+      "star3": 22
+    },
+    {
+      "id": "A40",
+      "group": "advanced",
+      "order": 40,
+      "size": 5,
+      "tiles": [
+        "p14 p10 g8 g4 g2",
+        "p6 p3 p9 p12 g2",
+        "p13 p10 s9 p5 g1",
+        "p6 p10 p11 g4 p14",
+        "p3 g8 p10 p11 p10"
+      ],
+      "shortest": 11,
+      "star2": 33,
+      "star3": 22
+    },
+    {
+      "id": "A41",
+      "group": "advanced",
+      "order": 41,
+      "size": 5,
+      "tiles": [
+        "p3 p6 p10 p10 p11",
+        "p5 p12 g4 g4 p6",
+        "g1 p10 s13 p5 g4",
+        "g4 p5 p7 p5 p13",
+        "g8 p3 p11 p9 g1"
+      ],
+      "shortest": 11,
+      "star2": 33,
+      "star3": 22
+    },
+    {
+      "id": "A42",
+      "group": "advanced",
+      "order": 42,
+      "size": 5,
+      "tiles": [
+        "p12 g1 g4 g2 g2",
+        "p12 p5 g2 p15 p5",
+        "p12 p12 s1 p7 p9",
+        "p7 p7 p10 p11 p9",
+        "p10 g2 p5 g1 p12"
+      ],
+      "shortest": 11,
+      "star2": 33,
+      "star3": 22
+    },
+    {
+      "id": "A43",
+      "group": "advanced",
+      "order": 43,
+      "size": 5,
+      "tiles": [
+        "p13 p5 p10 p10 g4",
+        "p12 p6 g2 p9 p11",
+        "p3 p3 s8 p14 p13",
+        "p6 p12 p6 p9 p9",
+        "g8 g2 p11 g2 g2"
+      ],
+      "shortest": 12,
+      "star2": 36,
+      "star3": 24
+    },
+    {
+      "id": "A44",
+      "group": "advanced",
+      "order": 44,
+      "size": 5,
+      "tiles": [
+        "p10 p10 p12 g8 p13",
+        "p3 p10 p6 p11 g4",
+        "g2 p12 s9 p6 p13",
+        "g8 g4 p5 p3 p7",
+        "p6 g1 p9 p3 p5"
+      ],
+      "shortest": 12,
+      "star2": 36,
+      "star3": 24
+    },
+    {
+      "id": "A45",
+      "group": "advanced",
+      "order": 45,
+      "size": 5,
+      "tiles": [
+        "g8 p6 p12 p3 p10",
+        "p14 p12 p5 g1 g8",
+        "g4 p5 s3 p11 g8",
+        "p10 g4 p7 p11 p10",
+        "p9 p3 p10 p10 p6"
+      ],
+      "shortest": 12,
+      "star2": 36,
+      "star3": 24
+    },
+    {
+      "id": "A46",
+      "group": "advanced",
+      "order": 46,
+      "size": 5,
+      "tiles": [
+        "p7 p12 g8 p12 p13",
+        "p7 p3 g8 p6 p6",
+        "p5 p10 s1 p13 g8",
+        "p3 p10 p3 g1 p14",
+        "g2 p11 p10 g8 g4"
+      ],
+      "shortest": 12,
+      "star2": 36,
+      "star3": 24
+    },
+    {
+      "id": "A47",
+      "group": "advanced",
+      "order": 47,
+      "size": 5,
+      "tiles": [
+        "g1 p14 p14 g8 g8",
+        "g8 p6 p7 p10 p3",
+        "p12 p9 s4 p14 p11",
+        "g1 g4 p7 p3 g8",
+        "p6 p10 p10 p3 p9"
+      ],
+      "shortest": 12,
+      "star2": 36,
+      "star3": 24
+    },
+    {
+      "id": "A48",
+      "group": "advanced",
+      "order": 48,
+      "size": 5,
+      "tiles": [
+        "p12 p3 p14 p6 p11",
+        "g2 p9 p7 g1 p13",
+        "g2 p10 s9 g2 p12",
+        "g8 p6 g8 p3 p7",
+        "p10 p9 p12 p6 g8"
+      ],
+      "shortest": 12,
+      "star2": 36,
+      "star3": 24
+    },
+    {
+      "id": "A49",
+      "group": "advanced",
+      "order": 49,
+      "size": 5,
+      "tiles": [
+        "p12 g8 p6 g4 g4",
+        "p15 g1 p15 p10 p12",
+        "p7 p13 s6 p10 p3",
+        "g1 p10 p5 p9 p5",
+        "g1 p3 p6 g1 g8"
+      ],
+      "shortest": 12,
+      "star2": 36,
+      "star3": 24
+    },
+    {
+      "id": "A50",
+      "group": "advanced",
+      "order": 50,
+      "size": 5,
+      "tiles": [
+        "p10 p14 g8 p12 p10",
+        "p3 g1 g2 p10 p11",
+        "g8 p6 s11 p13 g8",
+        "g4 g1 p7 p9 p6",
+        "p9 p3 p14 p6 g4"
+      ],
+      "shortest": 12,
+      "star2": 36,
+      "star3": 24
+    },
+    {
+      "id": "A51",
+      "group": "advanced",
+      "order": 51,
+      "size": 5,
+      "tiles": [
+        "p5 g1 g4 p13 p3",
+        "p5 p10 p3 g8 p10",
+        "g8 p6 s11 p14 g1",
+        "g4 p12 p9 p6 p5",
+        "p7 p14 g8 p10 p3"
+      ],
+      "shortest": 13,
+      "star2": 39,
+      "star3": 26
+    },
+    {
+      "id": "A52",
+      "group": "advanced",
+      "order": 52,
+      "size": 5,
+      "tiles": [
+        "g8 p6 p10 p3 g1",
+        "p5 p6 p12 p6 p7",
+        "g2 p9 s2 p13 p13",
+        "p9 g1 p12 p12 p7",
+        "g1 p15 g4 p3 g8"
+      ],
+      "shortest": 13,
+      "star2": 39,
+      "star3": 26
+    },
+    {
+      "id": "A53",
+      "group": "advanced",
+      "order": 53,
+      "size": 5,
+      "tiles": [
+        "p3 g4 p10 p12 g2",
+        "p12 p3 p3 p13 g4",
+        "p5 p6 s15 p10 g4",
+        "p9 p9 p13 g2 p13",
+        "g8 p10 g2 p3 p10"
+      ],
+      "shortest": 13,
+      "star2": 39,
+      "star3": 26
+    },
+    {
+      "id": "A54",
+      "group": "advanced",
+      "order": 54,
+      "size": 5,
+      "tiles": [
+        "p11 p7 g2 p10 p9",
+        "p14 p5 p12 p6 g8",
+        "p12 g8 s15 p10 g4",
+        "g4 g4 p3 p12 p3",
+        "p5 p3 p3 p9 g1"
+      ],
+      "shortest": 13,
+      "star2": 39,
+      "star3": 26
+    },
+    {
+      "id": "A55",
+      "group": "advanced",
+      "order": 55,
+      "size": 5,
+      "tiles": [
+        "p3 p3 p10 g8 p12",
+        "g4 g4 p11 p14 p5",
+        "p9 p5 s6 p13 p5",
+        "g1 g2 p9 p5 g1",
+        "g4 p13 p14 p6 p3"
+      ],
+      "shortest": 13,
+      "star2": 39,
+      "star3": 26
+    },
+    {
+      "id": "A56",
+      "group": "advanced",
+      "order": 56,
+      "size": 5,
+      "tiles": [
+        "g2 p11 p7 g8 p12",
+        "p5 p7 p5 g4 p5",
+        "p5 p6 s9 p5 p5",
+        "p3 g4 g8 p9 p14",
+        "g1 p14 p9 g2 p5"
+      ],
+      "shortest": 13,
+      "star2": 39,
+      "star3": 26
+    },
+    {
+      "id": "A57",
+      "group": "advanced",
+      "order": 57,
+      "size": 5,
+      "tiles": [
+        "g1 p10 g4 p15 p10",
+        "p5 g2 p10 g8 p5",
+        "g4 p6 s2 g1 p13",
+        "p5 p5 p9 g2 p5",
+        "p7 p11 p12 p11 p12"
+      ],
+      "shortest": 13,
+      "star2": 39,
+      "star3": 26
+    },
+    {
+      "id": "A58",
+      "group": "advanced",
+      "order": 58,
+      "size": 5,
+      "tiles": [
+        "g4 p9 g4 p6 p6",
+        "p13 p14 p12 g1 p3",
+        "p7 p9 s6 g1 g4",
+        "g8 g1 p10 p15 p11",
+        "p5 g2 p11 p10 g8"
+      ],
+      "shortest": 13,
+      "star2": 39,
+      "star3": 26
+    },
+    {
+      "id": "A59",
+      "group": "advanced",
+      "order": 59,
+      "size": 5,
+      "tiles": [
+        "g2 p12 p6 g2 p13",
+        "p9 g4 p5 p14 p5",
+        "g8 p13 s7 g4 p9",
+        "p3 p5 g1 p11 g2",
+        "g2 p14 p11 g8 p10"
+      ],
+      "shortest": 13,
+      "star2": 39,
+      "star3": 26
+    },
+    {
+      "id": "A60",
+      "group": "advanced",
+      "order": 60,
+      "size": 5,
+      "tiles": [
+        "p10 p5 p6 p11 p6",
+        "p12 g8 p3 p5 p5",
+        "g1 p12 s7 p9 p5",
+        "g4 g1 p6 g8 g1",
+        "g8 p6 p10 p15 p11"
+      ],
+      "shortest": 14,
+      "star2": 42,
+      "star3": 28
+    },
+    {
+      "id": "A61",
+      "group": "advanced",
+      "order": 61,
+      "size": 5,
+      "tiles": [
+        "p6 p3 p14 p6 p9",
+        "g4 p10 p9 g1 p7",
+        "p15 p13 s4 g8 p5",
+        "g8 g8 g1 p6 p10",
+        "p3 p7 g8 p3 p12"
+      ],
+      "shortest": 14,
+      "star2": 42,
+      "star3": 28
+    },
+    {
+      "id": "A62",
+      "group": "advanced",
+      "order": 62,
+      "size": 5,
+      "tiles": [
+        "g4 p12 p3 p9 p14",
+        "g2 g8 p10 p10 p9",
+        "p7 p13 s12 p6 g4",
+        "p15 g1 g8 p3 p10",
+        "g4 p6 p3 p9 p3"
+      ],
+      "shortest": 14,
+      "star2": 42,
+      "star3": 28
+    },
+    {
+      "id": "A63",
+      "group": "advanced",
+      "order": 63,
+      "size": 5,
+      "tiles": [
+        "p13 g4 p10 p9 p11",
+        "p12 p9 g4 p3 g2",
+        "g4 p5 s7 p6 g4",
+        "p9 p5 p10 p5 p7",
+        "g1 p3 g4 p13 p5"
+      ],
+      "shortest": 14,
+      "star2": 42,
+      "star3": 28
+    },
+    {
+      "id": "A64",
+      "group": "advanced",
+      "order": 64,
+      "size": 5,
+      "tiles": [
+        "p6 g2 p11 g4 g1",
+        "p6 p13 p14 p9 g2",
+        "p5 p7 s8 g2 p9",
+        "p12 p9 p5 g2 p11",
+        "p12 p14 p10 p3 g8"
+      ],
+      "shortest": 14,
+      "star2": 42,
+      "star3": 28
+    },
+    {
+      "id": "A65",
+      "group": "advanced",
+      "order": 65,
+      "size": 5,
+      "tiles": [
+        "p12 p6 p10 g1 p12",
+        "p5 p7 p15 g8 p12",
+        "p5 g1 s7 p12 p3",
+        "p5 g2 p9 g1 p10",
+        "g8 g1 p10 p7 p6"
+      ],
+      "shortest": 14,
+      "star2": 42,
+      "star3": 28
+    },
+    {
+      "id": "A66",
+      "group": "advanced",
+      "order": 66,
+      "size": 5,
+      "tiles": [
+        "g2 g2 p10 p9 g2",
+        "p12 g2 p9 p14 g1",
+        "p7 p7 s10 p15 g4",
+        "p13 p5 p10 p9 p10",
+        "p12 g1 g2 p10 p12"
+      ],
+      "shortest": 14,
+      "star2": 42,
+      "star3": 28
+    },
+    {
+      "id": "A67",
+      "group": "advanced",
+      "order": 67,
+      "size": 5,
+      "tiles": [
+        "g8 g4 p6 p10 p14",
+        "p6 g8 p10 p9 p9",
+        "p3 p14 s15 g4 p12",
+        "g2 p13 g1 g8 p7",
+        "p9 g2 p11 p3 g2"
+      ],
+      "shortest": 14,
+      "star2": 42,
+      "star3": 28
+    },
+    {
+      "id": "A68",
+      "group": "advanced",
+      "order": 68,
+      "size": 5,
+      "tiles": [
+        "g1 g2 p10 g4 g4",
+        "g4 p9 g4 p12 p9",
+        "g4 g1 s15 p15 p12",
+        "p5 p5 p9 p7 p5",
+        "g2 p3 p11 p10 p7"
+      ],
+      "shortest": 14,
+      "star2": 42,
+      "star3": 28
     }
   ],
   "daily": [
@@ -544,13 +2017,14 @@
       "order": 1,
       "size": 4,
       "tiles": [
-        "p6 p10 g2 p5",
-        "p5 p7 g8 p10",
-        "p3 s12 p5 g4",
-        "p11 p9 p12 g1"
+        "p6 p0 g2 g1",
+        "g1 p12 p7 p12",
+        "g2 s7 p10 p5",
+        "g8 p11 g8 p13"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D02",
@@ -558,13 +2032,14 @@
       "order": 2,
       "size": 4,
       "tiles": [
-        "p3 p10 p12 p5",
-        "p14 p9 s2 p9",
-        "p12 p5 g2 p6",
-        "g2 g8 p3 p13"
+        "p6 p5 p12 g8",
+        "g1 p9 s7 p5",
+        "p6 g8 p5 g1",
+        "p14 g1 p3 p14"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D03",
@@ -572,13 +2047,14 @@
       "order": 3,
       "size": 4,
       "tiles": [
-        "p6 p14 g8 g1",
-        "p5 p3 p14 p10",
-        "g4 p12 s1 p11",
-        "g2 g8 p3 p13"
+        "p3 p12 g8 p6",
+        "p10 p7 g1 g4",
+        "p9 s4 p10 p9",
+        "g4 p5 p11 p7"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D04",
@@ -586,14 +2062,15 @@
       "order": 4,
       "size": 5,
       "tiles": [
-        "g4 p5 p6 p10 p15",
-        "p3 g1 p6 p3 p9",
-        "g4 p14 s13 g2 p12",
-        "g1 p5 g8 p9 p10",
-        "g4 p11 p10 p12 p3"
+        "p3 p12 g2 p12 p9",
+        "g2 p9 p6 p15 g8",
+        "p6 p10 s13 p3 p12",
+        "p3 g1 p6 p14 p9",
+        "p6 p10 p9 g4 g1"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "D05",
@@ -601,13 +2078,14 @@
       "order": 5,
       "size": 4,
       "tiles": [
-        "p12 p10 p12 g2",
-        "p5 p7 p15 p6",
-        "g1 g1 s1 p5",
-        "p6 p10 g8 p9"
+        "g4 p3 p10 g1",
+        "p5 p6 s12 p12",
+        "p5 p3 p5 p7",
+        "p12 g1 p5 p9"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "D06",
@@ -615,13 +2093,14 @@
       "order": 6,
       "size": 4,
       "tiles": [
-        "p9 g4 g2 p10",
-        "g4 p3 p12 g4",
-        "p7 s15 p10 p13",
-        "g2 p13 g1 g1"
+        "p7 g8 p3 g8",
+        "p5 p6 p7 p6",
+        "g1 g8 s5 p12",
+        "g1 p12 p5 p11"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D07",
@@ -629,13 +2108,14 @@
       "order": 7,
       "size": 4,
       "tiles": [
-        "g4 p14 p12 p10",
-        "p9 p7 g4 p3",
-        "g1 s2 p11 p9",
-        "g2 p5 p10 p12"
+        "p9 p6 p12 g4",
+        "p5 p10 g4 p9",
+        "g1 p7 s7 g2",
+        "p11 p11 g8 g4"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D08",
@@ -643,14 +2123,15 @@
       "order": 8,
       "size": 5,
       "tiles": [
-        "p6 p12 g2 p3 p12",
-        "p5 p6 p9 g1 p5",
-        "g1 p3 s11 p14 p12",
-        "g4 p6 p12 g1 p5",
-        "p3 p14 p9 p10 p9"
+        "p12 p6 p10 p10 p10",
+        "p9 p3 p14 p12 p6",
+        "p6 p9 s1 p5 g4",
+        "p12 p3 p9 p5 p6",
+        "p9 p3 p10 g8 p3"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 4,
+      "star2": 12,
+      "star3": 8
     },
     {
       "id": "D09",
@@ -658,13 +2139,14 @@
       "order": 9,
       "size": 4,
       "tiles": [
-        "g2 p10 g8 g4",
-        "p6 s15 p12 g8",
-        "p3 g4 p13 p7",
-        "p9 p9 p3 g2"
+        "p0 p6 p11 p14",
+        "p12 g1 g8 p5",
+        "p7 s8 p10 g1",
+        "p3 p10 p6 g8"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D10",
@@ -672,13 +2154,14 @@
       "order": 10,
       "size": 4,
       "tiles": [
-        "p6 p3 p12 p9",
-        "p5 p5 s1 g4",
-        "p5 p11 g4 g2",
-        "p13 p14 g1 p10"
+        "g4 p3 p10 p5",
+        "p6 p14 s8 g8",
+        "p14 p5 p7 p3",
+        "g8 p3 g8 p9"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D11",
@@ -686,13 +2169,14 @@
       "order": 11,
       "size": 4,
       "tiles": [
-        "g2 p12 p5 p12",
-        "p7 p10 g8 g4",
-        "p11 s7 g2 p13",
-        "p3 g8 g1 p5"
+        "p3 p12 p5 g4",
+        "g1 p12 p5 p6",
+        "p7 s5 g1 p5",
+        "p5 p9 p0 p5"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D12",
@@ -700,14 +2184,15 @@
       "order": 12,
       "size": 5,
       "tiles": [
-        "p3 p11 p12 g2 p9",
-        "g2 p14 p9 p6 p12",
-        "g1 p7 s5 p5 g4",
-        "p7 g8 p11 g4 p5",
-        "p5 p6 g8 p9 p5"
+        "p12 p12 g4 p5 p0",
+        "p5 p5 p5 p12 p3",
+        "p3 p3 s11 p5 p5",
+        "p5 g2 p12 g4 p9",
+        "p11 p9 p3 g4 p6"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "D13",
@@ -715,13 +2200,14 @@
       "order": 13,
       "size": 4,
       "tiles": [
-        "p3 p12 p7 g2",
-        "g2 p6 p10 g8",
-        "p11 g8 s7 g8",
-        "p9 p12 p11 g4"
+        "p6 p12 p6 g1",
+        "p5 p7 p0 p5",
+        "p3 g8 s4 p9",
+        "g8 p3 p11 p12"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D14",
@@ -729,13 +2215,14 @@
       "order": 14,
       "size": 4,
       "tiles": [
-        "p9 g4 p10 p13",
-        "p5 g2 s11 g4",
-        "p5 p5 p6 p12",
-        "p3 g1 p11 g4"
+        "p0 p13 p10 p13",
+        "g2 g1 s2 p6",
+        "p6 p14 g1 g1",
+        "p14 p9 g1 p12"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D15",
@@ -743,13 +2230,14 @@
       "order": 15,
       "size": 4,
       "tiles": [
-        "p11 g8 p12 p5",
-        "p12 s5 p6 p13",
-        "g1 g1 p3 g4",
-        "p7 p10 g1 p6"
+        "p6 p13 p6 p5",
+        "p12 g2 p12 p11",
+        "g2 g1 s4 g1",
+        "p9 p5 p11 p5"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D16",
@@ -757,14 +2245,15 @@
       "order": 16,
       "size": 5,
       "tiles": [
-        "p10 p3 p6 p3 p14",
-        "p5 p10 p9 g2 p12",
-        "p5 p6 s2 p12 p13",
-        "p5 p5 p12 p3 g1",
-        "g8 p3 p10 p9 p12"
+        "p5 p11 p10 g8 p0",
+        "g1 p6 p6 g4 g4",
+        "p5 p3 s15 p11 p9",
+        "g1 p14 p11 p14 p12",
+        "p6 g4 g8 g1 g1"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "D17",
@@ -772,13 +2261,14 @@
       "order": 17,
       "size": 4,
       "tiles": [
-        "g1 p6 p10 g8",
-        "g8 p5 p5 g4",
-        "p6 s9 p7 p12",
-        "p3 p10 p9 p7"
+        "p6 g4 p14 g8",
+        "p12 g1 g1 p15",
+        "p6 p10 s8 p5",
+        "p9 p3 p3 p10"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D18",
@@ -786,13 +2276,14 @@
       "order": 18,
       "size": 4,
       "tiles": [
-        "p10 g4 p5 p5",
-        "p12 p6 p11 g1",
-        "p5 g1 s4 p6",
-        "p3 p10 p9 p13"
+        "p5 p7 p13 p10",
+        "g1 p6 p12 p5",
+        "p9 g4 s1 p5",
+        "g8 p6 p3 p10"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D19",
@@ -800,13 +2291,14 @@
       "order": 19,
       "size": 4,
       "tiles": [
-        "p3 p12 p12 p3",
-        "p6 p5 p3 p5",
-        "g8 s10 g2 p9",
-        "p7 g8 p5 p12"
+        "g4 p6 p3 g4",
+        "p12 p5 s1 p5",
+        "p9 p5 p3 p14",
+        "p10 p11 g8 p5"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D20",
@@ -814,14 +2306,15 @@
       "order": 20,
       "size": 5,
       "tiles": [
-        "p10 p10 p12 g4 g1",
-        "p10 g8 p3 p6 p3",
-        "p6 p14 s2 p10 p13",
-        "p9 p12 g4 p5 p13",
-        "g2 p10 p11 p9 p3"
+        "p9 p14 p6 p12 p5",
+        "p6 p5 p3 p9 p5",
+        "p7 g2 s10 g8 p5",
+        "g1 p14 p12 p5 p9",
+        "g1 p12 p0 p3 g2"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "D21",
@@ -829,13 +2322,14 @@
       "order": 21,
       "size": 4,
       "tiles": [
-        "g8 p10 g2 p12",
-        "p13 p7 p6 p12",
-        "p10 p3 s4 p5",
-        "p7 p9 g1 g1"
+        "p7 p0 p14 g8",
+        "g8 p6 p9 p5",
+        "g1 p7 s7 p12",
+        "g8 p3 g1 g4"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D22",
@@ -843,13 +2337,14 @@
       "order": 22,
       "size": 4,
       "tiles": [
-        "p12 p10 g1 p6",
-        "p3 g8 g1 p14",
-        "p7 s6 p14 g1",
-        "p5 p9 g1 p12"
+        "g2 p12 g2 p3",
+        "g2 s11 p9 p13",
+        "p6 p10 p10 p5",
+        "g8 p12 p12 p3"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D23",
@@ -857,13 +2352,14 @@
       "order": 23,
       "size": 4,
       "tiles": [
-        "p5 p6 g2 p14",
-        "p11 g8 s9 p5",
-        "g2 p6 p9 p7",
-        "p10 g8 g1 p12"
+        "g1 p12 g1 p14",
+        "g4 p13 p6 g8",
+        "p3 s13 p3 p0",
+        "p6 p3 g8 p5"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D24",
@@ -871,14 +2367,15 @@
       "order": 24,
       "size": 5,
       "tiles": [
-        "p12 p6 p10 p12 p6",
-        "p7 p9 p5 p5 p10",
-        "p3 g4 s3 g8 p5",
-        "g4 p13 p6 p12 p5",
-        "p9 p3 g1 p9 p3"
+        "p6 p9 g4 p9 g4",
+        "p5 p6 p7 g4 p5",
+        "p7 p13 s13 p11 p13",
+        "g1 g1 p7 p0 p6",
+        "g2 g1 p12 g1 g8"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     },
     {
       "id": "D25",
@@ -886,13 +2383,14 @@
       "order": 25,
       "size": 4,
       "tiles": [
-        "p12 g4 p9 p10",
-        "p5 p3 g2 p13",
-        "p7 p6 s6 p3",
-        "p9 p5 g8 g8"
+        "p3 g8 g4 p6",
+        "p9 p5 p12 p3",
+        "p6 s14 p12 p9",
+        "g1 g1 p3 p14"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D26",
@@ -900,13 +2398,14 @@
       "order": 26,
       "size": 4,
       "tiles": [
-        "g4 p12 g1 p10",
-        "p5 g2 s14 p10",
-        "p3 g4 p5 g2",
-        "p11 p9 p5 p13"
+        "p10 p10 p12 p5",
+        "p6 p10 p14 p5",
+        "g1 s3 g1 g1",
+        "p0 p9 p12 p6"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D27",
@@ -914,13 +2413,14 @@
       "order": 27,
       "size": 4,
       "tiles": [
-        "p12 p10 p10 g8",
-        "p6 p11 s8 g4",
-        "p7 p10 p6 p9",
-        "g8 p3 g2 p11"
+        "g2 g1 p10 g8",
+        "p6 s9 p14 p9",
+        "p7 g8 p6 p12",
+        "p3 p7 g1 p12"
       ],
-      "star2": 9,
-      "star3": 6
+      "shortest": 6,
+      "star2": 18,
+      "star3": 12
     },
     {
       "id": "D28",
@@ -928,14 +2428,15 @@
       "order": 28,
       "size": 5,
       "tiles": [
-        "p7 p6 g8 p6 p14",
-        "p5 p12 p5 p5 p5",
-        "p10 p3 s9 p5 p13",
-        "g8 p3 p9 p7 g1",
-        "g4 g2 p10 p10 g8"
+        "p5 p6 p10 p10 p14",
+        "g4 g2 p9 p5 p5",
+        "p3 p13 s6 p12 p3",
+        "p9 g2 p9 p5 p10",
+        "g8 g2 p10 p11 p12"
       ],
-      "star2": 8,
-      "star3": 5
+      "shortest": 5,
+      "star2": 15,
+      "star3": 10
     }
   ]
 }

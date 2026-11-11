@@ -13,6 +13,7 @@ export function parseStage(raw) {
     size: raw.size,
     tiles,
     tutorial: raw.group === 'tutorial',
+    shortest: raw.shortest ?? raw.star3 ?? null, // 최단 경로(미증명 판은 알려진 가장 짧은 정답 길이)
     star2: raw.star2 ?? null,
     star3: raw.star3 ?? null,
   };

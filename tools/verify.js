@@ -38,7 +38,7 @@ for (const stage of content.byId.values()) {
   else {
     const res = evaluateResult(stage, evaluateConnections(stage, full.cells), sol.full.length);
     if (!res.requiredDone || (hasBonus && !res.bonusDone)) fail('보너스 포함 해답으로 목표가 모두 이어지지 않음');
-    if (!stage.tutorial && res.stars !== 3) fail(`3별 기준(${stage.star3}수)을 해답(${sol.full.length}수)으로 달성할 수 없음`);
+    if (res.stars !== 3) fail(`3별 기준(${stage.star3}수)을 해답(${sol.full.length}수)으로 달성할 수 없음`);
   }
 
   if (DEEP) {

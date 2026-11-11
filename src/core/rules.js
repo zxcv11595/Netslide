@@ -1,3 +1,4 @@
+import { starsAt } from './stars.js';
 // 순수 규칙 모듈. DOM/렌더러와 무관하며 게임과 Node 도구가 같은 함수를 쓴다.
 //
 // 용어
@@ -217,7 +218,7 @@ export function pathTo(conn, pos) {
 
 // ---------- 결과 ----------
 // 별 규칙
-// - 입문(stage.tutorial): 별 없이 완료만 표시 (stars 0)
+// - 입문도 정규 판과 같은 이동 수 기준으로 별 1~3개
 // - 보너스 있는 판: 1=필수 / 2=필수+모든 보너스 / 3=2별 조건 + star3 이동 수 이내
 // - 보너스 없는 판: 1=필수 / 2=star2 이내 / 3=star3 이내 (star3 < star2)
 export function evaluateResult(stage, conn, moves) {
@@ -225,12 +226,11 @@ export function evaluateResult(stage, conn, moves) {
   const hasBonus = conn.bonusTotal > 0;
   const bonusDone = requiredDone && hasBonus && conn.bonusConnected === conn.bonusTotal;
   let stars = 0;
-  if (requiredDone && !stage.tutorial) {
+  if (requiredDone) {
     stars = 1;
     if (hasBonus) {
       if (bonusDone) stars = moves <= stage.star3 ? 3 : 2;
-    } else if (moves <= stage.star3) stars = 3;
-    else if (moves <= stage.star2) stars = 2;
+    } else stars = starsAt(stage, moves);
   }
   return { requiredDone, hasBonus, bonusDone, canComplete: requiredDone, stars };
 }
@@ -267,7 +267,7 @@ export function validateStage(stage) {
     } else if (t.ports < 0 || t.ports > 15) errors.push('포트 값 오류');
   }
   if (required < 1) errors.push('필수 목표가 최소 1개 필요');
-  if (!stage.tutorial) {
+  {
     if (!Number.isInteger(stage.star3) || stage.star3 < 1) errors.push('star3 누락');
     if (bonus === 0 && !(Number.isInteger(stage.star2) && stage.star2 > stage.star3)) {
       errors.push('보너스 없는 판은 star2 > star3 이어야 함');

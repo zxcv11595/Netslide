@@ -26,7 +26,7 @@ test('판 구성: 입문 2~3판, 난이도별 판 존재, ID 중복 없음', () 
 
 test('게임용 판 데이터에는 해답이 들어 있지 않다', () => {
   for (const s of [...raw.stages, ...raw.daily]) {
-    assert.deepEqual(Object.keys(s).filter((k) => !['id', 'group', 'order', 'size', 'tiles', 'star2', 'star3'].includes(k)), []);
+    assert.deepEqual(Object.keys(s).filter((k) => !['id', 'group', 'order', 'size', 'tiles', 'shortest', 'star2', 'star3'].includes(k)), []);
   }
 });
 
@@ -54,12 +54,10 @@ for (const stage of all) {
     const fullRes = evaluateResult(stage, evaluateConnections(stage, full.cells), sol.full.moves.length);
     assert.equal(fullRes.requiredDone, true);
     if (hasBonus) assert.equal(fullRes.bonusDone, true);
-    if (!stage.tutorial) {
+    {
       assert.equal(fullRes.stars, 3, '3별 기준이 달성 가능해야 한다');
       assert.ok(sol.full.length <= stage.star3);
       if (!hasBonus) assert.ok(stage.star2 > stage.star3);
-    } else {
-      assert.equal(fullRes.stars, 0);
     }
     assert.ok(sol.basic.length <= sol.full.length);
   });

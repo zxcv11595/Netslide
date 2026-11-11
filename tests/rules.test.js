@@ -142,10 +142,10 @@ test('별 경계: 보너스 있는 판', () => {
   assert.deepEqual([0, 4, 50].map((m) => evaluateResult(basic, c2, m).stars), [1, 1, 1]);
 });
 
-test('입문은 별 없이 완료만', () => {
-  const st = parseStage({ id: 'T9', group: 'tutorial', order: 1, size: 3, tiles: ['p0 p0 p0', 'p0 s2 g8', 'p0 p0 p0'] });
+test('입문도 이동 수에 따라 별을 받는다', () => {
+  const st = parseStage({ id: 'T9', group: 'tutorial', star3: 1, star2: 4, order: 1, size: 3, tiles: ['p0 p0 p0', 'p0 s2 g8', 'p0 p0 p0'] });
   const res = evaluateResult(st, evaluateConnections(st, initialCells(st)), 1);
-  assert.deepEqual([res.canComplete, res.stars], [true, 0]);
+  assert.deepEqual([res.canComplete, res.stars], [true, 3]);
 });
 
 test('데이터 점검이 잘못된 판을 잡아낸다', () => {
