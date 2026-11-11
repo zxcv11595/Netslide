@@ -13,7 +13,12 @@ Vite + Vanilla JavaScript + HTML/CSS, 보드는 SVG. 로컬 커밋만 있고 원
   - `npm run generate`는 1~2분 걸리므로 판 데이터를 바꿀 때만 돌린다.
 
 ## 명령
-- `npm run dev` / `npm test` / `npm run verify` / `npm run generate` / `npm run build`
+- `npm run dev` / `npm test` / `npm run verify` / `npm run generate` / `npm run build` / `npm run deploy`
+
+## 저장소와 배포 (2026-11-11)
+- 원격 저장소: https://github.com/zxcv11595/Netslide (공개). 예전 기록의 "로컬 커밋만 있고 원격/배포 없음"을 대체한다.
+- 게임 링크: https://zxcv11595.github.io/Netslide/ (GitHub Pages). `npm run deploy`가 빌드해서 `gh-pages` 가지에 올린다(`tools/deploy.js`). 올린 뒤 1~2분 걸린다.
+- 배포본은 모의 결제(`shop.simulatePay`)가 켜져 있다. 실제 출시 전에 끈다.
 
 ## 게임 규칙 (확정)
 - Netslide 방식: 가운데 햄스터에서 뻗는 하나의 나무 길이 정답이고 도토리는 가지 끝에 있다. 정답은 여러 개여도 된다. 보너스 없음.
@@ -137,7 +142,7 @@ Vite + Vanilla JavaScript + HTML/CSS, 보드는 SVG. 로컬 커밋만 있고 원
 - 배치(2026-11-11): 로고·햄스터·게이지·시작 글자를 한 줄기로 쌓고 크기와 간격을 `clamp(…dvh…)`로 화면 높이에 맞춘다. 위아래 여백은 같다. 시작 글자는 다 불러오기 전에도 자리를 차지한다. 규칙은 `index.html` 스타일 끝의 "타이틀 배치" 블록.
 - 로딩 화면이 타이틀을 겸한다: 다 불러오면(최소 1.25초) 게이지가 가득 차고 가운데 햄스터가 도토리 든 그림으로 통통 뛰며 "화면을 눌러 시작"이 깜빡인다. 누르면(click) 홈으로 간다. 코드는 `src/main.js`의 `titleGate`, 스타일은 `index.html`의 `.loading.done`. 눌러야 배경음이 시작된다.
 - 글꼴은 주아(Jua, OFL). 로고·부제·시작 글자와 홈 로고에만 쓴다. 글꼴 파일은 필요한 글자만 담은 `public/assets/fonts/jua-subset.woff2`(22KB). 새 글자를 쓰려면 원본 글꼴로 다시 만들어 담아야 한다(라이선스 `OFL-Jua.txt`).
-- 카드 색(`.card`, `.stat3 > div`, `.dash`)은 입문~고급 줄과 같은 `--panel`. 입문 3은 화살표 안내 없음. 힌트는 지금 테스트용 무한(`CONFIG.hints.infinite`, 출시 전에 끈다).
+- 카드 색(`.card`, `.stat3 > div`, `.dash`)은 입문~고급 줄과 같은 `--panel`. 입문 3은 화살표 안내 없음. 테스트용 무한 힌트(`CONFIG.hints.infinite`)는 2026-11-11에 껐다.
 
 ## 화면 크기 대응 (2026-11-12)
 - 간격·높이는 폰 높이에 맞춰 부드럽게 변한다: `src/styles.css` 끝의 "화면 높이에 맞춘 유동 크기" 블록과 계기판 블록이 `clamp(최소, N dvh, 최대)`를 쓴다. 최대값이 844px 높이 폰 기준 크기다. 새 화면도 고정 px 대신 이 방식을 쓴다.

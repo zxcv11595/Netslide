@@ -31,7 +31,7 @@ export const CONFIG = {
 
   // 힌트. 처음 주는 개수는 storage.js의 START_HINTS(3)다.
   hints: {
-    infinite: true, // 테스트용: 힌트가 줄지 않는다. 출시 전에 false로
+    infinite: false, // true면 힌트가 줄지 않는다(테스트용)
     wallCost: 1, // 벽 보기: 정답에서 길이 이어지지 않는 곳에 벽을 세운다. 그 판을 끝낼 때까지 남는다
     guideCost: 2, // 경로 안내: 남은 경로의 절반을 화살표로 알려 준다
     clearCost: 3, // 즉시 성공에 쓰는 힌트 수(별 1개로 기록)

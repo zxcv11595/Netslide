@@ -8,7 +8,6 @@
 - 난이도 체감: 별 기준(최단의 2배·3배)과 힌트 지급(접속 1 · 오늘의 도전 1 · 최단 경로 1)이 적당한지 무한 힌트를 끄고 해 보기
 
 ## 출시 전
-- 테스트용 무한 힌트 끄기(`src/config.js`의 `hints.infinite`)
 - 테스트용 모의 결제 끄기(`src/config.js`의 `shop.simulatePay`). 켜 둔 채 내면 누구나 공짜로 힌트·광고 제거를 받는다
 - 상점 가격 정하기(`src/shop/catalog.js`, 지금은 임시 값)
 - 문의 받을 이메일 정하기(`src/config.js`의 contactEmail). 정하면 설정에 '문의하기'가 나타난다
