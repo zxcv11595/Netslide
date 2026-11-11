@@ -54,9 +54,10 @@ export const CONFIG = {
     simulatePay: !!(import.meta.env && import.meta.env.DEV),
   },
 
-  // 방문·진행 통계(src/analytics.js). 주소가 비어 있으면 아무것도 보내지 않는다. 켜기 전에 개인정보 처리방침부터 고친다.
+  // 방문·진행 통계(src/analytics.js): Google 애널리틱스. 측정 ID를 비우면 꺼진다. 개발 서버에서는 보내지 않는다.
+  // 파이어베이스 프로젝트 nutslide (웹 앱 1:853025183476:web:e4b0b1d7f2b1634126b0a1). 이 값들은 공개되어도 되는 식별용이다.
   analytics: {
-    goatcounter: '', // 예: 'https://nutslide.goatcounter.com/count'
+    measurementId: 'G-H6567SMMGG',
   },
 
   // 광고: 사업자 미정이므로 기본 비활성. provider가 없으면 항상 즉시 통과한다.

@@ -70,7 +70,7 @@ Vite + Vanilla JavaScript + HTML/CSS, 보드는 SVG. 로컬 커밋만 있고 원
 - 준비 중 표시는 숨겼다: 상점 탭(탭은 홈·오늘의 도전·기록 3개), 설정의 언어·구매 복원·문의하기, 힌트 창의 광고·묶음 구매 줄. 상점 화면 코드는 남아 있고 탭 목록(`src/ui/common.js`의 TABS)에 넣으면 다시 보인다. 홈의 '전문가 · 준비 중'은 예고로 남겼다.
 - 소리 크기는 `src/ui/sound.js`의 `SFX_VOLUME`(2)·`MUSIC_VOLUME`(0.11). 2026-11-11에 두 배로 올렸다.
 - 소리: `src/ui/sound.js`가 파일 없이 Web Audio로 효과음을 만든다(밀기, 햄스터에게 닿음, 완료, 힌트, 되돌리기). 설정의 소리 스위치(`settings.sound`)로 끈다.
-- 개인정보 처리방침: 설정 → 개인정보 처리방침 화면, 스토어용 공개 주소는 `public/privacy.html`. 두 곳의 내용을 같게 유지한다. 지금은 '수집 안 함'이며 광고·결제·순위표를 넣으면 먼저 고친다. 문의하기는 `CONFIG.contactEmail`을 채우면 나타난다.
+- 개인정보 처리방침: 설정 → 개인정보 처리방침 화면, 스토어용 공개 주소는 `public/privacy.html`. 두 곳의 내용을 같게 유지한다. 2026-11-11 밤부터 '이용 통계(Google 애널리틱스)만 수집'이다. 광고·결제·순위표를 넣으면 먼저 고친다. 문의하기는 `CONFIG.contactEmail`을 채우면 나타난다.
 - 입문 판은 판 위에 한 줄 설명(`TUTORIAL_TEXT`)을 보여 준다.
 - 게임 화면 배치: 판은 별 막대와 아래 버튼 사이의 가운데, 재시작·되돌리기는 화면 맨 아래.
 
@@ -161,7 +161,7 @@ Vite + Vanilla JavaScript + HTML/CSS, 보드는 SVG. 로컬 커밋만 있고 원
 - 홈 화면 설치·오프라인: `public/manifest.webmanifest`와 `public/sw.js`. 빌드할 때 `vite.config.js`의 `offlineFiles`가 전체 파일 목록(`precache.json`)을 만들고 서비스 워커에 빌드 시각을 적는다. 한 번 연 뒤에는 인터넷 없이 열리고, 새로 배포하면 다음 접속 때 바뀐다. 개발 서버와 앱 안에서는 켜지 않는다.
 - 모의 결제(`shop.simulatePay`)는 개발 서버에서만 켜진다. 배포한 게임은 구매 창이 "아직 구매할 수 없어요"로 끝난다(이전의 "배포본은 모의 결제가 켜져 있다"를 대체).
 - 개인정보 처리방침 공개 파일은 `public/privacy.html` 하나다(예전 `docs/privacy.html`을 옮겼다). 주소는 `https://zxcv11595.github.io/Netslide/privacy.html`.
-- 방문·진행 통계: `src/analytics.js`. `CONFIG.analytics.goatcounter`가 비어 있어 지금은 아무것도 보내지 않는다. 켜려면 GoatCounter 사이트를 만들어 주소를 넣고, 그 전에 개인정보 처리방침부터 고친다. 세는 것: 접속, 판 시작(`play/<판>`), 성공(`clear/<판>/<별>`), 힌트(`hint/…`), 구매 결과(`buy/…`).
+- 방문·진행 통계: Google 애널리틱스(파이어베이스 프로젝트 `nutslide`, 측정 ID `G-H6567SMMGG`, `CONFIG.analytics.measurementId`). `src/analytics.js`가 gtag만 불러온다(파이어베이스 SDK는 쓰지 않는다). 보내는 것: 접속, `stage_start`, `stage_clear`(판·별·횟수), `hint_use`, `shop_result`. 개발 서버·내 PC 주소·'추적 안 함'을 켠 브라우저에서는 보내지 않는다. 개인정보 처리방침(게임 안 화면, `public/privacy.html`)에 '이용 통계' 항목을 넣었다 — 보내는 것을 바꾸면 방침부터 고친다. 결과는 파이어베이스 콘솔의 애널리틱스에서 본다.
 - 앱으로 감싸기: Capacitor 7. `capacitor.config.json`(앱 아이디 `io.github.zxcv11595.nutslide` — 스토어에 올리면 바꿀 수 없으니 그 전에 확정), `android/` 폴더. `npm run app:sync`가 빌드해서 앱에 넣고 `npm run app:open`이 Android Studio를 연다. 이 PC에는 Android Studio와 JDK 21이 없어 앱을 실제로 만들어 보지는 못했다. 세로 고정.
 - 소리: 화면이 가려져 타이머가 멈췄다 깨어나면 밀린 배경음이 한꺼번에 울리던 것(5초 멈추면 13개, 1분이면 175개가 동시에)을 고쳤다 — 밀린 음은 건너뛰고 지금부터 잇는다. 한 번 누를 때 버튼음과 다른 소리(창 열림 등)가 겹치던 것도 고쳤다(`src/ui/sound.js`). 문의 이메일은 `CONFIG.contactEmail`에 넣었다(설정 화면에 '문의하기'가 나타난다).
 

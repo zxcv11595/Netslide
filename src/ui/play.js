@@ -413,7 +413,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     if (!walls.length) { toast(t('이 판은 벽 보기를 쓸 수 없어요.')); return; }
     setHints(store.data.hints - H.wallCost);
     wallsOn = true;
-    track('hint/walls');
+    track('hint_use', { kind: 'walls', stage: stage.id });
     ctx.state.wallsFor = wallKey;
     board.setWalls(walls);
     sound.hint();
@@ -485,7 +485,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   function startGuide(plan) {
     if (destroyed || completing || store.data.hints < H.guideCost) return;
     setHints(store.data.hints - H.guideCost);
-    track('hint/guide');
+    track('hint_use', { kind: 'guide', stage: stage.id });
     const n = guideCount(plan, H.minGuide);
     guideQ = plan.moves.slice(0, n);
     showGuide();
@@ -517,7 +517,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     }
     skipped = true;
     setHints(store.data.hints - H.clearCost);
-    track('hint/clear');
+    track('hint_use', { kind: 'clear', stage: stage.id });
     complete();
   }
 
@@ -525,7 +525,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   function complete() {
     if (destroyed || completing || !session.result.canComplete) return;
     completing = true;
-    track(`clear/${stage.id}/${skipped ? 'skip' : session.result.stars}`);
+    track('stage_clear', { stage: stage.id, stars: skipped ? 0 : session.result.stars, moves: session.moves, skipped });
     const result = skipped ? { ...session.result, stars: 1 } : session.result;
     const moves = session.moves;
     const firstDaily = !!date && !store.content(content.version).daily[date];

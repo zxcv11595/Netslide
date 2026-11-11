@@ -161,7 +161,7 @@ async function boot() {
     }
     // 다른 판을 새로 시작하면 이전에 하던 판의 저장은 지운다(이어하기는 history를 넘겨받는다).
     if (!opts.history) clearCurrent(store, content);
-    track(`play/${stage.id}`);
+    track('stage_start', { stage: stage.id });
     mount(createPlayScreen({ ...ctx, afterTutorial }, { stage, ...opts }));
   }
 

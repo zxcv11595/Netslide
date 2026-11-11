@@ -67,7 +67,7 @@ export function openBuyDialog(ctx, product, onDone = () => {}) {
     }
     const { status } = await purchases.buy(product);
     busy = false;
-    track(`buy/${product.id}/${status}`);
+    track('shop_result', { product: product.id, status });
     if (!overlay.isConnected) return;
     result(status);
   }

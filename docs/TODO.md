@@ -12,7 +12,6 @@
 - 스토어 이미지(소개 그림, 스크린샷). 앱 아이콘은 햄스터 그림으로 만들어 두었다(전용 그림이 생기면 `tools/make-icons.py`의 원본만 바꾼다)
 - 스토어 등록 정보에 개인정보 처리방침 주소 적기: https://zxcv11595.github.io/Netslide/privacy.html
 - 앱 만들기: Android Studio와 JDK 21 설치 → `npm run app:sync` → `npm run app:open` → 실제 폰에서 확인. 앱 아이디(`capacitor.config.json`) 확정
-- 방문 통계 켜기: GoatCounter 사이트 만들기 → `src/config.js`의 `analytics.goatcounter` → 개인정보 처리방침 먼저 고치기
 - README.md를 새 이름과 현재 규칙에 맞게 고치기
 - Codex용 로딩 그림 요청서 새로 쓰기(예전 것은 지웠고 git 기록에 있다)
 
