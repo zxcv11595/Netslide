@@ -33,9 +33,10 @@
       "group": "tutorial",
       "order": 3,
       "size": 2,
+      "wrap": true,
       "tiles": [
-        "s6 g1",
-        "p0 g8"
+        "s12 p0",
+        "g2 g1"
       ],
       "shortest": 2,
       "star3": 2,

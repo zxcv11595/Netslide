@@ -8,7 +8,7 @@ export const CONFIG = {
   fullName: t('Nutslide: 햄스터 슬라이드 퍼즐'), // 브라우저 탭과 공유 제목(지금은 한국어만)
   logoLines: ['Nutslide'], // 홈 제목의 줄바꿈. 로딩 제목은 index.html에서 맞춘다.
   version: '1.0.0',
-  contactEmail: 'zxcv11595@gmail.com', // 문의 받을 주소. 채우면 설정에 '문의하기'가 나타난다
+  contactEmail: 'nutslide.help@gmail.com', // 문의 받을 주소. 채우면 설정에 '문의하기'가 나타난다
   storageKey: 'hamster-snack-delivery',
 
   // public/ 아래 경로(배포 하위 경로에서도 동작하도록 상대 경로)
@@ -40,7 +40,7 @@ export const CONFIG = {
     searchBudgetMs: 4500, // 그중 길 찾기에 쓰는 시간
     waitMinMs: 700, // "길을 찾는 중" 표시를 최소한 이만큼은 보여 준다(점이 하나씩 생기는 것이 보이게)
     maxStates: 60000, // 길 찾기에서 앞으로 살펴볼 배치 수 상한. 이 수로 끊어서 어떤 휴대폰에서도 같은 힌트가 나온다
-    dailyFree: 1, // 날마다 처음 접속할 때 주는 힌트(0이면 주지 않고 안내 목록에서도 빠진다). 처음 시작한 날은 시작 힌트로 대신한다
+    dailyFree: 0, // 날마다 처음 접속할 때 주는 힌트(0이면 주지 않고 안내 목록에서도 빠진다). 2026-11-12 사용자 지시로 껐다: 오늘의 도전 첫 성공(dailyClear)이 그 역할을 한다
     freeCap: 999, // 날마다 주는 힌트는 보유 수가 이보다 적을 때만(지금은 사실상 제한 없음)
     dailyClear: 1, // 그날의 오늘의 도전을 처음 끝내면
     clearReward: 0, // 정규 판을 직접 풀어 처음 성공하면(지금은 주지 않는다. 0이면 안내 목록에서도 빠진다)

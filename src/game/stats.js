@@ -86,6 +86,7 @@ export function achievementSections(store, content, todayStr) {
       item('firstClear', t('첫 도토리 찾기'), reg.done, 1),
       item('firstThree', t('첫 별 3개'), reg.three, 1),
       item('firstDaily', t('첫 오늘의 도전'), d.total, 1),
+      item('firstPath', t('첫 길 잇기'), path.done, 1), // 길 조각을 하나라도 이어 성공하면(2026-11-12)
     ] },
     { title: t('판 성공'), items: [
       ...tier('tutorial', t('입문'), ['tut1', 'tutAll']),
@@ -96,8 +97,8 @@ export function achievementSections(store, content, todayStr) {
     // 판이 128개(별 384개)로 늘어서 끝 목표를 하나씩 더 둔다. 그림은 있는 것을 다시 쓴다(전용 그림이 생기면 바꾼다).
     { title: t('별 모으기'), items: [[1, 'stars10'], [10, 'stars30'], [30, 'stars60'], [100, 'stars100'], [200, 'stars200'], [reg.maxStars, 'stars200']].map(([n, icon], i) => item(i === 5 ? 'starsAll' : `stars${n}`, i === 5 ? t('별 모두 모으기') : t('별 {n}개', { n }), reg.stars, n, icon)) },
     { title: t('깃발 모으기'), items: [[1, 'firstShortest'], [10, 'shortest10'], [30, 'shortest30'], [100, 'rocket'], [reg.total, 'rocket']].map(([n, icon], i) => item(i === 4 ? 'shortestAll' : `shortest${n}`, i === 4 ? t('깃발 모두 모으기') : t('깃발 {n}개', { n }), reg.shortest, n, icon)) },
-    // 길 잇기(2026-11-12): 이어 준 길 조각 수. 그림은 계기판 통나무 그림으로 만들었다(public/assets/ach/logs*.webp).
-    { title: t('길 잇기'), items: [[10, 'logs1'], [100, 'logs3'], [500, 'logs3'], [1000, 'logs3'], [path.total, 'logsAll']].map(([n, icon], i) => item(i === 4 ? 'logsAll' : `logs${n}`, i === 4 ? t('모든 길 잇기') : t('길 {n}개 잇기', { n }), path.done, n, icon)) },
+    // 길 잇기(2026-11-12): 이어 준 길 조각 수. 그림은 Codex 이미지 생성으로 만들었다(public/assets/ach/logs*.webp, firstPath.webp).
+    { title: t('길 잇기'), items: [[10, 'logs10'], [100, 'logs100'], [500, 'logs500'], [1000, 'logs1000'], [path.total, 'logsAll']].map(([n, icon], i) => item(i === 4 ? 'logsAll' : `logs${n}`, i === 4 ? t('모든 길 잇기') : t('길 {n}개 잇기', { n }), path.done, n, icon)) },
     { title: t('오늘의 도전'), items: [
       item('streak3', t('3일 연속 도전'), d.bestStreak, 3),
       item('streak7', t('7일 연속 도전'), d.bestStreak, 7),

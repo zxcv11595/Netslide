@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   shiftBoard, inverseMove, initialCells, legalMoves, isLineLocked, evaluateConnections,
-  evaluateResult, sourcePos, moveToCode, moveFromCode, pathTo, validateStage,
+  evaluateResult, sourcePos, moveToCode, moveFromCode, pathTo, validateStage, parseTile,
 } from '../src/core/rules.js';
 import { parseStage } from '../src/data/parse.js';
 import { createSession } from '../src/game/session.js';
@@ -235,4 +235,14 @@ test('성공 조건: 도토리에 닿아도 끊어진 길이 남으면 아직이
   const c2 = evaluateConnections(st, cells);
   assert.deepEqual([c2.pathConnected, c2.pathTotal], [4, 4]);
   assert.deepEqual([evaluateResult(st, c2, 2).canComplete, evaluateResult(st, c2, 2).stars], [true, 3]);
+});
+
+// 끝끼리 이어진 판(입문 03): 판 밖으로 나간 길은 반대편 끝으로 이어진다. 보통 판은 막힌다.
+test('끝끼리 이어진 판은 판 밖으로 나간 길이 반대편과 이어진다', () => {
+  const mk = (wrap) => ({ size: 2, wrap, tiles: ['s12', 'g2', 'g1', 'p0'].map(parseTile), tutorial: true, star3: 2, star2: 5 });
+  const cells = [0, 1, 2, 3];
+  const open = evaluateConnections(mk(true), cells);
+  assert.equal(open.pathConnected, open.pathTotal, '왼쪽으로 나간 햄스터 길이 오른쪽 끝 도토리와 이어진다');
+  const closed = evaluateConnections(mk(false), cells);
+  assert.ok(closed.pathConnected < closed.pathTotal, '보통 판은 판 밖이 막혀 있다');
 });

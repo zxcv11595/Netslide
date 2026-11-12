@@ -214,6 +214,39 @@ function openLangDialog() {
   document.body.appendChild(overlay);
 }
 
+// 문의하기 창(2026-11-12): 메일 앱을 받는 사람·제목·게임 정보가 채워진 채로 연다.
+// 메일 앱이 없는 곳(PC 브라우저 등)을 위해 주소 복사도 둔다. 주소는 설정 줄에는 보이지 않고 이 창에만 작게 보인다.
+function contactMailto() {
+  const ua = navigator.userAgent || '';
+  const device = /Android/i.test(ua) ? 'Android' : /iPhone|iPad|iPod/i.test(ua) ? 'iOS' : /Windows/i.test(ua) ? 'Windows' : /Mac/i.test(ua) ? 'Mac' : 'etc';
+  const body = `
+
+
+----
+${t('게임 버전')}: ${CONFIG.version}
+${t('기기')}: ${device}
+${t('언어')}: ${getLang()}
+${ua}`;
+  return `mailto:${CONFIG.contactEmail}?subject=${encodeURIComponent(`[${CONFIG.gameName}] ${t('문의')}`)}&body=${encodeURIComponent(body)}`;
+}
+function openContactDialog() {
+  const close = () => overlay.remove();
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(CONFIG.contactEmail); toast(t('주소를 복사했어요')); } catch { toast(CONFIG.contactEmail, 4000); }
+  };
+  const overlay = el('div', { class: 'modal-overlay', onclick: (e) => { if (e.target === overlay) close(); } }, [
+    el('div', { class: 'modal-card contact-sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': t('문의하기') }, [
+      el('h2', { text: t('문의하기') }),
+      el('p', { class: 'contact-desc', text: t('궁금한 점이나 불편한 점을 보내 주세요.') }),
+      el('a', { class: 'go contact-choice', href: contactMailto(), onclick: () => setTimeout(close, 300) }, [t('메일 쓰기')]),
+      el('button', { class: 'btn contact-choice', type: 'button', onclick: copy }, [t('주소 복사')]),
+      el('p', { class: 'contact-addr', text: CONFIG.contactEmail }),
+      el('button', { class: 'link-btn', type: 'button', text: t('닫기'), onclick: close }),
+    ]),
+  ]);
+  document.body.appendChild(overlay);
+}
+
 // ----- 설정: 지금 실제로 동작하는 항목만 둔다 -----
 export function createSettingsScreen(ctx) {
   const { store } = ctx;
@@ -228,7 +261,7 @@ export function createSettingsScreen(ctx) {
     el('div', { class: 'card set' }, [
       // 문의하기: 주소(CONFIG.contactEmail)를 정하기 전에는 준비 중으로 보여 준다
       CONFIG.contactEmail
-        ? el('a', { class: 'r link', href: `mailto:${CONFIG.contactEmail}` }, [t('문의하기'), el('span', { text: CONFIG.contactEmail })])
+        ? el('button', { class: 'r link', type: 'button', onclick: openContactDialog }, [t('문의하기'), icon('play')])
         : el('div', { class: 'r soon' }, [t('문의하기'), el('span', { text: t('준비 중') })]),
       el('button', { class: 'r link', type: 'button', onclick: () => ctx.go('privacy') }, [t('개인정보 처리방침'), icon('play')]),
       el('div', { class: 'r' }, [t('버전'), el('span', { text: CONFIG.version })]),

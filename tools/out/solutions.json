@@ -44,21 +44,21 @@
       "basic": {
         "length": 2,
         "moves": [
-          "c1+",
-          "r1+"
+          "r1+",
+          "c1+"
         ]
       },
       "basicProven": true,
       "full": {
         "length": 2,
         "moves": [
-          "c1+",
-          "r1+"
+          "r1+",
+          "c1+"
         ]
       },
       "fullProven": true,
       "lowerBound": 2,
-      "states": 5,
+      "states": 4,
       "limitHit": false
     },
     "B01": {

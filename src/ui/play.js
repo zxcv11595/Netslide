@@ -84,7 +84,8 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
     onMove: handleMove,
     onLockedTap: () => sound.locked(),
   });
-  if (wallsOn) board.setWalls(solutionWalls(stage, loadSolution(content, stage.id)));
+  // 입문 01은 안쪽 벽까지 늘 보여 준다(벽으로 막힌 곳을 처음 배우는 판, 2026-11-12). 다른 판은 벽 보기 힌트를 써야 보인다
+  if (wallsOn || stage.id === 'T1') board.setWalls(solutionWalls(stage, loadSolution(content, stage.id)));
   const boardWrap = el('div', { class: 'board-wrap' });
 
   // ----- 계기판: 동그란 게이지(민 횟수) + 도토리 하나(찾은 수 / 전체) + 별 기준 세 줄 -----
@@ -178,7 +179,10 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   // ----- 입문 1의 안내: 화면을 어둡게 하고 한 곳씩 밝혀 설명한다 -----
   // 1단계 "무엇을 하는 게임인지"(판을 밝힘) → 2단계 "이 화살표를 누르세요"(화살표만 밝힘, 그것만 눌림)
   // 입문 01 안내는 처음 성공하기 전까지만 보여 준다(한 번 끝낸 뒤 다시 들어가면 안내 없이 바로 푼다)
-  const coach = stage.id === 'T1' && !getRecord(store, content, 'T1')?.done ? createCoach() : null;
+  const firstTime = !getRecord(store, content, stage.id)?.done;
+  const coach = stage.id === 'T1' && firstTime ? createCoach() : null;
+  // 입문 02·03을 처음 할 때는 판을 밝히고 짧은 설명 카드만 보여 준다(화살표 안내 없음)
+  const intro = (stage.id === 'T2' || stage.id === 'T3') && firstTime ? createCoach() : null;
   let coachStep = null;
   const unionRect = (nodes) => {
     let box = null;
@@ -196,13 +200,34 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
       rect: () => { const h = root.querySelector('.edge-btn.hinted .btn-face') || root.querySelector('.edge-btn.hinted'); return h ? unionRect([h]) : null; },
     });
   }
+  const boardRect = () => unionRect(root.querySelectorAll('.board .tile'));
+  // 입문 01: 무엇을 하는 게임인지 → 벽(울타리)으로 막힌 곳 → 이 화살표를 누르세요
+  function coachWalls() {
+    coachStep = 'walls';
+    coach.show({
+      title: t('벽으로 막힌 곳은 이어지지 않아요'), text: t('판 둘레와 칸 사이의 벽으로는 길이 지나갈 수 없어요.'), button: t('다음'), onNext: coachPress, pad: 12, round: 22,
+      rect: boardRect,
+    });
+  }
   function coachStart() {
     if (!coach || session.moves > 0) return;
     coachStep = 'goal';
     coach.show({
-      title: t('끊어진 길을 모두 이어 주세요'), text: t('길이 전부 이어지면 햄스터가 도토리를 찾아가요.'), button: t('다음'), onNext: coachPress, pad: 4, round: 20,
-      rect: () => unionRect(root.querySelectorAll('.board .tile')),
+      title: t('끊어진 길을 모두 이어 주세요'), text: t('길이 전부 이어지면 햄스터가 도토리를 찾아가요.'), button: t('다음'), onNext: coachWalls, pad: 4, round: 20,
+      rect: boardRect,
     });
+  }
+  // 입문 02: 이제부터 안쪽 벽은 힌트를 써야 보인다 / 입문 03: 끝끼리 이어진 판
+  function introStart() {
+    if (!intro || session.moves > 0) return;
+    const card = (title, text, button, onNext) => intro.show({ title, text, button, onNext, pad: 4, round: 20, rect: boardRect });
+    if (stage.id === 'T2') {
+      card(t('이제부터 바깥쪽 벽만 보여요'), t('안쪽 벽은 힌트를 써야 보여요.'), t('시작'), () => intro.hide());
+    } else {
+      card(t('끝끼리 이어진 판이에요'), t('이 판은 둘레에 벽이 없어요. 판 밖으로 나간 길은 반대편 끝으로 들어와요.'), t('다음'), () => card(
+        t('왼쪽 끝과 오른쪽 끝이 이어져요'), t('햄스터의 왼쪽 길은 오른쪽 끝 칸과 이어져요. 위와 아래도 마찬가지예요.'), t('시작'), () => intro.hide(),
+      ));
+    }
   }
 
   // ----- 상태 표시 -----
@@ -709,6 +734,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
   guide();
   // 화면이 붙은 뒤에 위치를 재야 하므로 한 박자 늦게 시작한다
   if (coach) later(coachStart, 350);
+  if (intro) later(introStart, 350);
   // 힌트를 처음 눌렀을 때 빠르도록, 완성 쪽에서 거꾸로 펼친 표를 미리 만들어 둔다
   if (!stage.tutorial) warmPlan(stage, loadSolution(content, stage.id));
 
@@ -721,6 +747,7 @@ export function createPlayScreen(ctx, { stage, date = null, history = null }) {
       for (const t of timers) clearTimeout(t);
       timers.clear();
       coach?.destroy();
+      intro?.destroy();
       board.destroy();
       root.remove();
     },

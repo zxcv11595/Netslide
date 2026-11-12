@@ -57,7 +57,9 @@ const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
 const TUTORIALS = [
   { id: 'T1', size: 2, tiles: ['s2 g1', 'p0 p12'] }, // 세로줄 한 번: 끊어진 길 한 조각과 도토리를 잇는다
   { id: 'T2', size: 2, tiles: ['s4 p0', 'g8 p3'] }, // 가로줄 한 번
-  { id: 'T3', size: 2, tiles: ['s6 g1', 'p0 g8'] }, // 두 도토리, 두 번 (2026-11-12 사용자 지정: 2×2 유지)
+  // 입문 03(2026-11-12 사용자 지정): 끝끼리 이어진 2×2. 햄스터의 왼쪽 길이 판 밖으로 나가 오른쪽 끝 도토리와 이어진다.
+  // 보통 규칙으로는 풀 수 없고 끝끼리 이어져야만 2번에 풀린다.
+  { id: 'T3', size: 2, wrap: true, tiles: ['s12 p0', 'g2 g1'] },
 ];
 
 // ---------- 생성 계획 ----------
@@ -351,7 +353,7 @@ const reportRows = [];
 const rowsOf = (size, tiles) => Array.from({ length: size }, (_, rr) => tiles.slice(rr * size, rr * size + size).map(tileCode).join(' '));
 
 TUTORIALS.forEach((t, i) => {
-  const stage = { size: t.size, tiles: t.tiles.flatMap((row) => row.split(' ')).map(parseTile), tutorial: true, star3: 1, star2: 4 };
+  const stage = { size: t.size, wrap: !!t.wrap, tiles: t.tiles.flatMap((row) => row.split(' ')).map(parseTile), tutorial: true, star3: 1, star2: 4 };
   const errs = validateStage(stage);
   if (errs.length) throw new Error(`${t.id}: ${errs.join(', ')}`);
   const sol = solve(stage, { maxStates: 200000 });
@@ -359,7 +361,7 @@ TUTORIALS.forEach((t, i) => {
   stage.shortest = sol.basic.length;
   stage.star3 = sol.basic.length; // 입문은 여유 없이 최단 그대로
   stage.star2 = stage.star3 + TUTORIAL_STAR2_EXTRA;
-  stagesOut.push({ id: t.id, group: 'tutorial', order: i + 1, size: t.size, tiles: t.tiles, shortest: stage.shortest, star3: stage.star3, star2: stage.star2 });
+  stagesOut.push({ id: t.id, group: 'tutorial', order: i + 1, size: t.size, ...(t.wrap ? { wrap: true } : {}), tiles: t.tiles, shortest: stage.shortest, star3: stage.star3, star2: stage.star2 });
   solutions[t.id] = { basic: sol.basic, basicProven: true, full: sol.basic, fullProven: true, lowerBound: sol.basic.length, states: sol.states, limitHit: false };
   reportRows.push({ id: t.id, group: 'tutorial', order: i + 1, size: t.size, hamsters: stage.tiles.filter((x) => x.kind === 'goal').length, sol: solutions[t.id], star2: stage.star2, star3: stage.star3 });
   seenForms.add(canonical(t.size, stage.tiles));

@@ -172,9 +172,14 @@ export function evaluateConnections(stage, cells) {
     const c = pos % n;
     for (let d = 1; d <= 8; d <<= 1) {
       if (!(exits & d)) continue;
-      const nr = r + DR[d];
-      const nc = c + DC[d];
-      if (nr < 0 || nr >= n || nc < 0 || nc >= n) continue; // 보드 밖: 순환 연결 없음
+      let nr = r + DR[d];
+      let nc = c + DC[d];
+      if (nr < 0 || nr >= n || nc < 0 || nc >= n) {
+        // 판 밖: 보통 판은 막혀 있다. 끝끼리 이어진 판(stage.wrap, 입문 03)은 반대편 끝으로 이어진다(원작 Netslide '어려움'과 같다)
+        if (!stage.wrap) continue;
+        nr = (nr + n) % n;
+        nc = (nc + n) % n;
+      }
       const np = nr * n + nc;
       const side = OPP[d];
       if (entered[np] & side) continue; // 같은 변으로 이미 들어옴 → 순환 경로 종료

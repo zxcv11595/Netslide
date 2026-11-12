@@ -217,6 +217,43 @@ export function createBoard({ stage, onMove, onLockedTap }) {
     addButton('col', i, 1, mid, edgeFar, S); // 아래 ↓ : 아래 이동
   }
 
+  // ----- 울타리 -----
+  // 판 둘레에는 늘 울타리를 친다(끝끼리 이어지지 않는 판이라는 표시, 2026-11-12 사용자 지정 시안 A).
+  // 벽 보기 힌트(walls)를 쓰면 안쪽 벽도 같은 울타리로 이어서 세운다. 칸 모서리마다 흰 점(기둥)을 둔다.
+  // 끝끼리 이어진 판(stage.wrap)은 둘레를 막지 않는다.
+  function drawWalls(walls) {
+    root.querySelector('.walls')?.remove();
+    const edge = n * C;
+    const segs = new Map();
+    const add = (x1, y1, x2, y2) => segs.set(`${x1},${y1},${x2},${y2}`, [x1, y1, x2, y2]);
+    for (const w of walls || []) {
+      if (w.dir === 'v') add((w.c + 1) * C, w.r * C, (w.c + 1) * C, (w.r + 1) * C);
+      else add(w.c * C, (w.r + 1) * C, (w.c + 1) * C, (w.r + 1) * C);
+    }
+    if (!stage.wrap) {
+      for (let i = 0; i < n; i++) {
+        add(i * C, 0, (i + 1) * C, 0);
+        add(i * C, edge, (i + 1) * C, edge);
+        add(0, i * C, 0, (i + 1) * C);
+        add(edge, i * C, edge, (i + 1) * C);
+      }
+    }
+    if (!segs.size) return;
+    const g = svg('g', { class: 'walls', transform: `translate(${OFF} ${OFF})`, 'pointer-events': 'none' });
+    const joints = new Map();
+    const d = [...segs.values()].map(([x1, y1, x2, y2]) => {
+      joints.set(`${x1},${y1}`, [x1, y1]);
+      joints.set(`${x2},${y2}`, [x2, y2]);
+      return `M${x1} ${y1}L${x2} ${y2}`;
+    }).join('');
+    g.appendChild(svg('path', { d, class: 'wall-edge' }));
+    g.appendChild(svg('path', { d, class: 'wall-face' }));
+    for (const [cx, cy] of joints.values()) g.appendChild(svg('circle', { cx, cy, r: 5.5, class: 'wall-post' }));
+    tilesLayer.after(g);
+  }
+  if (stage.wrap) root.classList.add('wrap');
+  drawWalls(null);
+
   // ----- 배치/흐름 -----
   function layout(cells) {
     for (let pos = 0; pos < cells.length; pos++) {
@@ -309,36 +346,8 @@ export function createBoard({ stage, onMove, onLockedTap }) {
       for (const g of btnMap.values()) g.classList.remove('hinted');
       if (move) btnMap.get(`${move.axis}:${move.index}:${move.dir}`)?.classList.add('hinted');
     },
-    // 벽 보기 힌트: 칸 경계를 따라 이어진 나무 울타리. 판 둘레에도 칸마다 치고, 칸 모서리마다 흰 점(기둥)을 둔다.
-    // 조각을 밀어도 벽은 제자리에 남는다. (2026-11-12 사용자 지정: 보드는 예전 모양, 벽만 새 모양)
-    setWalls(walls) {
-      root.querySelector('.walls')?.remove();
-      if (!walls || !walls.length) return;
-      const g = svg('g', { class: 'walls', transform: `translate(${OFF} ${OFF})`, 'pointer-events': 'none' });
-      const edge = n * C;
-      const segs = new Map();
-      const add = (x1, y1, x2, y2) => segs.set(`${x1},${y1},${x2},${y2}`, [x1, y1, x2, y2]);
-      for (const w of walls) {
-        if (w.dir === 'v') add((w.c + 1) * C, w.r * C, (w.c + 1) * C, (w.r + 1) * C);
-        else add(w.c * C, (w.r + 1) * C, (w.c + 1) * C, (w.r + 1) * C);
-      }
-      for (let i = 0; i < n; i++) {
-        add(i * C, 0, (i + 1) * C, 0);
-        add(i * C, edge, (i + 1) * C, edge);
-        add(0, i * C, 0, (i + 1) * C);
-        add(edge, i * C, edge, (i + 1) * C);
-      }
-      const joints = new Map();
-      const d = [...segs.values()].map(([x1, y1, x2, y2]) => {
-        joints.set(`${x1},${y1}`, [x1, y1]);
-        joints.set(`${x2},${y2}`, [x2, y2]);
-        return `M${x1} ${y1}L${x2} ${y2}`;
-      }).join('');
-      g.appendChild(svg('path', { d, class: 'wall-edge' }));
-      g.appendChild(svg('path', { d, class: 'wall-face' }));
-      for (const [cx, cy] of joints.values()) g.appendChild(svg('circle', { cx, cy, r: 5.5, class: 'wall-post' }));
-      tilesLayer.after(g);
-    },
+    // 벽 보기 힌트: 안쪽 벽을 더 세운다(바깥 울타리는 늘 있다). null이면 바깥 울타리만 남긴다.
+    setWalls(walls) { drawWalls(walls); },
     // 완료 순간: 굴 전체가 한 번 반짝인다
     celebrate() { root.classList.add('all-done'); },
     destroy() {

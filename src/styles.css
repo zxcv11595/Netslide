@@ -1115,3 +1115,14 @@ html[lang="en"] .mi-chip { font-size: 0.82rem; }
 .board .walls .wall-edge { fill: none; stroke: #55301d; stroke-width: 9; stroke-linecap: butt; }
 .board .walls .wall-face { fill: none; stroke: #dfb179; stroke-width: 4; stroke-linecap: butt; }
 .board .walls .wall-post { fill: #fff; stroke: #55301d; stroke-width: 2.6; }
+
+/* ---------- 문의하기 창 (2026-11-12) ---------- */
+.contact-sheet { gap: 10px; }
+.contact-sheet h2 { font-size: 1.5rem; font-weight: 900; text-align: center; }
+.contact-sheet .contact-desc { text-align: center; font-size: 0.92rem; font-weight: 700; color: var(--soft); word-break: keep-all; }
+.contact-sheet .contact-choice { width: 100%; height: 54px; border-radius: 18px; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+.contact-sheet .contact-addr { text-align: center; font-size: 0.8rem; font-weight: 700; color: var(--soft); user-select: all; -webkit-user-select: all; }
+
+/* ---------- 끝끼리 이어진 판 (입문 03, 2026-11-12) ----------
+   둘레 울타리를 치지 않고 판 테두리를 점선으로 그려 "열린 판"임을 보여 준다. */
+.board.wrap .board-frame { stroke-dasharray: 14 10; stroke-linecap: round; }
