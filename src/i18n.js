@@ -126,6 +126,7 @@ const EN = {
   '찾은 도토리 {a}개, 전체 {b}개': '{a} of {b} acorns reached',
   '길 잇기': 'Path building',
   '첫 길 잇기': 'First Path Connected',
+  '이 기기에 저장된 기록을 모두 지우고 처음부터 시작할까요?': 'Erase all progress saved on this device and start over?',
   '벽으로 막힌 곳은 이어지지 않아요': 'Walls block the path',
   '판 둘레와 칸 사이의 벽으로는 길이 지나갈 수 없어요.': "Paths can't pass through the walls around the board or between tiles.",
   '이제부터 바깥쪽 벽만 보여요': 'Only the outer walls show from now on',

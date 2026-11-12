@@ -59,9 +59,13 @@ async function boot() {
   document.title = CONFIG.fullName;
   const ver = app.querySelector('.loading .ver');
   if (ver) ver.textContent = `v${CONFIG.version}`; // 타이틀 화면 오른쪽 아래
-  // 개발 서버에서만: 주소에 ?reset 을 붙여 열면 저장된 기록을 모두 지우고 처음 시작 상태가 된다(언어 설정은 남긴다).
-  if (import.meta.env.DEV && new URLSearchParams(location.search).has('reset')) {
+  // 주소에 ?reset 을 붙여 열면 이 기기에 저장된 기록을 모두 지우고 처음 시작 상태가 된다(언어 설정은 남긴다).
+  // 공개 링크에서도 된다(2026-11-12). 개발 서버가 아니면 한 번 묻는다(남이 보낸 링크로 실수로 지우지 않게).
+  if (new URLSearchParams(location.search).has('reset')
+    && (import.meta.env.DEV || window.confirm(t('이 기기에 저장된 기록을 모두 지우고 처음부터 시작할까요?')))) {
     try { localStorage.removeItem(CONFIG.storageKey); } catch { /* 저장소를 못 쓰는 환경 */ }
+  }
+  if (new URLSearchParams(location.search).has('reset')) {
     const clean = new URL(location.href);
     clean.searchParams.delete('reset');
     history.replaceState(null, '', clean);
